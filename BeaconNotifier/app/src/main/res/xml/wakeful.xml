@@ -1,0 +1,3 @@
+<WakefulIntentService
+    listener="debas.com.beaconnotifier.service.DailyListener"
+    />

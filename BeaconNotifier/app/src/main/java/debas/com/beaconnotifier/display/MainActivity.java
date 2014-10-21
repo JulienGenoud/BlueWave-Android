@@ -1,45 +1,27 @@
 package debas.com.beaconnotifier.display;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.FragmentTransaction;
-import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import android.view.Gravity;
-import android.widget.FrameLayout;
-import android.widget.FrameLayout.LayoutParams;
 import android.widget.Toast;
 
 import debas.com.beaconnotifier.BeaconNotifierApp;
 import debas.com.beaconnotifier.R;
 import debas.com.beaconnotifier.database.AsyncTaskDB;
 import debas.com.beaconnotifier.database.BeaconDataBase;
+import debas.com.beaconnotifier.display.fragment.BeaconViewer;
+import debas.com.beaconnotifier.display.fragment.FavoritesBeacons;
+import debas.com.beaconnotifier.display.fragment.HistoryBeacon;
 import debas.com.beaconnotifier.utils.Constants;
 import debas.com.beaconnotifier.utils.Utils;
 

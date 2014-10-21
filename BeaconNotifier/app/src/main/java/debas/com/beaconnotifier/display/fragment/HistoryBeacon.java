@@ -1,4 +1,4 @@
-package debas.com.beaconnotifier.display;
+package debas.com.beaconnotifier.display.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,5 +18,12 @@ public class HistoryBeacon extends Fragment {
         View rootView = inflater.inflate(R.layout.history, container, false);
 
         return rootView;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setRetainInstance(true);
     }
 }

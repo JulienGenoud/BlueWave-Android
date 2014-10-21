@@ -6,7 +6,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -21,10 +20,8 @@ import org.altbeacon.beacon.startup.BootstrapNotifier;
 import org.altbeacon.beacon.startup.RegionBootstrap;
 
 import debas.com.beaconnotifier.database.BeaconDataBase;
-import debas.com.beaconnotifier.display.BeaconViewer;
 import debas.com.beaconnotifier.display.MainActivity;
 import debas.com.beaconnotifier.service.DailyListener;
-import debas.com.beaconnotifier.utils.Constants;
 
 /**
  * Created by debas on 13/10/14.

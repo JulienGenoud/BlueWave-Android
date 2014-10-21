@@ -1,4 +1,4 @@
-package debas.com.beaconnotifier.display;
+package debas.com.beaconnotifier.display.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,4 +20,10 @@ public class FavoritesBeacons extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setRetainInstance(true);
+    }
 }

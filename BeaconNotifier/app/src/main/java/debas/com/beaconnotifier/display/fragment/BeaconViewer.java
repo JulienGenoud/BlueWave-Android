@@ -1,4 +1,4 @@
-package debas.com.beaconnotifier.display;
+package debas.com.beaconnotifier.display.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -40,6 +40,7 @@ import java.util.List;
 
 import debas.com.beaconnotifier.BeaconNotifierApp;
 import debas.com.beaconnotifier.R;
+import debas.com.beaconnotifier.display.DisplayBeaconAdapter;
 import debas.com.beaconnotifier.utils.SortBeacon;
 import debas.com.beaconnotifier.utils.Constants;
 

@@ -24,7 +24,7 @@ public class DisplayBeaconAdapter extends BaseAdapter {
         private LayoutInflater mLayoutInflater = null;
         private int updated = 0;
 
-        DisplayBeaconAdapter(Context context) {
+        public DisplayBeaconAdapter(Context context) {
             mContext = context;
             mLayoutInflater = LayoutInflater.from(mContext);
             mBeaconList = new ArrayList<Beacon>();

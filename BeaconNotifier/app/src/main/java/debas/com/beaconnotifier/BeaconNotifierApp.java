@@ -39,6 +39,8 @@ public class BeaconNotifierApp extends Application implements BootstrapNotifier 
 
     @Override
     public void onCreate() {
+        super.onCreate();
+
         Log.d("BeaconNotifierApp", "created");
 
         /* set header beacon to gimbal */
@@ -60,15 +62,6 @@ public class BeaconNotifierApp extends Application implements BootstrapNotifier 
 
         /* create beacon database instance */
         mBeaconDataBase = new BeaconDataBase(getApplicationContext());
-
-        /* check if this is the first time run */
-        SharedPreferences sharedPreferences = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
-        boolean firstTimeRun = sharedPreferences.getBoolean(Constants.FIRST_LAUNCHED, true);
-        if (firstTimeRun) {
-            // update database
-        }
-
-        super.onCreate();
     }
 
     @Override

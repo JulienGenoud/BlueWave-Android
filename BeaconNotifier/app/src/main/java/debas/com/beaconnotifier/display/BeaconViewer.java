@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -81,7 +82,9 @@ public class BeaconViewer extends Fragment {
 //            builder.show();
 //        }
 //
+
         mListView = (ListView) rootView.findViewById(R.id.listView);
+
         mDisplayBeaconAdapter = new DisplayBeaconAdapter(getActivity().getApplicationContext());
         mListView.setAdapter(mDisplayBeaconAdapter);
 
@@ -103,6 +106,13 @@ public class BeaconViewer extends Fragment {
         super.onCreate(savedInstanceState);
 
         Log.d("Beacon", "created");
+
+        if(savedInstanceState != null) {
+            Parcelable mListInstanceState = savedInstanceState.getParcelable(LIST_INSTANCE_STATE);
+            mListView.onRestoreInstanceState(mListInstanceState);
+        }
+
+        setRetainInstance(true);
 
         /* database test */
 //        BeaconDataBase beaconDataBase = ((BeaconNotifierApp) getApplication()).getBeaconDataBase();
@@ -188,6 +198,8 @@ public class BeaconViewer extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        Log.d("BeaconViewer", "saveinstance");
         outState.putParcelable(LIST_INSTANCE_STATE, mListView.onSaveInstanceState());
     }
 

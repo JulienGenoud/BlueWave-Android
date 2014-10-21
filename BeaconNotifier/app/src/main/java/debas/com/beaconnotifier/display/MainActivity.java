@@ -2,12 +2,15 @@ package debas.com.beaconnotifier.display;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -35,6 +38,10 @@ import android.widget.Toast;
 
 import debas.com.beaconnotifier.BeaconNotifierApp;
 import debas.com.beaconnotifier.R;
+import debas.com.beaconnotifier.database.AsyncTaskDB;
+import debas.com.beaconnotifier.database.BeaconDataBase;
+import debas.com.beaconnotifier.utils.Constants;
+import debas.com.beaconnotifier.utils.Utils;
 
 import com.astuetz.PagerSlidingTabStrip;
 
@@ -47,29 +54,29 @@ import org.altbeacon.beacon.Region;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by debas on 18/10/14.
  */
-public class MainActivity extends FragmentActivity implements
-        ActionBar.TabListener, BeaconConsumer {
+public class MainActivity extends FragmentActivity implements BeaconConsumer {
 
     private List<Fragment> fragmentList = new ArrayList<Fragment>();
     private BroadcastReceiver mReceiver;
     private BeaconManager mBeaconManager = BeaconManager.getInstanceForApplication(this);
+    private String TAG = "onBeacon";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.d("save = ", (savedInstanceState == null ? "null" : "pas null"));
         fragmentList.add(new BeaconViewer());
         fragmentList.add(new HistoryBeacon());
         fragmentList.add(new FavoritesBeacons());
 
-        Log.d("onCreate", "MainActivity");
+
+        System.out.println("onCreate");
         setContentView(R.layout.activity_main);
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
@@ -88,6 +95,31 @@ public class MainActivity extends FragmentActivity implements
         mBeaconManager.bind(this);
 
         BeaconManager.debug = true;
+
+                /* check if this is the first time run */
+        SharedPreferences sharedPreferences = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
+        boolean firstTimeRun = sharedPreferences.getBoolean(Constants.FIRST_LAUNCHED, true);
+        if (firstTimeRun) {
+            if (Utils.checkInternetConnectivity(getApplicationContext())) {
+                final BeaconDataBase beaconDataBase = ((BeaconNotifierApp) getApplication()).getBeaconDataBase();
+
+                beaconDataBase.open();
+                beaconDataBase.updateDB(null, sharedPreferences, new AsyncTaskDB.OnDBUpdated() {
+                    @Override
+                    public void onDBUpdated(boolean result, int nbElement) {
+                        if (!result) {
+                            Toast.makeText(MainActivity.this, "failed to update DB", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(MainActivity.this, "success to update DB : new element " + nbElement, Toast.LENGTH_LONG).show();
+                        }
+                        beaconDataBase.close();
+                    }
+                });
+            } else {
+                Toast.makeText(this, "Internet needed to update DB", Toast.LENGTH_LONG).show();
+            }
+        }
+
 //        BeaconConsumer fragment = (BeaconConsumer) myPagerAdapter.getItem(0);
 //        fragment.getApplicationContext();
 //        mReceiver = new BroadcastReceiver() {
@@ -126,19 +158,19 @@ public class MainActivity extends FragmentActivity implements
 
     }
 
-    @Override
-    public void onStart() {
-        Log.d("Beacon", "started");
-        super.onStart();
-        if (mBeaconManager.isBound(this)) {
-            mBeaconManager.setBackgroundMode(false);
-        }
-        ((BeaconNotifierApp) getApplication()).setCreateNotif(false);
-    }
-
+//    @Override
+//    public void onStart() {
+//        Log.d(TAG, "started");
+//        super.onStart();
+//        if (mBeaconManager.isBound(this)) {
+//            mBeaconManager.setBackgroundMode(false);
+//        }
+//        ((BeaconNotifierApp) getApplication()).setCreateNotif(false);
+//    }
+//
     @Override
     public void onResume() {
-        Log.d("Beacon", "resume");
+        Log.d(TAG, "resume");
         super.onResume();
         if (mBeaconManager.isBound(this)) {
             mBeaconManager.setBackgroundMode(false);
@@ -148,7 +180,7 @@ public class MainActivity extends FragmentActivity implements
 
     @Override
     public void onPause() {
-        Log.d("Beacon", "Pause");
+        Log.d(TAG, "Pause");
 
         super.onResume();
         if (mBeaconManager.isBound(this)) {
@@ -157,20 +189,22 @@ public class MainActivity extends FragmentActivity implements
         ((BeaconNotifierApp) getApplication()).setCreateNotif(true);
     }
 
-    @Override
-    public void onStop() {
-        Log.d("Beacon", "stoped");
-
-        super.onStop();
-        if (mBeaconManager.isBound(this)) {
-            mBeaconManager.setBackgroundMode(true);
-        }
-        ((BeaconNotifierApp) getApplicationContext()).setCreateNotif(true);
-    }
+//    @Override
+//    public void onStop() {
+//        Log.d(TAG, "stoped");
+//
+//        super.onStop();
+//        if (mBeaconManager.isBound(this)) {
+//            mBeaconManager.setBackgroundMode(true);
+//        }
+//        ((BeaconNotifierApp) getApplicationContext()).setCreateNotif(true);
+//    }
 
     @Override
     public void onDestroy() {
-        Log.d("Beacon", "destroyed");
+//        Toast.makeText(this, "onDestroy", Toast.LENGTH_LONG).show();
+
+        Log.d(TAG, "destroyed");
         super.onDestroy();
         mBeaconManager.unbind(this);
     }
@@ -226,18 +260,21 @@ public class MainActivity extends FragmentActivity implements
         }
     }
 
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-
-    }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-
-    }
+//    @Override
+//    public void onBackPressed() {
+//        new AlertDialog.Builder(this)
+//                .setIcon(android.R.drawable.ic_dialog_alert)
+//                .setTitle("Closing BeaconNotifier")
+//                .setMessage("Are you sure you want to close ?")
+//                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+//                {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        finish();
+//                    }
+//
+//                })
+//                .setNegativeButton("No", null)
+//                .show();
+//    }
 }

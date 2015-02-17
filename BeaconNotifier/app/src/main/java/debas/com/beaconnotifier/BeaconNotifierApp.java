@@ -11,25 +11,26 @@ import android.util.Log;
 
 import com.commonsware.cwac.wakeful.WakefulIntentService;
 
+import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
-import org.altbeacon.beacon.Identifier;
+import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 import org.altbeacon.beacon.startup.BootstrapNotifier;
 import org.altbeacon.beacon.startup.RegionBootstrap;
 
-import debas.com.beaconnotifier.database.BeaconDataBase;
+import java.util.Collection;
+
 import debas.com.beaconnotifier.display.MainActivity;
 import debas.com.beaconnotifier.service.DailyListener;
 
 /**
  * Created by debas on 13/10/14.
  */
-public class BeaconNotifierApp extends Application implements BootstrapNotifier {
+public class BeaconNotifierApp extends Application implements BootstrapNotifier, RangeNotifier {
 
     private BeaconManager mBeaconManager = BeaconManager.getInstanceForApplication(this);
-    private BeaconDataBase mBeaconDataBase = null;
     private boolean createNotif = false;
 
     public static final int NOTIFICATION_ID = 12345;
@@ -47,18 +48,17 @@ public class BeaconNotifierApp extends Application implements BootstrapNotifier 
         BackgroundPowerSaver backgroundPowerSaver = new BackgroundPowerSaver(this);
 
         /* search only my beacon for debuging */
-        Region region = new Region("RegionBootstrap",
-                Identifier.parse("53168465-4534-6543-2134-546865413213"),
-                Identifier.fromInt(10),
-                Identifier.fromInt(1));
+//        Region region = new Region("RegionBootstrap",
+//                Identifier.parse("53168465-4534-6543-2134-546865413213"),
+//                Identifier.fromInt(10),
+//                Identifier.fromInt(1));
+        Region region = new Region("RegionBootstrap", null, null, null);
+
         RegionBootstrap regionBootstrap = new RegionBootstrap(this, region);
 
         mBeaconManager.setBackgroundBetweenScanPeriod(5000l);
 
         WakefulIntentService.scheduleAlarms(new DailyListener(), this, false);
-
-        /* create beacon database instance */
-        mBeaconDataBase = new BeaconDataBase(getApplicationContext());
     }
 
     @Override
@@ -98,7 +98,8 @@ public class BeaconNotifierApp extends Application implements BootstrapNotifier 
 
     }
 
-    public BeaconDataBase getBeaconDataBase() {
-        return mBeaconDataBase;
+    @Override
+    public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+
     }
 }

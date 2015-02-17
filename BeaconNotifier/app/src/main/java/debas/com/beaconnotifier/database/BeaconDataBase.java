@@ -1,35 +1,20 @@
 package debas.com.beaconnotifier.database;
 
-import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.widget.Toast;
 
-import org.altbeacon.beacon.Beacon;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.security.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import debas.com.beaconnotifier.utils.Constants;
-import debas.com.beaconnotifier.utils.JSONParserURL;
 
 /**
  * Created by debas on 14/10/14.
@@ -37,13 +22,21 @@ import debas.com.beaconnotifier.utils.JSONParserURL;
 public class BeaconDataBase {
     private BeaconSql mBeaconSql = null;
     private SQLiteDatabase mDataBase = null;
+    private static BeaconDataBase mBeaconDB = null;
 
     public static final int DB_VERSION = 1;
     public static final String DB_NAME = "beacons.db";
     public static final String BEACONS_TABLE = "beacons";
 
-    public BeaconDataBase(Context context) {
+    private BeaconDataBase(Context context) {
         mBeaconSql = new BeaconSql(context, DB_NAME, null, DB_VERSION);
+    }
+
+    public static BeaconDataBase getInstance(Context context) {
+        if (mBeaconDB == null) {
+            mBeaconDB = new BeaconDataBase(context);
+        }
+        return mBeaconDB;
     }
 
     public void open(){
@@ -61,24 +54,10 @@ public class BeaconDataBase {
     }
 
     public void insertBeacon(List<BeaconItemDB> beaconItemDBList) {
-        //Création d'un ContentValues (fonctionne comme une HashMap)
-//        //on lui ajoute une valeur associé à une clé (qui est le nom de la colonne dans laquelle on veut mettre la valeur)
-//        values.put("beacon_id", 10);
-//        values.put("customer_id", 10);
-//        values.put("uuid", "53168465-4534-6543-2134-546865413213");
-//        values.put("major", 10);
-//        values.put("minor", 1);
-//        values.put("action", 1);
-//        values.put("notification", "Coucou la famille");
-//        values.put("content", "Je t'aime");
-//        values.put("range", 4);
-//        values.put("lastUpdate", 123456789);
-
         for (BeaconItemDB b : beaconItemDBList) {
-            if (b.getContent() == null) {
-                Log.d("Test", "null");
+            if (b.getContent() != null) {
+                mDataBase.insertWithOnConflict(BEACONS_TABLE, null, b.getContent(), SQLiteDatabase.CONFLICT_REPLACE);
             }
-            mDataBase.insert(BEACONS_TABLE, null, b.getContent());
         }
     }
 
@@ -98,39 +77,40 @@ public class BeaconDataBase {
     }
 
     /* update new beacon on api and update new time*/
-    public  void updateDB(final Activity activity, final SharedPreferences sharedPreferences, final AsyncTaskDB.OnDBUpdated listener) {
+    public  void updateDB(final Context context, final SharedPreferences sharedPreferences, final AsyncTaskDB.OnDBUpdated listener) {
         long lastTimeUpdate = sharedPreferences.getLong(Constants.LAST_TIME_UPDATE_DB, 0);
 
-        JSONParserURL jsonParserURL = new JSONParserURL(new AsyncTaskDB.OnTaskCompleted() {
-            @Override
-            public void onTaskCompleted(JSONObject jsonObject) {
-                if (jsonObject == null) {
-                    listener.onDBUpdated(false, 0);
-                }
-                try {
-                    List<BeaconItemDB> beaconItemDBList = new ArrayList<BeaconItemDB>();
-                    JSONArray jsonArray = jsonObject.getJSONArray("e");
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONArray beaconContent = jsonArray.getJSONArray(i);
-                        beaconItemDBList.add(new BeaconItemDB(beaconContent));
+        Ion.with(context)
+                .load(Constants.URL_API_DB + String.valueOf(lastTimeUpdate))
+                .asJsonObject()
+                .setCallback(new FutureCallback<JsonObject>() {
+                    @Override
+                    public void onCompleted(Exception error, JsonObject result) {
+                        System.out.println("error : " + error);
+
+                        if (error != null)
+                            listener.onDBUpdated(false, 0);
+                        JsonArray beacons = result.getAsJsonArray("e");
+                        List<BeaconItemDB> beaconItemDBList = new ArrayList<BeaconItemDB>();
+                        for (int i = 0; i < beacons.size(); i++) {
+                            beaconItemDBList.add(new BeaconItemDB(beacons.get(i).getAsJsonArray()));
+                        }
+
+                        /* insert new beacons on database */
+                        open();
+                        insertBeacon(beaconItemDBList);
+                        close();
+
+                        long newLastTimeUpdate = result.get("t").getAsLong();
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putLong(Constants.LAST_TIME_UPDATE_DB, newLastTimeUpdate).commit();
+
+                        listener.onDBUpdated(true, beaconItemDBList.size());
+
+                        System.out.println("result : " + beacons);
+                        System.out.println("time : " + newLastTimeUpdate);
                     }
-                    insertBeacon(beaconItemDBList);
-
-                    /* debug */
-                    if (activity != null) Toast.makeText(activity, "updated : " + String.valueOf(beaconItemDBList.size()) + " elements", Toast.LENGTH_LONG).show();
-
-                    long newLastTimeUpdate = jsonObject.getLong("t");
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putLong(Constants.LAST_TIME_UPDATE_DB, newLastTimeUpdate).commit();
-
-                    listener.onDBUpdated(true, beaconItemDBList.size());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    listener.onDBUpdated(false, 0);
-                }
-            }
-        });
-        jsonParserURL.execute(Constants.URL_API_DB + String.valueOf(lastTimeUpdate));
+                });
     }
 
 }

@@ -1,17 +1,30 @@
 package debas.com.beaconnotifier.display;
 
+import android.app.ActionBar;
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -45,6 +58,17 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
     private BroadcastReceiver mReceiver;
     private BeaconManager mBeaconManager = BeaconManager.getInstanceForApplication(this);
     private String TAG = "onBeacon";
+  //  ArrayList<LinearLayout> linearLayouts;
+
+    List<RelativeLayout> linearLayouts = new ArrayList<RelativeLayout>();
+
+//    LinearLayout button = (LinearLayout)findViewById(R.id.first);
+//    LinearLayout button2 = (LinearLayout)findViewById(R.id.middle);
+//    LinearLayout button3 = (LinearLayout)findViewById(R.id.last);
+    DemoCollectionPagerAdapter mDemoCollectionPagerAdapter;
+    MyPagerAdapter mMyPagerAdapter;
+
+    ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,25 +80,126 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
         fragmentList.add(new FavoritesBeacons());
 
 
+
+
         System.out.println("onCreate");
         setContentView(R.layout.activity_main);
 
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-        ViewPager pager = (ViewPager) findViewById(R.id.pager);
+        linearLayouts.add((RelativeLayout)findViewById(R.id.first));
+        linearLayouts.add((RelativeLayout)findViewById(R.id.middle));
+        linearLayouts.add((RelativeLayout)findViewById(R.id.last));
 
-        MyPagerAdapter myPagerAdapter = new MyPagerAdapter(getSupportFragmentManager(), fragmentList);
-        pager.setAdapter(myPagerAdapter);
-        pager.setOffscreenPageLimit(3);
-
-        final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources()
-                .getDisplayMetrics());
-        pager.setPageMargin(pageMargin);
-        tabs.setShouldExpand(true);
-        tabs.setViewPager(pager);
-
+        mDemoCollectionPagerAdapter =
+                new DemoCollectionPagerAdapter(
+                        getSupportFragmentManager());
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mDemoCollectionPagerAdapter);
         mBeaconManager.bind(this);
 
-//        BeaconManager.debug = true;
+
+//        ActionBar.TabListener tabListener = new ActionBar.TabListener() {
+//            public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+//                mViewPager.setCurrentItem(tab.getPosition());
+//                linearLayouts.get(tab.getPosition()).setBackgroundColor(R.drawable.gradiant);
+//
+//                // show the given tab
+//            }
+//
+//            public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
+//                // hide the given tab
+//            }
+//
+//            public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+//                // probably ignore this event
+//            }
+//        };
+
+
+
+
+        linearLayouts.get(0).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mViewPager.setCurrentItem(0);
+                linearLayouts.get(0).setBackground(getDrawable(R.drawable.gradiant));
+                linearLayouts.get(1).setBackgroundColor(Color.TRANSPARENT);
+                linearLayouts.get(2).setBackgroundColor(Color.TRANSPARENT);
+            }
+        });
+
+        linearLayouts.get(1).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mViewPager.setCurrentItem(1);
+                linearLayouts.get(0).setBackgroundColor(Color.TRANSPARENT);
+                linearLayouts.get(1).setBackground(getDrawable(R.drawable.gradiant));
+                linearLayouts.get(2).setBackgroundColor(Color.TRANSPARENT);
+            }
+        });
+        linearLayouts.get(2).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mViewPager.setCurrentItem(2);
+                linearLayouts.get(0).setBackground(getDrawable(R.drawable.transparant));
+                linearLayouts.get(1).setBackground(getDrawable(R.drawable.transparant));
+                linearLayouts.get(2).setBackground(getDrawable(R.drawable.gradiant));
+            }
+        });
+
+//        ActionBar actionBar = getActionBar();
+//        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        // Add 3 tabs, specifying the tab's text and TabListener
+//        for (int i = 0; i < 3; i++) {
+//            actionBar.addTab(
+//                    actionBar.newTab()
+//                            .setText("Tab " + (i + 1))
+//                            .setTabListener(tabListener));
+//        }
+//
+     //   mViewPager = (ViewPager) findViewById(R.id.pager);
+
+       // mViewPager.setOnPageChangeListener(mPageChangeListener);
+
+        mViewPager.setOnPageChangeListener(
+                new ViewPager.OnPageChangeListener() {
+
+                    @Override
+                    public void onPageScrolled(int i, float v, int i2) {
+
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+                       // linearLayouts.get(position).setBackground(getDrawable(R.drawable.transparant));
+
+                        for (int j = 0; j < linearLayouts.size(); j++) {
+                            if (j == position)
+                                linearLayouts.get(j).setBackground(getDrawable(R.drawable.gradiant));
+                            else
+                                linearLayouts.get(j).setBackground(getDrawable(R.drawable.transparant));
+                        }
+
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int i) {
+
+                    }
+                });
+
+
+//            @Override
+//            public void onPageScrolled(int arg0, float arg1, int arg2) {
+//                // TODO Auto-generated method stub
+//
+//            }
+//
+//            @Override
+//            public void onPageScrollStateChanged(int pos) {
+//
+//            }
+//        });
+//                        Toast.makeText(getApplicationContext(), "coucou", Toast.LENGTH_SHORT).show();
+//
+//                    }
+//                });
 
                 /* check if this is the first time run */
         SharedPreferences sharedPreferences = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
@@ -159,8 +284,37 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
     }
 
 
+    public class DemoCollectionPagerAdapter extends FragmentStatePagerAdapter {
+        public DemoCollectionPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+
+
+        @Override
+        public Fragment getItem(int i)
+        {
+            return fragmentList.get(i);
+        }
+
+        @Override
+        public int getCount() {
+            return 3;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return "OBJECT " + (position + 1);
+        }
+    }
+
+
+
+
     public class MyPagerAdapter extends FragmentPagerAdapter {
         private final String[] TITLES = { "Beacon", "History", "Favorites"};
+        private final int[] COLORS = { R.color.black, R.color.dark_bluewave, R.color.red_bluewave};
+
         private List<Fragment> fragmentList;
 
         public MyPagerAdapter(FragmentManager fm, List<Fragment> fragmentList) {

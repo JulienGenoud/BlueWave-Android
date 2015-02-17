@@ -5,4 +5,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="bluetooth_disable">Please enable bluetooth to scan beacons</string>
+    <string name="history_all">tous</string>
+    <string name="not_seen">non vu</string>
+    <string name="favorites">favoris</string>
 </resources>

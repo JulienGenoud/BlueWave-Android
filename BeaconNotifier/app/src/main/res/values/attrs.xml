@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="fontStyle" format="enum">
+        <enum name="cond_light" value="0" />
+        <enum name="cond_light_italic" value="1" />
+        <enum name="cond_bold" value="2" />
+    </attr>
+
+    <declare-styleable name="TypefacedTextView">
+        <attr name="fontStyle" />
+    </declare-styleable>
+
+</resources>

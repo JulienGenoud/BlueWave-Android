@@ -1,15 +1,8 @@
 package debas.com.beaconnotifier.database;
 
 import android.content.ContentValues;
-import android.content.Context;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import com.google.gson.JsonArray;
 
 /**
  * Created by debas on 21/10/14.
@@ -29,18 +22,17 @@ public class BeaconItemDB {
     public static String RANGE = "range";
     public static String LAST_UPDATE = "lastUpdate";
 
-    public BeaconItemDB(JSONArray jsonArray) {
+    public BeaconItemDB(JsonArray jsonArray) {
+        contentValues.put(BEACON_ID, jsonArray.get(0).getAsString());
+        contentValues.put(UUID, jsonArray.get(1).getAsString());
+        contentValues.put(MAJOR, Integer.parseInt(jsonArray.get(2).getAsString()));
+        contentValues.put(MINOR, Integer.parseInt(jsonArray.get(3).getAsString()));
+        contentValues.put(NOTIFICATION, jsonArray.get(4).getAsString());
+        contentValues.put(RANGE, Integer.parseInt(jsonArray.get(5).getAsString()));
+    }
 
-        try {
-            contentValues.put(BEACON_ID, Integer.parseInt(jsonArray.getString(0)));
-            contentValues.put(UUID, jsonArray.getString(1));
-            contentValues.put(MAJOR, Integer.parseInt(jsonArray.getString(2)));
-            contentValues.put(MINOR, Integer.parseInt(jsonArray.getString(3)));
-            contentValues.put(NOTIFICATION, jsonArray.getString(4));
-            contentValues.put(RANGE, Integer.parseInt(jsonArray.getString(5)));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public Object getValue(String key) {
+        return contentValues.get(key);
     }
 
     public ContentValues getContent() {

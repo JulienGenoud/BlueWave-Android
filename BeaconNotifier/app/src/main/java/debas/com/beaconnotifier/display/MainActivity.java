@@ -12,8 +12,19 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.util.TypedValue;
-
 import android.widget.Toast;
+
+import com.astuetz.PagerSlidingTabStrip;
+
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.BeaconConsumer;
+import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.RangeNotifier;
+import org.altbeacon.beacon.Region;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import debas.com.beaconnotifier.BeaconNotifierApp;
 import debas.com.beaconnotifier.R;
@@ -24,19 +35,6 @@ import debas.com.beaconnotifier.display.fragment.FavoritesBeacons;
 import debas.com.beaconnotifier.display.fragment.HistoryBeacon;
 import debas.com.beaconnotifier.utils.Constants;
 import debas.com.beaconnotifier.utils.Utils;
-
-import com.astuetz.PagerSlidingTabStrip;
-
-import org.altbeacon.beacon.Beacon;
-import org.altbeacon.beacon.BeaconConsumer;
-import org.altbeacon.beacon.BeaconManager;
-import org.altbeacon.beacon.Identifier;
-import org.altbeacon.beacon.RangeNotifier;
-import org.altbeacon.beacon.Region;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Created by debas on 18/10/14.
@@ -76,17 +74,17 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
 
         mBeaconManager.bind(this);
 
-        BeaconManager.debug = true;
+//        BeaconManager.debug = true;
 
                 /* check if this is the first time run */
         SharedPreferences sharedPreferences = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
         boolean firstTimeRun = sharedPreferences.getBoolean(Constants.FIRST_LAUNCHED, true);
         if (firstTimeRun) {
             if (Utils.checkInternetConnectivity(getApplicationContext())) {
-                final BeaconDataBase beaconDataBase = ((BeaconNotifierApp) getApplication()).getBeaconDataBase();
+                final BeaconDataBase beaconDataBase = BeaconDataBase.getInstance(getApplicationContext());
 
                 beaconDataBase.open();
-                beaconDataBase.updateDB(null, sharedPreferences, new AsyncTaskDB.OnDBUpdated() {
+                beaconDataBase.updateDB(getApplicationContext(), sharedPreferences, new AsyncTaskDB.OnDBUpdated() {
                     @Override
                     public void onDBUpdated(boolean result, int nbElement) {
                         if (!result) {
@@ -94,7 +92,6 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
                         } else {
                             Toast.makeText(MainActivity.this, "success to update DB : new element " + nbElement, Toast.LENGTH_LONG).show();
                         }
-                        beaconDataBase.close();
                     }
                 });
             } else {
@@ -102,54 +99,8 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
             }
         }
 
-//        BeaconConsumer fragment = (BeaconConsumer) myPagerAdapter.getItem(0);
-//        fragment.getApplicationContext();
-//        mReceiver = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                final String action = intent.getAction();
-//
-//                if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
-//                    final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
-//                            BluetoothAdapter.ERROR);
-//                    LinearLayout linearLayout;
-//                    ListView listView;
-//                    switch (state) {
-//                        case BluetoothAdapter.STATE_OFF:
-////                            imageView = (ImageView) findViewById(R.id.bluetooth_disabled);
-//                            listView = (ListView) findViewById(R.id.listView);
-//                            linearLayout = (LinearLayout) findViewById(R.id.bluetooth_disabled);
-////                            imageView.setVisibility(ImageView.VISIBLE);
-//                            listView.setVisibility(ListView.GONE);
-//                            linearLayout.setVisibility(LinearLayout.VISIBLE);
-//                            Toast.makeText(MainActivity.this, "bluetooth turning off ...", Toast.LENGTH_LONG).show();
-//                            break;
-//                        case BluetoothAdapter.STATE_ON:
-//                            linearLayout = (LinearLayout) findViewById(R.id.bluetooth_disabled);
-//                            listView = (ListView) findViewById(R.id.listView);
-//                            linearLayout.setVisibility(LinearLayout.GONE);
-//                            listView.setVisibility(ListView.VISIBLE);
-//                            Toast.makeText(MainActivity.this, "bluetooth turning on ...", Toast.LENGTH_LONG).show();
-//                            break;
-//                    }
-//                }
-//            }
-//        };
-//        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-//        registerReceiver(mReceiver, filter);
-
     }
 
-//    @Override
-//    public void onStart() {
-//        Log.d(TAG, "started");
-//        super.onStart();
-//        if (mBeaconManager.isBound(this)) {
-//            mBeaconManager.setBackgroundMode(false);
-//        }
-//        ((BeaconNotifierApp) getApplication()).setCreateNotif(false);
-//    }
-//
     @Override
     public void onResume() {
         Log.d(TAG, "resume");
@@ -170,17 +121,6 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
         }
         ((BeaconNotifierApp) getApplication()).setCreateNotif(true);
     }
-
-//    @Override
-//    public void onStop() {
-//        Log.d(TAG, "stoped");
-//
-//        super.onStop();
-//        if (mBeaconManager.isBound(this)) {
-//            mBeaconManager.setBackgroundMode(true);
-//        }
-//        ((BeaconNotifierApp) getApplicationContext()).setCreateNotif(true);
-//    }
 
     @Override
     public void onDestroy() {
@@ -205,10 +145,13 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
         });
 
         try {
-            mBeaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId",
-                    Identifier.parse("53168465-4534-6543-2134-546865413213"),
-                    Identifier.fromInt(10),
-                    Identifier.fromInt(1)));
+//            mBeaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId",
+//                    Identifier.parse("53168465-4534-6543-2134-546865413213"),
+//                    Identifier.fromInt(10),
+//                    Identifier.fromInt(1)));
+            mBeaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
+
+
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -241,22 +184,4 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
             return fragmentList.get(position);
         }
     }
-
-//    @Override
-//    public void onBackPressed() {
-//        new AlertDialog.Builder(this)
-//                .setIcon(android.R.drawable.ic_dialog_alert)
-//                .setTitle("Closing BeaconNotifier")
-//                .setMessage("Are you sure you want to close ?")
-//                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-//                {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        finish();
-//                    }
-//
-//                })
-//                .setNegativeButton("No", null)
-//                .show();
-//    }
 }

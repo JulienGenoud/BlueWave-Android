@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import org.altbeacon.beacon.Beacon;
@@ -58,6 +59,9 @@ public class BeaconViewer extends Fragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.beacon_viewer, container, false);
+
+
+
 
 //        try {
 //            if (!mBeaconManager.checkAvailability()) {

@@ -2,4 +2,6 @@
 <resources>
     <color name="dark_bluewave">#3F4D52</color>
     <color name="red_bluewave">#FF5D52</color>
+    <color name="black">#000000</color>
+
 </resources>

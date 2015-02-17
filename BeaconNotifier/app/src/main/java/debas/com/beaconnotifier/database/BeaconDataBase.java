@@ -46,7 +46,7 @@ public class BeaconDataBase {
 
     public void close(){
         //on ferme l'accès à la BDD
-        mDataBase.close();
+//        mDataBase.close();
     }
 
     public SQLiteDatabase getBDD(){

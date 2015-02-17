@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "debas.com.beaconnotifier"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"

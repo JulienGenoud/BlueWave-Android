@@ -88,8 +88,10 @@ public class BeaconDataBase {
                     public void onCompleted(Exception error, JsonObject result) {
                         System.out.println("error : " + error);
 
-                        if (error != null)
+                        if (error != null) {
                             listener.onDBUpdated(false, 0);
+                            return;
+                        }
                         JsonArray beacons = result.getAsJsonArray("e");
                         List<BeaconItemDB> beaconItemDBList = new ArrayList<BeaconItemDB>();
                         for (int i = 0; i < beacons.size(); i++) {

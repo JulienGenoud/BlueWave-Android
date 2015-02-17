@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public class GridViewAdapterBeacon extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return mBeaconItemViewList.size();
+        return 15;
     }
 
     @Override
@@ -50,6 +51,11 @@ public class GridViewAdapterBeacon extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.beacon_item_view, parent, false);
         }
+        ImageView imageView = (ImageView) convertView.findViewById(R.id.image_view_beacon);
+        if (position % 2 == 0)
+            imageView.setImageResource(R.drawable.consumer_beacon);
+        else
+            imageView.setImageResource(R.drawable.icon_bluewave);
         return convertView;
     }
 }

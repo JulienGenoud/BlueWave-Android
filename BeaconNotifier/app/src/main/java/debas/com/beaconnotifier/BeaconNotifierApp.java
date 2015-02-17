@@ -30,7 +30,7 @@ import debas.com.beaconnotifier.service.DailyListener;
  */
 public class BeaconNotifierApp extends Application implements BootstrapNotifier, RangeNotifier {
 
-    private BeaconManager mBeaconManager = BeaconManager.getInstanceForApplication(this);
+//    private BeaconManager mBeaconManager = BeaconManager.getInstanceForApplication(this);
     private boolean createNotif = false;
 
     public static final int NOTIFICATION_ID = 12345;
@@ -42,8 +42,8 @@ public class BeaconNotifierApp extends Application implements BootstrapNotifier,
         Log.d("BeaconNotifierApp", "created");
 
         /* set header beacon to gimbal */
-        mBeaconManager.getBeaconParsers().add(new BeaconParser()
-                .setBeaconLayout("m:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24"));
+//        mBeaconManager.getBeaconParsers().add(new BeaconParser()
+//                .setBeaconLayout("m:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24"));
 
         BackgroundPowerSaver backgroundPowerSaver = new BackgroundPowerSaver(this);
 
@@ -56,7 +56,7 @@ public class BeaconNotifierApp extends Application implements BootstrapNotifier,
 
         RegionBootstrap regionBootstrap = new RegionBootstrap(this, region);
 
-        mBeaconManager.setBackgroundBetweenScanPeriod(5000l);
+     //   mBeaconManager.setBackgroundBetweenScanPeriod(5000l);
 
         WakefulIntentService.scheduleAlarms(new DailyListener(), this, false);
     }

@@ -1,11 +1,8 @@
 package debas.com.beaconnotifier.display;
 
-import android.app.ActionBar;
-import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.app.Fragment;
@@ -13,21 +10,11 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.astuetz.PagerSlidingTabStrip;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -120,26 +107,26 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
         linearLayouts.get(0).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mViewPager.setCurrentItem(0);
-                linearLayouts.get(0).setBackground(getDrawable(R.drawable.gradiant));
-                linearLayouts.get(1).setBackground(getDrawable(R.drawable.transparant));
-                linearLayouts.get(2).setBackground(getDrawable(R.drawable.transparant));
+                linearLayouts.get(0).setBackground(getResources().getDrawable(R.drawable.gradiant));
+                linearLayouts.get(1).setBackground(getResources().getDrawable(R.drawable.transparant));
+                linearLayouts.get(2).setBackground(getResources().getDrawable(R.drawable.transparant));
             }
         });
 
         linearLayouts.get(1).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mViewPager.setCurrentItem(1);
-                linearLayouts.get(0).setBackground(getDrawable(R.drawable.transparant));
-                linearLayouts.get(1).setBackground(getDrawable(R.drawable.gradiant));
-                linearLayouts.get(2).setBackground(getDrawable(R.drawable.transparant));
+                linearLayouts.get(0).setBackground(getResources().getDrawable(R.drawable.transparant));
+                linearLayouts.get(1).setBackground(getResources().getDrawable(R.drawable.gradiant));
+                linearLayouts.get(2).setBackground(getResources().getDrawable(R.drawable.transparant));
             }
         });
         linearLayouts.get(2).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mViewPager.setCurrentItem(2);
-                linearLayouts.get(0).setBackground(getDrawable(R.drawable.transparant));
-                linearLayouts.get(1).setBackground(getDrawable(R.drawable.transparant));
-                linearLayouts.get(2).setBackground(getDrawable(R.drawable.gradiant));
+                linearLayouts.get(0).setBackground(getResources().getDrawable(R.drawable.transparant));
+                linearLayouts.get(1).setBackground(getResources().getDrawable(R.drawable.transparant));
+                linearLayouts.get(2).setBackground(getResources().getDrawable(R.drawable.gradiant));
             }
         });
 
@@ -171,9 +158,9 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
 
                         for (int j = 0; j < linearLayouts.size(); j++) {
                             if (j == position)
-                                linearLayouts.get(j).setBackground(getDrawable(R.drawable.gradiant));
+                                linearLayouts.get(j).setBackground(getResources().getDrawable(R.drawable.gradiant));
                             else
-                                linearLayouts.get(j).setBackground(getDrawable(R.drawable.transparant));
+                                linearLayouts.get(j).setBackground(getResources().getDrawable(R.drawable.transparant));
                         }
 
                     }

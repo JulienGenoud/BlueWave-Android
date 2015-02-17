@@ -121,17 +121,17 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
             public void onClick(View v) {
                 mViewPager.setCurrentItem(0);
                 linearLayouts.get(0).setBackground(getDrawable(R.drawable.gradiant));
-                linearLayouts.get(1).setBackgroundColor(Color.TRANSPARENT);
-                linearLayouts.get(2).setBackgroundColor(Color.TRANSPARENT);
+                linearLayouts.get(1).setBackground(getDrawable(R.drawable.transparant));
+                linearLayouts.get(2).setBackground(getDrawable(R.drawable.transparant));
             }
         });
 
         linearLayouts.get(1).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mViewPager.setCurrentItem(1);
-                linearLayouts.get(0).setBackgroundColor(Color.TRANSPARENT);
+                linearLayouts.get(0).setBackground(getDrawable(R.drawable.transparant));
                 linearLayouts.get(1).setBackground(getDrawable(R.drawable.gradiant));
-                linearLayouts.get(2).setBackgroundColor(Color.TRANSPARENT);
+                linearLayouts.get(2).setBackground(getDrawable(R.drawable.transparant));
             }
         });
         linearLayouts.get(2).setOnClickListener(new View.OnClickListener() {

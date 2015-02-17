@@ -34,6 +34,6 @@ dependencies {
     compile 'org.altbeacon:android-beacon-library:2+@aar'
     compile 'com.astuetz:pagerslidingtabstrip-1.0.1@aar'
     compile 'com.koushikdutta.ion:ion:2.0.2+'
-    compile files('libs/android-support-v4.jar')
+    compile 'com.android.support:cardview-v7:21.0.3'
     compile files('libs/cwac-wakeful-1.0.3.jar')
 }

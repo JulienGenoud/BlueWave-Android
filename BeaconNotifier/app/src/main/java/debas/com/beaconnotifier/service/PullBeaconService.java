@@ -34,6 +34,5 @@ public class PullBeaconService extends WakefulIntentService {
                 }
             }
         });
-        mBeaconDataBase.close();
     }
 }

@@ -89,6 +89,7 @@
     <orderEntry type="library" exported="" name="android-beacon-library-2.1.3" level="project" />
     <orderEntry type="library" exported="" name="ion-2.0.2" level="project" />
     <orderEntry type="library" exported="" name="pagerslidingtabstrip-1.0.1-" level="project" />
+    <orderEntry type="library" exported="" name="cardview-v7-21.0.3" level="project" />
     <orderEntry type="library" exported="" name="androidasync-2.0.2" level="project" />
     <orderEntry type="library" exported="" name="gson-2.3" level="project" />
   </component>

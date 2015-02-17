@@ -54,11 +54,13 @@ public class BeaconDataBase {
     }
 
     public void insertBeacon(List<BeaconItemDB> beaconItemDBList) {
+        open();
         for (BeaconItemDB b : beaconItemDBList) {
             if (b.getContent() != null) {
                 mDataBase.insertWithOnConflict(BEACONS_TABLE, null, b.getContent(), SQLiteDatabase.CONFLICT_REPLACE);
             }
         }
+        close();
     }
 
     public boolean isBeaconWithUUID(String uuid) {
@@ -99,13 +101,11 @@ public class BeaconDataBase {
                         }
 
                         /* insert new beacons on database */
-                        open();
                         insertBeacon(beaconItemDBList);
-                        close();
 
                         long newLastTimeUpdate = result.get("t").getAsLong();
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong(Constants.LAST_TIME_UPDATE_DB, newLastTimeUpdate).commit();
+                        editor.putLong(Constants.LAST_TIME_UPDATE_DB, newLastTimeUpdate).apply();
 
                         listener.onDBUpdated(true, beaconItemDBList.size());
 

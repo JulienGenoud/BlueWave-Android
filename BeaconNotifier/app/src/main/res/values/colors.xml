@@ -5,4 +5,7 @@
     <color name="black">#000000</color>
     <color name="primary">#358D8F</color>
 
+    <color name="primaryDark">#00796b</color>
+    <color name="accent">#eeff41</color>
+    <color name="accentLight">#F4FF81</color>
 </resources>

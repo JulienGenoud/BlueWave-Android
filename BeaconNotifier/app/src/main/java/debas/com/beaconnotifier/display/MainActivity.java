@@ -1,6 +1,5 @@
 package debas.com.beaconnotifier.display;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,7 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
@@ -45,13 +44,12 @@ import debas.com.beaconnotifier.utils.Utils;
 public class MainActivity extends FragmentActivity implements BeaconConsumer {
 
     private List<Fragment> fragmentList = new ArrayList<Fragment>();
-    private BroadcastReceiver mReceiver;
     private BeaconManager mBeaconManager = BeaconManager.getInstanceForApplication(this);
     private String TAG = "onBeacon";
 
     List<RelativeLayout> linearLayouts = new ArrayList<RelativeLayout>();
 
-    DemoCollectionPagerAdapter mDemoCollectionPagerAdapter;
+    PagerAdapter mBeaconPagerAdapter;
 
     ViewPager mViewPager;
 
@@ -61,55 +59,26 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d("save = ", (savedInstanceState == null ? "null" : "pas null"));
         fragmentList.add(new HistoryBeacon());
         fragmentList.add(new BeaconViewer());
         fragmentList.add(new FavoritesBeacons());
 
-        System.out.println("onCreate");
         setContentView(R.layout.activity_main);
 
-        linearLayouts.add((RelativeLayout)findViewById(R.id.first));
-        linearLayouts.add((RelativeLayout)findViewById(R.id.middle));
-        linearLayouts.add((RelativeLayout)findViewById(R.id.last));
+        linearLayouts.add((RelativeLayout) findViewById(R.id.first));
+        linearLayouts.add((RelativeLayout) findViewById(R.id.middle));
+        linearLayouts.add((RelativeLayout) findViewById(R.id.last));
 
-        mDemoCollectionPagerAdapter =
-                new DemoCollectionPagerAdapter(
-                        getSupportFragmentManager());
+        mBeaconPagerAdapter = new BeaconPagerAdapter(getSupportFragmentManager(), fragmentList);
         mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mDemoCollectionPagerAdapter);
+        mViewPager.setAdapter(mBeaconPagerAdapter);
+        mViewPager.setOffscreenPageLimit(linearLayouts.size());
+
         mBeaconManager.bind(this);
 
+        setLayoutChangeFragment();
 
-        linearLayouts.get(0).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mViewPager.setCurrentItem(0);
-                linearLayouts.get(0).setBackground(getResources().getDrawable(R.drawable.gradiant));
-                linearLayouts.get(1).setBackground(getResources().getDrawable(R.drawable.transparant));
-                linearLayouts.get(2).setBackground(getResources().getDrawable(R.drawable.transparant));
-            }
-        });
-
-        linearLayouts.get(1).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mViewPager.setCurrentItem(1);
-                linearLayouts.get(0).setBackground(getResources().getDrawable(R.drawable.transparant));
-                linearLayouts.get(1).setBackground(getResources().getDrawable(R.drawable.gradiant));
-                linearLayouts.get(2).setBackground(getResources().getDrawable(R.drawable.transparant));
-            }
-        });
-        linearLayouts.get(2).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mViewPager.setCurrentItem(2);
-                linearLayouts.get(0).setBackground(getResources().getDrawable(R.drawable.transparant));
-                linearLayouts.get(1).setBackground(getResources().getDrawable(R.drawable.transparant));
-                linearLayouts.get(2).setBackground(getResources().getDrawable(R.drawable.gradiant));
-            }
-        });
-
-        mViewPager.setOnPageChangeListener(
-                new ViewPager.OnPageChangeListener() {
-
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
                     public void onPageScrolled(int i, float v, int i2) {
 
@@ -117,15 +86,12 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
 
                     @Override
                     public void onPageSelected(int position) {
-                       // linearLayouts.get(position).setBackground(getDrawable(R.drawable.transparant));
-
                         for (int j = 0; j < linearLayouts.size(); j++) {
                             if (j == position)
-                                linearLayouts.get(j).setBackground(getResources().getDrawable(R.drawable.gradiant));
+                                linearLayouts.get(j).setBackground(getResources().getDrawable(R.drawable.gradient_selected));
                             else
-                                linearLayouts.get(j).setBackground(getResources().getDrawable(R.drawable.transparant));
+                                linearLayouts.get(j).setBackground(getResources().getDrawable(R.drawable.gradient_unselected));
                         }
-
                     }
 
                     @Override
@@ -133,7 +99,6 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
 
                     }
                 });
-
 
         /* check if this is the first time run */
         SharedPreferences sharedPreferences = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
@@ -156,7 +121,39 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
                 Toast.makeText(this, "Internet needed to update DB", Toast.LENGTH_LONG).show();
             }
         }
+    }
 
+    public void setLayoutChangeFragment() {
+
+        linearLayouts.get(0).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mViewPager.setCurrentItem(0);
+                linearLayouts.get(0).setBackground(getResources().getDrawable(R.drawable.gradient_selected));
+                linearLayouts.get(1).setBackground(getResources().getDrawable(R.drawable.gradient_unselected));
+                linearLayouts.get(2).setBackground(getResources().getDrawable(R.drawable.gradient_unselected));
+            }
+        });
+
+        linearLayouts.get(1).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mViewPager.setCurrentItem(1);
+                linearLayouts.get(0).setBackground(getResources().getDrawable(R.drawable.gradient_unselected));
+                linearLayouts.get(1).setBackground(getResources().getDrawable(R.drawable.gradient_selected));
+                linearLayouts.get(2).setBackground(getResources().getDrawable(R.drawable.gradient_unselected));
+            }
+        });
+        linearLayouts.get(2).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mViewPager.setCurrentItem(2);
+                linearLayouts.get(0).setBackground(getResources().getDrawable(R.drawable.gradient_unselected));
+                linearLayouts.get(1).setBackground(getResources().getDrawable(R.drawable.gradient_unselected));
+                linearLayouts.get(2).setBackground(getResources().getDrawable(R.drawable.gradient_selected));
+            }
+        });
+
+        linearLayouts.get(0).setBackground(getResources().getDrawable(R.drawable.gradient_selected));
+        linearLayouts.get(1).setBackground(getResources().getDrawable(R.drawable.gradient_unselected));
+        linearLayouts.get(2).setBackground(getResources().getDrawable(R.drawable.gradient_unselected));
     }
 
     @Override
@@ -193,10 +190,8 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
         mBeaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region) {
-                Log.d("MainActivity", "didrangebeaconsregion : " + beacons.size());
                 BeaconViewer beaconViewer = (BeaconViewer) fragmentList.get(1);
 
-                Log.d("time", Calendar.getInstance().getTimeInMillis() + "");
                 List<BeaconItemDB> beaconItemDB = mBeaconDetectorManager.getCurrentBeaconsAround(beacons, Calendar.getInstance().getTimeInMillis());
                 beaconViewer.updateBeaconList(beaconItemDB);
             }
@@ -204,51 +199,18 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
 
         try {
             mBeaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
-
-
         } catch (RemoteException e) {
             e.printStackTrace();
         }
 
     }
 
-
-    public class DemoCollectionPagerAdapter extends FragmentStatePagerAdapter {
-        public DemoCollectionPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-
-
-        @Override
-        public Fragment getItem(int i)
-        {
-            return fragmentList.get(i);
-        }
-
-        @Override
-        public int getCount() {
-            return 3;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return "OBJECT " + (position + 1);
-        }
-    }
-
-
-
-
-    public class MyPagerAdapter extends FragmentPagerAdapter {
+    public class BeaconPagerAdapter extends FragmentPagerAdapter {
         private final String[] TITLES = { "Beacon", "History", "Favorites"};
-        private final int[] COLORS = { R.color.black, R.color.dark_bluewave, R.color.red_bluewave};
-
         private List<Fragment> fragmentList;
 
-        public MyPagerAdapter(FragmentManager fm, List<Fragment> fragmentList) {
+        public BeaconPagerAdapter(FragmentManager fm, List<Fragment> fragmentList) {
             super(fm);
-
             this.fragmentList = fragmentList;
         }
 

@@ -31,26 +31,29 @@
             android:layout_height="fill_parent"
             android:layout_weight="1.0"
             android:id="@+id/first"
-            android:background="@drawable/gradiant"
             android:orientation="horizontal">
 
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="HISTORIQUE"
+                android:text="@string/history"
                 android:layout_marginBottom="9dp"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:id="@+id/textView5" />
+                android:id="@+id/textView5"
+                android:textSize="12sp"
+                android:textColor="@color/primary"/>
 
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:id="@+id/imageView2"
-                android:src="@drawable/ic_launcher"
+                android:src="@drawable/history"
                 android:layout_above="@+id/textView5"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="3dp"/>
+
         </RelativeLayout>
         <RelativeLayout
             android:clickable="true"
@@ -63,18 +66,21 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="À PROXIMITÉ"
+                android:text="@string/proximity"
                 android:layout_marginBottom="9dp"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:id="@+id/textView6" />
+                android:id="@+id/textView6"
+                android:textSize="12sp"
+                android:textColor="@color/primary"/>
 
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:src="@drawable/ic_launcher"
+                android:src="@drawable/icon_bluewave"
                 android:layout_above="@+id/textView6"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="3dp"/>
 
         </RelativeLayout>
         <RelativeLayout
@@ -88,18 +94,21 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="PRÉFÉRENCES"
+                android:text="@string/preferences"
                 android:layout_marginBottom="9dp"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:id="@+id/textView7" />
+                android:id="@+id/textView7"
+                android:textSize="12sp"
+                android:textColor="@color/primary"/>
 
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:src="@drawable/ic_launcher"
+                android:src="@drawable/preferences"
                 android:layout_above="@+id/textView7"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="3dp"/>
         </RelativeLayout>
 
 

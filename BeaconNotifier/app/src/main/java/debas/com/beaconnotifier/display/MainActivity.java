@@ -23,16 +23,19 @@ import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
+import debas.com.beaconnotifier.AsyncTaskDB;
+import debas.com.beaconnotifier.BeaconDetectorManager;
 import debas.com.beaconnotifier.BeaconNotifierApp;
 import debas.com.beaconnotifier.R;
-import debas.com.beaconnotifier.database.AsyncTaskDB;
 import debas.com.beaconnotifier.database.BeaconDataBase;
 import debas.com.beaconnotifier.display.fragment.BeaconViewer;
 import debas.com.beaconnotifier.display.fragment.FavoritesBeacons;
 import debas.com.beaconnotifier.display.fragment.HistoryBeacon;
+import debas.com.beaconnotifier.model.BeaconItemDB;
 import debas.com.beaconnotifier.utils.Constants;
 import debas.com.beaconnotifier.utils.Utils;
 
@@ -45,29 +48,23 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
     private BroadcastReceiver mReceiver;
     private BeaconManager mBeaconManager = BeaconManager.getInstanceForApplication(this);
     private String TAG = "onBeacon";
-  //  ArrayList<LinearLayout> linearLayouts;
 
     List<RelativeLayout> linearLayouts = new ArrayList<RelativeLayout>();
 
-//    LinearLayout button = (LinearLayout)findViewById(R.id.first);
-//    LinearLayout button2 = (LinearLayout)findViewById(R.id.middle);
-//    LinearLayout button3 = (LinearLayout)findViewById(R.id.last);
     DemoCollectionPagerAdapter mDemoCollectionPagerAdapter;
-    MyPagerAdapter mMyPagerAdapter;
 
     ViewPager mViewPager;
+
+    private BeaconDetectorManager mBeaconDetectorManager = new BeaconDetectorManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Log.d("save = ", (savedInstanceState == null ? "null" : "pas null"));
-        fragmentList.add(new BeaconViewer());
         fragmentList.add(new HistoryBeacon());
+        fragmentList.add(new BeaconViewer());
         fragmentList.add(new FavoritesBeacons());
-
-
-
 
         System.out.println("onCreate");
         setContentView(R.layout.activity_main);
@@ -82,26 +79,6 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mDemoCollectionPagerAdapter);
         mBeaconManager.bind(this);
-
-
-//        ActionBar.TabListener tabListener = new ActionBar.TabListener() {
-//            public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-//                mViewPager.setCurrentItem(tab.getPosition());
-//                linearLayouts.get(tab.getPosition()).setBackgroundColor(R.drawable.gradiant);
-//
-//                // show the given tab
-//            }
-//
-//            public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-//                // hide the given tab
-//            }
-//
-//            public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-//                // probably ignore this event
-//            }
-//        };
-
-
 
 
         linearLayouts.get(0).setOnClickListener(new View.OnClickListener() {
@@ -129,20 +106,6 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
                 linearLayouts.get(2).setBackground(getResources().getDrawable(R.drawable.gradiant));
             }
         });
-
-//        ActionBar actionBar = getActionBar();
-//        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        // Add 3 tabs, specifying the tab's text and TabListener
-//        for (int i = 0; i < 3; i++) {
-//            actionBar.addTab(
-//                    actionBar.newTab()
-//                            .setText("Tab " + (i + 1))
-//                            .setTabListener(tabListener));
-//        }
-//
-     //   mViewPager = (ViewPager) findViewById(R.id.pager);
-
-       // mViewPager.setOnPageChangeListener(mPageChangeListener);
 
         mViewPager.setOnPageChangeListener(
                 new ViewPager.OnPageChangeListener() {
@@ -172,30 +135,13 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
                 });
 
 
-//            @Override
-//            public void onPageScrolled(int arg0, float arg1, int arg2) {
-//                // TODO Auto-generated method stub
-//
-//            }
-//
-//            @Override
-//            public void onPageScrollStateChanged(int pos) {
-//
-//            }
-//        });
-//                        Toast.makeText(getApplicationContext(), "coucou", Toast.LENGTH_SHORT).show();
-//
-//                    }
-//                });
-
-                /* check if this is the first time run */
+        /* check if this is the first time run */
         SharedPreferences sharedPreferences = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
         boolean firstTimeRun = sharedPreferences.getBoolean(Constants.FIRST_LAUNCHED, true);
         if (firstTimeRun) {
             if (Utils.checkInternetConnectivity(getApplicationContext())) {
                 final BeaconDataBase beaconDataBase = BeaconDataBase.getInstance(getApplicationContext());
 
-                beaconDataBase.open();
                 beaconDataBase.updateDB(getApplicationContext(), sharedPreferences, new AsyncTaskDB.OnDBUpdated() {
                     @Override
                     public void onDBUpdated(boolean result, int nbElement) {
@@ -236,8 +182,6 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
 
     @Override
     public void onDestroy() {
-//        Toast.makeText(this, "onDestroy", Toast.LENGTH_LONG).show();
-
         Log.d(TAG, "destroyed");
         super.onDestroy();
         mBeaconManager.unbind(this);
@@ -250,17 +194,15 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
             @Override
             public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region) {
                 Log.d("MainActivity", "didrangebeaconsregion : " + beacons.size());
-                BeaconViewer beaconViewer = (BeaconViewer) fragmentList.get(0);
+                BeaconViewer beaconViewer = (BeaconViewer) fragmentList.get(1);
 
-                beaconViewer.updateBeaconList(beacons);
+                Log.d("time", Calendar.getInstance().getTimeInMillis() + "");
+                List<BeaconItemDB> beaconItemDB = mBeaconDetectorManager.getCurrentBeaconsAround(beacons, Calendar.getInstance().getTimeInMillis());
+                beaconViewer.updateBeaconList(beaconItemDB);
             }
         });
 
         try {
-//            mBeaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId",
-//                    Identifier.parse("53168465-4534-6543-2134-546865413213"),
-//                    Identifier.fromInt(10),
-//                    Identifier.fromInt(1)));
             mBeaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
 
 

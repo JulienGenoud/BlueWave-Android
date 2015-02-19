@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
@@ -47,14 +49,20 @@
 
     </RelativeLayout>
 
-    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/gridview"
+    <com.dexafree.materialList.view.MaterialStaggeredGridView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:numColumns="auto_fit"
-        android:columnWidth="100dp"
-        android:horizontalSpacing="5dp"
-        android:verticalSpacing="5dp"
-        android:stretchMode="columnWidth"
-        android:gravity="center"/>
+        android:id="@+id/gridview"
+        tools:column_count_portrait="2"
+        tools:column_count_land="3"/>
+
+    <!--<GridView xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--android:id="@+id/gridview"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="fill_parent"-->
+        <!--android:numColumns="auto_fit"-->
+        <!--android:horizontalSpacing="5dp"-->
+        <!--android:verticalSpacing="5dp"-->
+        <!--android:stretchMode="columnWidth"-->
+        <!--android:gravity="center"/>-->
 </LinearLayout>

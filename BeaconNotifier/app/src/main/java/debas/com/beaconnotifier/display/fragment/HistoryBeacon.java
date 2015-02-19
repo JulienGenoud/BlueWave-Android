@@ -8,12 +8,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
-import android.widget.GridView;
 import android.widget.TextView;
 
+import com.dexafree.materialList.view.MaterialStaggeredGridView;
+
 import debas.com.beaconnotifier.R;
-import debas.com.beaconnotifier.adapter.GridViewAdapterBeacon;
+import debas.com.beaconnotifier.display.CustomBeaconCard;
 
 /**
  * Created by debas on 18/10/14.
@@ -54,9 +54,12 @@ public class HistoryBeacon extends Fragment implements View.OnClickListener {
             textView.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
         }
 
-        GridView gridView = (GridView) view.findViewById(R.id.gridview);
-        gridView.setAdapter(new GridViewAdapterBeacon(getActivity()));
+        MaterialStaggeredGridView mListView = (MaterialStaggeredGridView) view.findViewById(R.id.gridview);
+//        mListView.setAdapter(new GridViewAdapterBeacon(getActivity()));
 
+        CustomBeaconCard card = new CustomBeaconCard();
+
+        mListView.add(card);
         onClick(mFilterText[0]);
     }
 

@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.commonsware.cwac.wakeful.WakefulIntentService;
 
-import debas.com.beaconnotifier.database.AsyncTaskDB;
+import debas.com.beaconnotifier.AsyncTaskDB;
 import debas.com.beaconnotifier.database.BeaconDataBase;
 import debas.com.beaconnotifier.utils.Constants;
 

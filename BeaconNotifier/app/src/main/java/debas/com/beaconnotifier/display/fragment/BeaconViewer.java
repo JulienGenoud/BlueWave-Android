@@ -38,34 +38,6 @@ public class BeaconViewer extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.beacon_viewer, container, false);
 
-
-
-
-//        try {
-//            if (!mBeaconManager.checkAvailability()) {
-//            /* bletooth disable */
-//                LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.bluetooth_disabled);
-//                ListView listView = (ListView) rootView.findViewById(R.id.listView);
-//                linearLayout.setVisibility(LinearLayout.VISIBLE);
-//                listView.setVisibility(ListView.GONE);
-//
-//            }
-//        } catch (RuntimeException e) {
-//            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//            builder.setTitle("Bluetooth LE not available");
-//            builder.setMessage("Sorry, this device does not support Bluetooth LE.");
-//            builder.setPositiveButton(android.R.string.ok, null);
-//            builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                @Override
-//                public void onDismiss(DialogInterface dialog) {
-//                    getActivity().finish();
-//                    System.exit(0);
-//                }
-//            });
-//            builder.show();
-//        }
-//
-
         mListView = (ListView) rootView.findViewById(R.id.listView);
 
         mDisplayBeaconAdapter = new DisplayBeaconAdapter(getActivity().getApplicationContext());
@@ -78,7 +50,7 @@ public class BeaconViewer extends Fragment {
             Toast.makeText(getActivity(), "First run", Toast.LENGTH_LONG).show();
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean(Constants.FIRST_LAUNCHED, false).commit();
+            editor.putBoolean(Constants.FIRST_LAUNCHED, false).apply();
         }
 
         return rootView;
@@ -90,74 +62,14 @@ public class BeaconViewer extends Fragment {
 
         Log.d("Beacon", "created");
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             Parcelable mListInstanceState = savedInstanceState.getParcelable(LIST_INSTANCE_STATE);
             mListView.onRestoreInstanceState(mListInstanceState);
         }
 
         setRetainInstance(true);
-
-        /* database test */
-//        BeaconDataBase beaconDataBase = ((BeaconNotifierApp) getApplication()).getBeaconDataBase();
-//        beaconDataBase.open();
-//        boolean result = beaconDataBase.isBeaconWithUUID("53168465-4534-6543-2134-546865413213");
-//        if (result) {
-//            Toast.makeText(this, "beacon founded", Toast.LENGTH_LONG).show();
-//        } else {
-//            Toast.makeText(this, "beacon not founded", Toast.LENGTH_LONG).show();
-//            beaconDataBase.insertBeacon();
-//        }
-//        beaconDataBase.close();
     }
 
-//    @Override
-//    public void onStart() {
-//        Log.d("Beacon", "started");
-//        super.onStart();
-//        if (mBeaconManager.isBound(this)) {
-//            mBeaconManager.setBackgroundMode(false);
-//        }
-//        ((BeaconNotifierApp) getActivity().getApplication()).setCreateNotif(false);
-//    }
-//
-//    @Override
-//    public void onResume() {
-//        Log.d("Beacon", "resume");
-//        super.onResume();
-//        if (mBeaconManager.isBound(this)) {
-//            mBeaconManager.setBackgroundMode(false);
-//        }
-//        ((BeaconNotifierApp) getActivity().getApplication()).setCreateNotif(false);
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        Log.d("Beacon", "Pause");
-//
-//        super.onResume();
-//        if (mBeaconManager.isBound(this)) {
-//            mBeaconManager.setBackgroundMode(true);
-//        }
-//        ((BeaconNotifierApp) getActivity().getApplication()).setCreateNotif(true);
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        Log.d("Beacon", "stoped");
-//
-//        super.onStop();
-//        if (mBeaconManager.isBound(this)) {
-//            mBeaconManager.setBackgroundMode(true);
-//        }
-//    ((BeaconNotifierApp) getActivity().getApplicationContext()).setCreateNotif(true);
-//    }
-//
-//    @Override
-//    public void onDestroy() {
-//        Log.d("Beacon", "destroyed");
-//        super.onDestroy();
-//        mBeaconManager.unbind(this);
-//    }
 
 
     public void updateBeaconList(List<BeaconItemDB> beacons) {
@@ -186,51 +98,4 @@ public class BeaconViewer extends Fragment {
         outState.putParcelable(LIST_INSTANCE_STATE, mListView.onSaveInstanceState());
     }
 
-//    @Override
-//    public void onBeaconServiceConnect() {
-//        mBeaconManager.setRangeNotifier(new RangeNotifier() {
-//            @Override
-//            public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region) {
-//                mBeaconArray.clear();
-//                mBeaconArray.addAll(beacons);
-//                Collections.sort(mBeaconArray, mSortBeacon);
-//
-//                Log.d("onBeacon", "test : " + beacons.size());
-//
-//                Activity activity = getActivity();
-////                if (activity != null) {
-//                    activity.runOnUiThread(new Runnable() {
-//                        public void run() {
-//                            mDisplayBeaconAdapter.setBeaconList(mBeaconArray);
-//                            mDisplayBeaconAdapter.notifyDataSetChanged();
-//                        }
-//                    });
-////                }
-//            }
-//        });
-
-//        try {
-//            mBeaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId",
-//                    Identifier.parse("53168465-4534-6543-2134-546865413213"),
-//                    Identifier.fromInt(10),
-//                    Identifier.fromInt(1)));
-//        } catch (RemoteException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    @Override
-//    public Context getApplicationContext() {
-//        return getActivity().getApplicationContext();
-//    }
-//
-//    @Override
-//    public void unbindService(ServiceConnection serviceConnection) {
-//        getActivity().getApplicationContext().unbindService(serviceConnection);
-//    }
-//
-//    @Override
-//    public boolean bindService(Intent intent, ServiceConnection serviceConnection, int i) {
-//        return getActivity().getApplicationContext().bindService(intent, serviceConnection, i);
-//    }
 }

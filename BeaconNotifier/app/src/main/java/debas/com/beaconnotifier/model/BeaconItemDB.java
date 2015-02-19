@@ -2,6 +2,7 @@ package debas.com.beaconnotifier.model;
 
 import com.google.gson.JsonArray;
 import com.orm.SugarRecord;
+import com.orm.dsl.Ignore;
 
 import org.altbeacon.beacon.Beacon;
 
@@ -19,6 +20,7 @@ public class BeaconItemDB extends SugarRecord<BeaconItemDB> {
     public int mMinor = 0;
     public int mRange = 0;
 
+    @Ignore
     private double mDistance = 0;
 
     public BeaconItemDB() {

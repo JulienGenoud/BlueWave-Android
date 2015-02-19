@@ -8,4 +8,9 @@
     <string name="history_all">tous</string>
     <string name="not_seen">non vu</string>
     <string name="favorites">favoris</string>
+
+    <!--tabs view pager-->
+    <string name="history">HISTORIQUE</string>
+    <string name="proximity">À PROXIMITÉ</string>
+    <string name="preferences">PRÉFÉRENCES</string>
 </resources>

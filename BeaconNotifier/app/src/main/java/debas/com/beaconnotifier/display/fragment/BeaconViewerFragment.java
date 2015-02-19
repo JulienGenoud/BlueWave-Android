@@ -19,7 +19,7 @@ import java.util.List;
 
 import debas.com.beaconnotifier.R;
 import debas.com.beaconnotifier.display.DisplayBeaconAdapter;
-import debas.com.beaconnotifier.model.BeaconItemDB;
+import debas.com.beaconnotifier.model.BeaconItemSeen;
 import debas.com.beaconnotifier.utils.Constants;
 import debas.com.beaconnotifier.utils.SortBeacon;
 
@@ -28,7 +28,7 @@ public class BeaconViewerFragment extends Fragment {
 
     private ListView mListView = null;
     private DisplayBeaconAdapter mDisplayBeaconAdapter = null;
-    private List<BeaconItemDB> mBeaconArray = new ArrayList<>();
+    private List<BeaconItemSeen> mBeaconArray = new ArrayList<>();
     private SortBeacon mSortBeacon = new SortBeacon();
     private String LIST_INSTANCE_STATE = "list_instance_state";
 
@@ -72,7 +72,7 @@ public class BeaconViewerFragment extends Fragment {
 
 
 
-    public void updateBeaconList(List<BeaconItemDB> beacons) {
+    public void updateBeaconList(List<BeaconItemSeen> beacons) {
         mBeaconArray.clear();
         mBeaconArray.addAll(beacons);
         Collections.sort(mBeaconArray, mSortBeacon);

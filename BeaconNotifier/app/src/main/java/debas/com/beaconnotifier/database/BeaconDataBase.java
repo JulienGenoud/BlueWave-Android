@@ -56,7 +56,7 @@ public class BeaconDataBase {
                         }
                         JsonArray beacons = result.getAsJsonArray("e");
                         for (int i = 0; i < beacons.size(); i++) {
-                            BeaconItemDB beaconItemDB = new BeaconItemDB(beacons.get(i).getAsJsonArray(), 0);
+                            BeaconItemDB beaconItemDB = new BeaconItemDB(beacons.get(i).getAsJsonArray());
                             for (Field field : beaconItemDB.getTableFields()) {
                                 Log.d("name", field.getName());
                             }

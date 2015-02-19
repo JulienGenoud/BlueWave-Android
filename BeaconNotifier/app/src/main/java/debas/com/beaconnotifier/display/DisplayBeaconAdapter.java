@@ -11,14 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import debas.com.beaconnotifier.R;
-import debas.com.beaconnotifier.model.BeaconItemDB;
+import debas.com.beaconnotifier.model.BeaconItemSeen;
 
 /**
  * Created by debas on 01/10/14.
  */
 public class DisplayBeaconAdapter extends BaseAdapter {
 
-        private List<BeaconItemDB> mBeaconList = null;
+        private List<BeaconItemSeen> mBeaconList = null;
         private Context mContext = null;
         private LayoutInflater mLayoutInflater = null;
         private int updated = 0;
@@ -48,7 +48,7 @@ public class DisplayBeaconAdapter extends BaseAdapter {
             return arg0;
         }
 
-        public void setBeaconList(List<BeaconItemDB> beacons) {
+        public void setBeaconList(List<BeaconItemSeen> beacons) {
             mBeaconList = beacons;
             updated++;
         }
@@ -64,10 +64,10 @@ public class DisplayBeaconAdapter extends BaseAdapter {
             TextView beacon_Distance = (TextView)arg1.findViewById(R.id.Beacon_Distance);
 
             if (mBeaconList.size() > arg0) {
-                BeaconItemDB beacon = mBeaconList.get(arg0);
+                BeaconItemSeen beacon = mBeaconList.get(arg0);
 
                 beacon_UUID.setText(beacon.mUuid + " - " + beacon.mMajor + " - " + beacon.mMinor);
-                beacon_Distance.setText(String.format("%.2f meters away", beacon.getDistance()) + " - updated : " + updated);
+                beacon_Distance.setText(String.format("%.2f meters away", beacon.mDistance) + " - updated : " + updated);
             }
             return arg1;
         }

@@ -18,7 +18,7 @@ import debas.com.beaconnotifier.display.CustomBeaconCard;
 /**
  * Created by debas on 18/10/14.
  */
-public class HistoryBeacon extends Fragment implements View.OnClickListener {
+public class HistoryBeaconFragment extends Fragment implements View.OnClickListener {
 
     Typeface mLight, mBold, mLightItalic;
     TextView[] mFilterText = new TextView[3];

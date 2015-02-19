@@ -10,7 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         tools:context=".MainActivity"
-        android:layout_above="@+id/tabs">
+        android:layout_below="@+id/tabs"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
     </android.support.v4.view.ViewPager>
 
@@ -18,10 +20,7 @@
         android:id="@+id/tabs"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_height="65dp"
         android:weightSum="3.0">
 
 
@@ -38,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/history"
-                android:layout_marginBottom="9dp"
+                android:layout_marginBottom="12dp"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/textView5"
@@ -67,7 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/proximity"
-                android:layout_marginBottom="9dp"
+                android:layout_marginBottom="12dp"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/textView6"
@@ -95,7 +94,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/preferences"
-                android:layout_marginBottom="9dp"
+                android:layout_marginBottom="12dp"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/textView7"

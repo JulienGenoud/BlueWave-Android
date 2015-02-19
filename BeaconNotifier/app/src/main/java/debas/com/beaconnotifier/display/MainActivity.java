@@ -35,6 +35,7 @@ import debas.com.beaconnotifier.display.fragment.BeaconViewer;
 import debas.com.beaconnotifier.display.fragment.FavoritesBeacons;
 import debas.com.beaconnotifier.display.fragment.HistoryBeacon;
 import debas.com.beaconnotifier.model.BeaconItemDB;
+import debas.com.beaconnotifier.model.BeaconItemSeen;
 import debas.com.beaconnotifier.utils.Constants;
 import debas.com.beaconnotifier.utils.Utils;
 
@@ -192,7 +193,7 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
             public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region) {
                 BeaconViewer beaconViewer = (BeaconViewer) fragmentList.get(1);
 
-                List<BeaconItemDB> beaconItemDB = mBeaconDetectorManager.getCurrentBeaconsAround(beacons, Calendar.getInstance().getTimeInMillis());
+                List<BeaconItemSeen> beaconItemDB = mBeaconDetectorManager.getCurrentBeaconsAround(beacons, Calendar.getInstance().getTimeInMillis());
                 beaconViewer.updateBeaconList(beaconItemDB);
             }
         });

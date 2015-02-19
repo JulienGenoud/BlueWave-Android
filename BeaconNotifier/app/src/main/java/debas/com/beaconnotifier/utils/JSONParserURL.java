@@ -16,7 +16,7 @@ import org.json.JSONObject;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import debas.com.beaconnotifier.database.AsyncTaskDB.OnTaskCompleted;
+import debas.com.beaconnotifier.AsyncTaskDB.OnTaskCompleted;
 
 /**
  * Created by debas on 21/10/14.

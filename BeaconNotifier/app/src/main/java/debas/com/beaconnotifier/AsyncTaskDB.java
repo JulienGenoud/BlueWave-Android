@@ -1,4 +1,4 @@
-package debas.com.beaconnotifier.database;
+package debas.com.beaconnotifier;
 
 /**
  * Created by debas on 21/10/14.

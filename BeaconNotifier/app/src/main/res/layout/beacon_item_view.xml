@@ -1,46 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/tools"
+<debas.com.beaconnotifier.display.CustomBeaconCardItemView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:customAttribute="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/card_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        card_view:cardCornerRadius="4dp"
-        android:layout_margin="5dp">
+        android:id="@+id/cardView"
+        card_view:cardCornerRadius="@dimen/card_corner_radius"
+        style="@style/MainCardView">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:weightSum="1">
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/image_view_beacon"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/icon_bluewave"
-                android:scaleType="fitCenter"/>
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:adjustViewBounds="true"
+                android:src="@drawable/example"
+                android:id="@+id/imageView"/>
 
             <debas.com.beaconnotifier.TypefacedTextView
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                app:fontStyle="cond_bold"
+                customAttribute:fontStyle="cond_light"
+                android:gravity="center_horizontal"
+                android:textSize="20sp"
                 android:text="TEST"
-                android:id="@+id/textView2"
-                android:gravity="center_horizontal" />
+                android:id="@+id/name_beacon"/>
 
             <include layout="@layout/horizontal_separator"/>
 
         </LinearLayout>
-
     </android.support.v7.widget.CardView>
 
-</LinearLayout>
+</debas.com.beaconnotifier.display.CustomBeaconCardItemView>

@@ -1,56 +1,34 @@
 package debas.com.beaconnotifier.display.fragment;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothProfile;
-import android.content.BroadcastReceiver;
-import android.content.DialogInterface;
-import android.content.IntentFilter;
-import android.os.Parcelable;
-import android.support.v4.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.RemoteException;
-import android.support.v4.app.FragmentActivity;
+import android.os.Parcelable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import org.altbeacon.beacon.Beacon;
-import org.altbeacon.beacon.BeaconConsumer;
-import org.altbeacon.beacon.BeaconManager;
-import org.altbeacon.beacon.Identifier;
-import org.altbeacon.beacon.RangeNotifier;
-import org.altbeacon.beacon.Region;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import debas.com.beaconnotifier.BeaconNotifierApp;
 import debas.com.beaconnotifier.R;
 import debas.com.beaconnotifier.display.DisplayBeaconAdapter;
-import debas.com.beaconnotifier.utils.SortBeacon;
+import debas.com.beaconnotifier.model.BeaconItemDB;
 import debas.com.beaconnotifier.utils.Constants;
+import debas.com.beaconnotifier.utils.SortBeacon;
 
 
 public class BeaconViewer extends Fragment {
 
     private ListView mListView = null;
     private DisplayBeaconAdapter mDisplayBeaconAdapter = null;
-    private List<Beacon> mBeaconArray = new ArrayList<Beacon>();
+    private List<BeaconItemDB> mBeaconArray = new ArrayList<>();
     private SortBeacon mSortBeacon = new SortBeacon();
     private String LIST_INSTANCE_STATE = "list_instance_state";
 
@@ -182,7 +160,7 @@ public class BeaconViewer extends Fragment {
 //    }
 
 
-    public void updateBeaconList(Collection<Beacon> beacons) {
+    public void updateBeaconList(List<BeaconItemDB> beacons) {
         mBeaconArray.clear();
         mBeaconArray.addAll(beacons);
         Collections.sort(mBeaconArray, mSortBeacon);

@@ -1,6 +1,5 @@
 package debas.com.beaconnotifier;
 
-import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,6 +9,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.commonsware.cwac.wakeful.WakefulIntentService;
+import com.orm.SugarApp;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconManager;
@@ -24,13 +24,14 @@ import java.util.Collection;
 
 import debas.com.beaconnotifier.display.MainActivity;
 import debas.com.beaconnotifier.service.DailyListener;
+import debas.com.beaconnotifier.utils.Constants;
 
 /**
  * Created by debas on 13/10/14.
  */
-public class BeaconNotifierApp extends Application implements BootstrapNotifier, RangeNotifier {
+public class BeaconNotifierApp extends SugarApp implements BootstrapNotifier, RangeNotifier {
 
-//    private BeaconManager mBeaconManager = BeaconManager.getInstanceForApplication(this);
+    private BeaconManager mBeaconManager;
     private boolean createNotif = false;
 
     public static final int NOTIFICATION_ID = 12345;
@@ -41,22 +42,19 @@ public class BeaconNotifierApp extends Application implements BootstrapNotifier,
 
         Log.d("BeaconNotifierApp", "created");
 
-        /* set header beacon to gimbal */
-//        mBeaconManager.getBeaconParsers().add(new BeaconParser()
-//                .setBeaconLayout("m:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24"));
+        /* add header beacon gimbal */
+        mBeaconManager = BeaconManager.getInstanceForApplication(this);
+        mBeaconManager.getBeaconParsers().add(new BeaconParser()
+                .setBeaconLayout(Constants.GIMBAL_HEADER));
 
         BackgroundPowerSaver backgroundPowerSaver = new BackgroundPowerSaver(this);
 
         /* search only my beacon for debuging */
-//        Region region = new Region("RegionBootstrap",
-//                Identifier.parse("53168465-4534-6543-2134-546865413213"),
-//                Identifier.fromInt(10),
-//                Identifier.fromInt(1));
         Region region = new Region("RegionBootstrap", null, null, null);
 
         RegionBootstrap regionBootstrap = new RegionBootstrap(this, region);
 
-     //   mBeaconManager.setBackgroundBetweenScanPeriod(5000l);
+        mBeaconManager.setBackgroundBetweenScanPeriod(5000l);
 
         WakefulIntentService.scheduleAlarms(new DailyListener(), this, false);
     }

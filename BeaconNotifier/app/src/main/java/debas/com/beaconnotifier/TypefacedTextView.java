@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by debas on 17/02/15.
@@ -21,6 +22,8 @@ public class TypefacedTextView extends TextView
         {
             // Get Custom Attribute Name and value
             TypedArray styledAttrs = context.obtainStyledAttributes(attrs, R.styleable.TypefacedTextView);
+            System.out.println(styledAttrs.toString());
+
             int typefaceCode = styledAttrs.getInt(R.styleable.TypefacedTextView_fontStyle, -1);
             styledAttrs.recycle();
 
@@ -31,7 +34,8 @@ public class TypefacedTextView extends TextView
                 return;
             }
 
-            Typeface typeface = TypefaceCache.get(context.getAssets(), 0);
+            Toast.makeText(context, "typeFaceCode = " + typefaceCode, Toast.LENGTH_LONG).show();
+            Typeface typeface = TypefaceCache.get(context.getAssets(), typefaceCode);
             setTypeface(typeface);
         }
     }

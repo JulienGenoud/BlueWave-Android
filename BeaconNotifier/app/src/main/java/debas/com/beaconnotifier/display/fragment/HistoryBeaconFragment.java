@@ -24,7 +24,7 @@ import debas.com.beaconnotifier.model.BeaconItemSeen;
 /**
  * Created by debas on 18/10/14.
  */
-public class HistoryBeacon extends Fragment implements View.OnClickListener {
+public class HistoryBeaconFragment extends Fragment implements View.OnClickListener {
 
     private Typeface mLight, mBold, mLightItalic;
     private TextView[] mFilterText = new TextView[3];

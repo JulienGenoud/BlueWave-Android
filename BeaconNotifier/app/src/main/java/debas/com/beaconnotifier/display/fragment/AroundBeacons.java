@@ -24,7 +24,7 @@ import debas.com.beaconnotifier.utils.Constants;
 import debas.com.beaconnotifier.utils.SortBeacon;
 
 
-public class BeaconViewer extends Fragment {
+public class AroundBeacons extends Fragment {
 
     private ListView mListView = null;
     private DisplayBeaconAdapter mDisplayBeaconAdapter = null;

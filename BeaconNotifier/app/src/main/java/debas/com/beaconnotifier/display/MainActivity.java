@@ -31,10 +31,9 @@ import debas.com.beaconnotifier.BeaconDetectorManager;
 import debas.com.beaconnotifier.BeaconNotifierApp;
 import debas.com.beaconnotifier.R;
 import debas.com.beaconnotifier.database.BeaconDataBase;
-import debas.com.beaconnotifier.display.fragment.BeaconViewer;
-import debas.com.beaconnotifier.display.fragment.FavoritesBeacons;
+import debas.com.beaconnotifier.display.fragment.AroundBeacons;
+import debas.com.beaconnotifier.display.fragment.PreferencesApp;
 import debas.com.beaconnotifier.display.fragment.HistoryBeacon;
-import debas.com.beaconnotifier.model.BeaconItemDB;
 import debas.com.beaconnotifier.model.BeaconItemSeen;
 import debas.com.beaconnotifier.utils.Constants;
 import debas.com.beaconnotifier.utils.Utils;
@@ -54,15 +53,15 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
 
     ViewPager mViewPager;
 
-    private BeaconDetectorManager mBeaconDetectorManager = new BeaconDetectorManager();
+    private BeaconDetectorManager mBeaconDetectorManager = BeaconDetectorManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         fragmentList.add(new HistoryBeacon());
-        fragmentList.add(new BeaconViewer());
-        fragmentList.add(new FavoritesBeacons());
+        fragmentList.add(new AroundBeacons());
+        fragmentList.add(new PreferencesApp());
 
         setContentView(R.layout.activity_main);
 
@@ -191,10 +190,21 @@ public class MainActivity extends FragmentActivity implements BeaconConsumer {
         mBeaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region) {
-                BeaconViewer beaconViewer = (BeaconViewer) fragmentList.get(1);
+                final HistoryBeacon historyBeacon = (HistoryBeacon) fragmentList.get(0);
+                final AroundBeacons aroundBeacons = (AroundBeacons) fragmentList.get(1);
 
-                List<BeaconItemSeen> beaconItemDB = mBeaconDetectorManager.getCurrentBeaconsAround(beacons, Calendar.getInstance().getTimeInMillis());
-                beaconViewer.updateBeaconList(beaconItemDB);
+                mBeaconDetectorManager.getCurrentBeaconsAround(beacons, Calendar.getInstance().getTimeInMillis(),
+                        new BeaconDetectorManager.OnFinish() {
+                            @Override
+                            public void result(List<BeaconItemSeen> beaconItemAround, int newBeacons, int lostBeacon) {
+                                aroundBeacons.updateBeaconList(beaconItemAround);
+
+                                Log.d("new beacons : ", "" + newBeacons);
+                                if (newBeacons != 0) {
+                                    historyBeacon.updateHistory(beaconItemAround);
+                                }
+                            }
+                        });
             }
         });
 

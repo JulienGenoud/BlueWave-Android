@@ -2,9 +2,11 @@ package debas.com.beaconnotifier.display.fragment;
 
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,17 +14,22 @@ import android.widget.TextView;
 
 import com.dexafree.materialList.view.MaterialStaggeredGridView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import debas.com.beaconnotifier.R;
 import debas.com.beaconnotifier.display.CustomBeaconCard;
+import debas.com.beaconnotifier.model.BeaconItemSeen;
 
 /**
  * Created by debas on 18/10/14.
  */
 public class HistoryBeacon extends Fragment implements View.OnClickListener {
 
-    Typeface mLight, mBold, mLightItalic;
-    TextView[] mFilterText = new TextView[3];
-    TextView currentSelection;
+    private Typeface mLight, mBold, mLightItalic;
+    private TextView[] mFilterText = new TextView[3];
+    private TextView currentSelection;
+    private MaterialStaggeredGridView mMaterialGridView = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,12 +61,13 @@ public class HistoryBeacon extends Fragment implements View.OnClickListener {
             textView.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
         }
 
-        MaterialStaggeredGridView mListView = (MaterialStaggeredGridView) view.findViewById(R.id.gridview);
-//        mListView.setAdapter(new GridViewAdapterBeacon(getActivity()));
+        mMaterialGridView = (MaterialStaggeredGridView) view.findViewById(R.id.gridview);
 
-        CustomBeaconCard card = new CustomBeaconCard();
+        List<BeaconItemSeen> beaconItemSeenList = BeaconItemSeen.findWithQuery(BeaconItemSeen.class, "select * from " + BeaconItemSeen.getTableName(BeaconItemSeen.class) + " order by m_seen asc");
+        for (BeaconItemSeen beaconItemSeen : beaconItemSeenList) {
+            mMaterialGridView.getAdapter().insert(new CustomBeaconCard(beaconItemSeen), 0);
+        }
 
-        mListView.add(card);
         onClick(mFilterText[0]);
     }
 
@@ -77,5 +85,52 @@ public class HistoryBeacon extends Fragment implements View.OnClickListener {
             currentSelection.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG | currentSelection.getPaintFlags());
 
         }
+    }
+
+    public void updateHistory(final List<BeaconItemSeen> beaconItemAround) {
+
+        new AsyncTask<Void, CustomBeaconCard, List<CustomBeaconCard>>() {
+
+            int number = mMaterialGridView.getAdapter().getCount();
+            final List<CustomBeaconCard> beaconToInsert = new ArrayList<>();
+
+            @Override
+            protected List<CustomBeaconCard> doInBackground(Void... params) {
+                for (BeaconItemSeen beaconItemSeen : beaconItemAround) {
+
+                    Log.d("testRemove", "test");
+
+                    for (int i = 0; i < number; i++) {
+                        CustomBeaconCard customBeaconCard = (CustomBeaconCard) mMaterialGridView.getCard(i);
+
+                        if (customBeaconCard.getBeaconItemSeen().mBeaconId.equalsIgnoreCase(beaconItemSeen.mBeaconId)) {
+                            publishProgress(customBeaconCard);
+                        }
+                    }
+
+                    CustomBeaconCard customBeaconCard = new CustomBeaconCard(beaconItemSeen);
+                    beaconToInsert.add(customBeaconCard);
+                }
+                return beaconToInsert;
+            }
+
+            @Override
+            protected void onProgressUpdate(CustomBeaconCard... values) {
+                super.onProgressUpdate(values);
+                Log.d("removing", "removing id " + values[0].getBeaconItemSeen().mBeaconId);
+                mMaterialGridView.getAdapter().remove(values[0]);
+            }
+
+            @Override
+            protected void onPostExecute(List<CustomBeaconCard> customBeaconCards) {
+                super.onPostExecute(customBeaconCards);
+
+                for (CustomBeaconCard customBeaconCard : customBeaconCards) {
+                    mMaterialGridView.getAdapter().insert(customBeaconCard, 0);
+                }
+                mMaterialGridView.notifyDataSetChanged();
+            }
+        }.execute();
+
     }
 }

@@ -1,70 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:background="#EDEDED"
+<com.github.ksoichiro.android.observablescrollview.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="30dp">
-
+    android:background="@android:color/white"
+    android:fillViewport="true"
+    android:overScrollMode="never">
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="50dp"
-            android:background="@color/background_floating_material_dark"
-            android:layout_marginBottom="5dp">
-
-        </LinearLayout>
+        <View xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:minHeight="?attr/actionBarSize" />
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:background="@color/background_floating_material_dark"
-            android:layout_height="50dp"
-            android:layout_marginBottom="5dp">
-        </LinearLayout>
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:padding="30dp"
+            android:paddingBottom="0dp">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="50dp"
-            android:background="@color/background_floating_material_dark"
-            android:layout_marginBottom="5dp">
-        </LinearLayout>
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:background="@color/background_floating_material_dark"
-            android:layout_height="50dp"
-            android:layout_marginBottom="5dp">
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/background_floating_material_dark"
+                android:orientation="horizontal">
+            </LinearLayout>
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="50dp"
-            android:background="@color/background_floating_material_dark"
-            android:layout_marginBottom="5dp">
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/background_floating_material_dark"
+                android:orientation="horizontal"></LinearLayout>
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:background="@color/background_floating_material_dark"
-            android:layout_height="50dp"
-            android:layout_marginBottom="5dp">
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/background_floating_material_dark"
+                android:orientation="horizontal"></LinearLayout>
 
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/background_floating_material_dark"
+                android:orientation="horizontal"></LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/background_floating_material_dark"
+                android:orientation="horizontal"></LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/background_floating_material_dark"
+                android:orientation="horizontal"></LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/background_floating_material_dark"
+                android:orientation="horizontal"></LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/background_floating_material_dark"
+                android:orientation="horizontal"></LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/background_floating_material_dark"
+                android:orientation="horizontal"></LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/background_floating_material_dark"
+                android:orientation="horizontal"></LinearLayout>
+
+
+
+        </LinearLayout>
 
     </LinearLayout>
-</RelativeLayout>
+</com.github.ksoichiro.android.observablescrollview.ObservableScrollView>
+
+

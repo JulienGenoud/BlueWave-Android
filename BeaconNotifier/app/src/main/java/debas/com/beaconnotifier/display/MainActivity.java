@@ -78,6 +78,7 @@ public class MainActivity extends ActionBarActivity implements BeaconConsumer, O
         mPagerAdapter = new NavigationAdapter(getSupportFragmentManager());
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter( mPagerAdapter);
+        mPager.setOffscreenPageLimit(3);
 
         SlidingTabLayout slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         slidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);

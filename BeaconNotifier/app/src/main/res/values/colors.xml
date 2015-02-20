@@ -3,6 +3,12 @@
     <color name="dark_bluewave">#3F4D52</color>
     <color name="red_bluewave">#FF5D52</color>
     <color name="black">#000000</color>
-    <color name="primary">#358D8F</color>
+    <color name="primary">#117C80</color>
+    <color name="primary2">#ff0e6669</color>
+    <color name="title">#fff</color>
 
+    <color name="primaryDark">#38ffffff</color>
+    <color name="accent">#ff0c5255</color>
+    <color name="accentLight">#fff</color>
+    <color name="tab_text_color" >#fff</color>
 </resources>

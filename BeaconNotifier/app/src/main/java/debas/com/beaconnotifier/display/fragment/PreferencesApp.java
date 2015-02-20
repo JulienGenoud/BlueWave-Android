@@ -13,7 +13,7 @@ import debas.com.beaconnotifier.R;
 /**
  * Created by debas on 18/10/14.
  */
-public class FavoritesBeacons extends Fragment {
+public class PreferencesApp extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

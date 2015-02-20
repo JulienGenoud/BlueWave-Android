@@ -7,6 +7,8 @@ import android.widget.TextView;
 
 import com.dexafree.materialList.model.CardItemView;
 
+import java.util.Date;
+
 import debas.com.beaconnotifier.R;
 
 /**
@@ -28,6 +30,10 @@ public class CustomBeaconCardItemView extends CardItemView<CustomBeaconCard> {
     @Override
     public void build(CustomBeaconCard customBeaconCard) {
         TextView textView = (TextView) findViewById(R.id.name_beacon);
+        TextView lastTimeSeen = (TextView) findViewById(R.id.last_time_seen);
+
+        textView.setText(customBeaconCard.getBeaconItemSeen().mNotification);
+        lastTimeSeen.setText(new Date(customBeaconCard.getBeaconItemSeen().mSeen).toString());
         textView.setPaintFlags(Paint.FAKE_BOLD_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
     }
 }

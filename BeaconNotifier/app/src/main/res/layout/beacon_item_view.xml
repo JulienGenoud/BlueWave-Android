@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<debas.com.beaconnotifier.display.CustomBeaconCardItemView xmlns:android="http://schemas.android.com/apk/res/android"
+<debas.com.beaconnotifier.display.BeaconHistoryCardItemView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:customAttribute="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -15,12 +15,27 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <ImageView
+            <FrameLayout
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:adjustViewBounds="true"
-                android:src="@drawable/example"
-                android:id="@+id/imageView"/>
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/example"
+                    android:id="@+id/imageView"/>
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/favorites_empty"
+                    android:layout_gravity="end|top"
+                    android:layout_marginRight="5dp"
+                    android:id="@+id/favorites_heart"
+                    android:layout_marginTop="5dp"/>
+
+            </FrameLayout>
 
             <debas.com.beaconnotifier.TypefacedTextView
                 android:layout_width="fill_parent"
@@ -41,4 +56,4 @@
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
-</debas.com.beaconnotifier.display.CustomBeaconCardItemView>
+</debas.com.beaconnotifier.display.BeaconHistoryCardItemView>

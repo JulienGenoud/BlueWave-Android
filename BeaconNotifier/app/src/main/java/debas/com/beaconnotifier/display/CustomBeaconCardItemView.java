@@ -3,7 +3,9 @@ package debas.com.beaconnotifier.display;
 import android.content.Context;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dexafree.materialList.model.CardItemView;
 
@@ -17,14 +19,27 @@ import debas.com.beaconnotifier.R;
 public class CustomBeaconCardItemView extends CardItemView<CustomBeaconCard> {
     public CustomBeaconCardItemView(Context context) {
         super(context);
+        init(context);
     }
 
     public CustomBeaconCardItemView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init(context);
     }
 
     public CustomBeaconCardItemView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init(context);
+    }
+
+    private void init(final Context context) {
+        setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(context, "Long click !", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
     }
 
     @Override

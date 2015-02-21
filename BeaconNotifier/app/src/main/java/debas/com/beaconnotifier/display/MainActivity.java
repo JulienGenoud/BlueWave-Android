@@ -1,5 +1,6 @@
 package debas.com.beaconnotifier.display;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,10 +9,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.github.ksoichiro.android.observablescrollview.CacheFragmentStatePagerAdapter;
@@ -19,9 +22,8 @@ import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCal
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.github.ksoichiro.android.observablescrollview.Scrollable;
+import com.github.ksoichiro.android.observablescrollview.TouchInterceptionFrameLayout;
 import com.nineoldandroids.view.ViewHelper;
-import com.nineoldandroids.view.ViewPropertyAnimator;
-
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -50,35 +52,38 @@ import debas.com.beaconnotifier.utils.Utils;
 /**
  * Created by debas on 18/10/14.
  */
-public class MainActivity extends ActionBarActivity implements BeaconConsumer, ObservableScrollViewCallbacks {
+public class MainActivity extends BaseActivity implements BeaconConsumer, ObservableScrollViewCallbacks {
 
     private BeaconManager mBeaconManager = BeaconManager.getInstanceForApplication(this);
     private String TAG = "onBeacon";
 
     private BeaconDetectorManager mBeaconDetectorManager = BeaconDetectorManager.getInstance();
-    private View mHeaderView;
+
     private View mToolbarView;
-    private int mBaseTranslationY;
+    private TouchInterceptionFrameLayout mInterceptionLayout;
     private ViewPager mPager;
     private NavigationAdapter mPagerAdapter;
+    private int mSlop;
+    private boolean mScrolled;
+    private ScrollState mLastScrollState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
-
         setContentView(R.layout.activity_viewpagertab);
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        mHeaderView = findViewById(R.id.header);
-        ViewCompat.setElevation(mHeaderView, getResources().getDimension(R.dimen.toolbar_elevation));
+        ViewCompat.setElevation(findViewById(R.id.header), getResources().getDimension(R.dimen.toolbar_elevation));
         mToolbarView = findViewById(R.id.toolbar);
         mPagerAdapter = new NavigationAdapter(getSupportFragmentManager());
         mPager = (ViewPager) findViewById(R.id.pager);
-        mPager.setAdapter( mPagerAdapter);
-        mPager.setOffscreenPageLimit(3);
+        mPager.setAdapter(mPagerAdapter);
+        // Padding for ViewPager must be set outside the ViewPager itself
+        // because with padding, EdgeEffect of ViewPager become strange.
+        final int tabHeight = getResources().getDimensionPixelSize(R.dimen.tab_height);
+        findViewById(R.id.pager_wrapper).setPadding(0, getActionBarSize() + tabHeight, 0, 0);
 
         SlidingTabLayout slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         slidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
@@ -86,24 +91,10 @@ public class MainActivity extends ActionBarActivity implements BeaconConsumer, O
         slidingTabLayout.setDistributeEvenly(true);
         slidingTabLayout.setViewPager(mPager);
 
-        // When the page is selected, other fragments' scrollY should be adjusted
-        // according to the toolbar status(shown/hidden)
-        slidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int i, float v, int i2) {
-            }
-
-            @Override
-            public void onPageSelected(int i) {
-                propagateToolbarState(toolbarIsShown());
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int i) {
-            }
-        });
-
-        propagateToolbarState(toolbarIsShown());
+        ViewConfiguration vc = ViewConfiguration.get(this);
+        mSlop = vc.getScaledTouchSlop();
+        mInterceptionLayout = (TouchInterceptionFrameLayout) findViewById(R.id.container);
+        mInterceptionLayout.setScrollInterceptionListener(mInterceptionListener);
 
         mBeaconManager.bind(this);
 
@@ -195,18 +186,6 @@ public class MainActivity extends ActionBarActivity implements BeaconConsumer, O
 
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-        if (dragging) {
-            int toolbarHeight = mToolbarView.getHeight();
-            float currentHeaderTranslationY = ViewHelper.getTranslationY(mHeaderView);
-            if (firstScroll) {
-                if (-toolbarHeight < currentHeaderTranslationY) {
-                    mBaseTranslationY = scrollY;
-                }
-            }
-            float headerTranslationY = ScrollUtils.getFloat(-(scrollY - mBaseTranslationY), -toolbarHeight, 0);
-            ViewPropertyAnimator.animate(mHeaderView).cancel();
-            ViewHelper.setTranslationY(mHeaderView, headerTranslationY);
-        }
     }
 
     @Override
@@ -215,29 +194,91 @@ public class MainActivity extends ActionBarActivity implements BeaconConsumer, O
 
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-        mBaseTranslationY = 0;
+        if (!mScrolled) {
+            // This event can be used only when TouchInterceptionFrameLayout
+            // doesn't handle the consecutive events.
+            adjustToolbar(scrollState);
+        }
+    }
 
+    private TouchInterceptionFrameLayout.TouchInterceptionListener mInterceptionListener = new TouchInterceptionFrameLayout.TouchInterceptionListener() {
+        @Override
+        public boolean shouldInterceptTouchEvent(MotionEvent ev, boolean moving, float diffX, float diffY) {
+            if (!mScrolled && mSlop < Math.abs(diffX) && Math.abs(diffY) < Math.abs(diffX)) {
+                // Horizontal scroll is maybe handled by ViewPager
+                return false;
+            }
+
+            Scrollable scrollable = getCurrentScrollable();
+            if (scrollable == null) {
+                mScrolled = false;
+                return false;
+            }
+
+            // If interceptionLayout can move, it should intercept.
+            // And once it begins to move, horizontal scroll shouldn't work any longer.
+            int toolbarHeight = mToolbarView.getHeight();
+            int translationY = (int) ViewHelper.getTranslationY(mInterceptionLayout);
+            boolean scrollingUp = 0 < diffY;
+            boolean scrollingDown = diffY < 0;
+            if (scrollingUp) {
+                if (translationY < 0) {
+                    mScrolled = true;
+                    mLastScrollState = ScrollState.UP;
+                    return true;
+                }
+            } else if (scrollingDown) {
+                if (-toolbarHeight < translationY) {
+                    mScrolled = true;
+                    mLastScrollState = ScrollState.DOWN;
+                    return true;
+                }
+            }
+            mScrolled = false;
+            return false;
+        }
+
+        @Override
+        public void onDownMotionEvent(MotionEvent ev) {
+        }
+
+        @Override
+        public void onMoveMotionEvent(MotionEvent ev, float diffX, float diffY) {
+            float translationY = ScrollUtils.getFloat(ViewHelper.getTranslationY(mInterceptionLayout) + diffY, -mToolbarView.getHeight(), 0);
+            ViewHelper.setTranslationY(mInterceptionLayout, translationY);
+            if (translationY < 0) {
+                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mInterceptionLayout.getLayoutParams();
+                lp.height = (int) (-translationY + getScreenHeight());
+                mInterceptionLayout.requestLayout();
+            }
+        }
+
+        @Override
+        public void onUpOrCancelMotionEvent(MotionEvent ev) {
+            mScrolled = false;
+            adjustToolbar(mLastScrollState);
+        }
+    };
+
+    private Scrollable getCurrentScrollable() {
         Fragment fragment = getCurrentFragment();
         if (fragment == null) {
-            return;
+            return null;
         }
         View view = fragment.getView();
         if (view == null) {
-            return;
+            return null;
         }
-
-        // ObservableXxxViews have same API
-        // but currently they don't have any common interfaces.
-        adjustToolbar(scrollState, view);
+        return (Scrollable) view.findViewById(R.id.scroll);
     }
 
-    private void adjustToolbar(ScrollState scrollState, View view) {
+    private void adjustToolbar(ScrollState scrollState) {
         int toolbarHeight = mToolbarView.getHeight();
-        final Scrollable scrollView = (Scrollable) view.findViewById(R.id.scroll);
-        if (scrollView == null) {
+        final Scrollable scrollable = getCurrentScrollable();
+        if (scrollable == null) {
             return;
         }
-        int scrollY = scrollView.getCurrentScrollY();
+        int scrollY = scrollable.getCurrentScrollY();
         if (scrollState == ScrollState.DOWN) {
             showToolbar();
         } else if (scrollState == ScrollState.UP) {
@@ -246,17 +287,10 @@ public class MainActivity extends ActionBarActivity implements BeaconConsumer, O
             } else {
                 showToolbar();
             }
-        } else {
-            // Even if onScrollChanged occurs without scrollY changing, toolbar should be adjusted
-            if (toolbarIsShown() || toolbarIsHidden()) {
-                // Toolbar is completely moved, so just keep its state
-                // and propagate it to other pages
-                propagateToolbarState(toolbarIsShown());
-            } else {
-                // Toolbar is moving but doesn't know which to move:
-                // you can change this to hideToolbar()
-                showToolbar();
-            }
+        } else if (!toolbarIsShown() && !toolbarIsHidden()) {
+            // Toolbar is moving but doesn't know which to move:
+            // you can change this to hideToolbar()
+            showToolbar();
         }
     }
 
@@ -264,76 +298,40 @@ public class MainActivity extends ActionBarActivity implements BeaconConsumer, O
         return mPagerAdapter.getItemAt(mPager.getCurrentItem());
     }
 
-    private void propagateToolbarState(boolean isShown) {
-        int toolbarHeight = mToolbarView.getHeight();
-
-        // Set scrollY for the fragments that are not created yet
-        mPagerAdapter.setScrollY(isShown ? 0 : toolbarHeight);
-
-        // Set scrollY for the active fragments
-        for (int i = 0; i < mPagerAdapter.getCount(); i++) {
-            // Skip current item
-            if (i == mPager.getCurrentItem()) {
-                continue;
-            }
-
-            // Skip destroyed or not created item
-            Fragment f = mPagerAdapter.getItemAt(i);
-            if (f == null) {
-                continue;
-            }
-
-            View view = f.getView();
-            if (view == null) {
-                continue;
-            }
-            propagateToolbarState(isShown, view, toolbarHeight);
-        }
-    }
-
-    private void propagateToolbarState(boolean isShown, View view, int toolbarHeight) {
-        Scrollable scrollView = (Scrollable) view.findViewById(R.id.scroll);
-        if (scrollView == null) {
-            return;
-        }
-        if (isShown) {
-            // Scroll up
-            if (0 < scrollView.getCurrentScrollY()) {
-                scrollView.scrollVerticallyTo(0);
-            }
-        } else {
-            // Scroll down (to hide padding)
-            if (scrollView.getCurrentScrollY() < toolbarHeight) {
-                scrollView.scrollVerticallyTo(toolbarHeight);
-            }
-        }
-    }
-
     private boolean toolbarIsShown() {
-        return ViewHelper.getTranslationY(mHeaderView) == 0;
+        return ViewHelper.getTranslationY(mInterceptionLayout) == 0;
     }
 
     private boolean toolbarIsHidden() {
-        return ViewHelper.getTranslationY(mHeaderView) == -mToolbarView.getHeight();
+        return ViewHelper.getTranslationY(mInterceptionLayout) == -mToolbarView.getHeight();
     }
 
     private void showToolbar() {
-        float headerTranslationY = ViewHelper.getTranslationY(mHeaderView);
-        if (headerTranslationY != 0) {
-            ViewPropertyAnimator.animate(mHeaderView).cancel();
-            ViewPropertyAnimator.animate(mHeaderView).translationY(0).setDuration(200).start();
-        }
-        propagateToolbarState(true);
+        animateToolbar(0);
     }
 
     private void hideToolbar() {
-        float headerTranslationY = ViewHelper.getTranslationY(mHeaderView);
-        int toolbarHeight = mToolbarView.getHeight();
-        if (headerTranslationY != -toolbarHeight) {
-            ViewPropertyAnimator.animate(mHeaderView).cancel();
-            ViewPropertyAnimator.animate(mHeaderView).translationY(-toolbarHeight).setDuration(200).start();
+        animateToolbar(-mToolbarView.getHeight());
+    }
+
+    private void animateToolbar(final float toY) {
+        float layoutTranslationY = ViewHelper.getTranslationY(mInterceptionLayout);
+        if (layoutTranslationY != toY) {
+            ValueAnimator animator = ValueAnimator.ofFloat(ViewHelper.getTranslationY(mInterceptionLayout), toY).setDuration(200);
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    float translationY = (float) animation.getAnimatedValue();
+                    ViewHelper.setTranslationY(mInterceptionLayout, translationY);
+                    if (translationY < 0) {
+                        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mInterceptionLayout.getLayoutParams();
+                        lp.height = (int) (-translationY + getScreenHeight());
+                        mInterceptionLayout.requestLayout();
+                    }
+                }
+            });
+            animator.start();
         }
-        propagateToolbarState(false);
     }
 
     /**
@@ -341,52 +339,28 @@ public class MainActivity extends ActionBarActivity implements BeaconConsumer, O
      * {@linkplain #createItem(int)} should be modified if you use this example for your app.
      */
     private static class NavigationAdapter extends CacheFragmentStatePagerAdapter {
-
         private static final String[] TITLES = new String[]{"Historique", "À Proximité", "Préférences"};
-        private int mScrollY;
 
         public NavigationAdapter(FragmentManager fm) {
             super(fm);
         }
 
-        public void setScrollY(int scrollY) {
-            mScrollY = scrollY;
-        }
-
         @Override
         protected Fragment createItem(int position) {
-            // Initialize fragments.
-            // Please be sure to pass scroll position to each fragments using setArguments.
-            Fragment f = null;
-            final int pattern = position % 3;
-            switch (pattern) {
-                case 0: {
+            Fragment f;
+            switch (position) {
+                case 0:
                     f = new HistoryBeaconFragment();
-                    if (0 <= mScrollY) {
-                        Bundle args = new Bundle();
-                        args.putInt(ViewPagerTabScrollViewFragment.ARG_SCROLL_Y, mScrollY);
-                        f.setArguments(args);
-                    }
                     break;
-                }
-                case 1: {
+                case 1:
                     f = new BeaconViewerFragment();
-                    if (0 <= mScrollY) {
-                        Bundle args = new Bundle();
-                        args.putInt(ViewPagerTabScrollViewFragment.ARG_SCROLL_Y, mScrollY);
-                        f.setArguments(args);
-                    }
                     break;
-                }
-                case 2: {
+                case 2:
                     f = new PreferencesFragment();
-                    if (0 <= mScrollY) {
-                        Bundle args = new Bundle();
-                        args.putInt(ViewPagerTabScrollViewFragment.ARG_SCROLL_Y, mScrollY);
-                        f.setArguments(args);
-                    }
                     break;
-                }
+                default:
+                    f = new PreferencesFragment();
+                    break;
             }
             return f;
         }

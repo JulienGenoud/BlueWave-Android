@@ -1,22 +1,23 @@
 package debas.com.beaconnotifier.display.fragment;
 
+import android.app.Activity;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.dexafree.materialList.view.MaterialStaggeredGridView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import debas.com.beaconnotifier.MaterialObservableGridView;
 import debas.com.beaconnotifier.R;
 import debas.com.beaconnotifier.display.CustomBeaconCard;
 import debas.com.beaconnotifier.model.BeaconItemSeen;
@@ -24,18 +25,24 @@ import debas.com.beaconnotifier.model.BeaconItemSeen;
 /**
  * Created by debas on 18/10/14.
  */
-public class HistoryBeaconFragment extends Fragment implements View.OnClickListener {
+public class HistoryBeaconFragment extends BaseFragment implements View.OnClickListener {
 
-    private Typeface mLight, mBold, mLightItalic;
-    private TextView[] mFilterText = new TextView[3];
+    private Typeface mLight, mBold;
     private TextView currentSelection;
-    private MaterialStaggeredGridView mMaterialGridView = null;
+    private MaterialObservableGridView materialObservableGridView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.history, container, false);
+        View view = inflater.inflate(R.layout.history, container, false);
 
-        return rootView;
+        Activity parentActivity = getActivity();
+        materialObservableGridView = (MaterialObservableGridView) view.findViewById(R.id.scroll);
+        materialObservableGridView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
+
+        if (parentActivity instanceof ObservableScrollViewCallbacks) {
+            materialObservableGridView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
+        }
+        return view;
     }
 
     @Override
@@ -44,13 +51,13 @@ public class HistoryBeaconFragment extends Fragment implements View.OnClickListe
 
         mLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/OpenSans-CondLight.ttf");
         mBold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/OpenSans-CondBold.ttf");
-        mLightItalic = Typeface.createFromAsset(getActivity().getAssets(), "fonts/OpenSans-CondLightItalic.ttf");
 
         setRetainInstance(true);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        TextView[] mFilterText = new TextView[3];
         mFilterText[0] = (TextView) view.findViewById(R.id.history_all);
         mFilterText[1] = (TextView) view.findViewById(R.id.not_seen);
         mFilterText[2] = (TextView) view.findViewById(R.id.favorites);
@@ -61,12 +68,23 @@ public class HistoryBeaconFragment extends Fragment implements View.OnClickListe
             textView.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
         }
 
-        mMaterialGridView = (MaterialStaggeredGridView) view.findViewById(R.id.gridview);
+        materialObservableGridView = (MaterialObservableGridView) view.findViewById(R.id.scroll);
+//        materialObservableGridView.setCardAnimation(IMaterialView.CardAnimation.SCALE_IN);
 
-        List<BeaconItemSeen> beaconItemSeenList = BeaconItemSeen.findWithQuery(BeaconItemSeen.class, "select * from " + BeaconItemSeen.getTableName(BeaconItemSeen.class) + " order by m_seen asc");
-        for (BeaconItemSeen beaconItemSeen : beaconItemSeenList) {
-            mMaterialGridView.getAdapter().insert(new CustomBeaconCard(beaconItemSeen), 0);
-        }
+        new AsyncTask<Void, Void, List<BeaconItemSeen>>() {
+            @Override
+            protected List<BeaconItemSeen> doInBackground(Void... params) {
+                return BeaconItemSeen.findWithQuery(BeaconItemSeen.class, "select * from " + BeaconItemSeen.getTableName(BeaconItemSeen.class) + " order by m_seen asc");
+            }
+
+            @Override
+            protected void onPostExecute(List<BeaconItemSeen> beaconItemSeens) {
+
+                for (BeaconItemSeen beaconItemSeen : beaconItemSeens) {
+                    materialObservableGridView.getAdapter().insert(new CustomBeaconCard(beaconItemSeen), 0);
+                }
+            }
+        }.execute();
 
         onClick(mFilterText[0]);
     }
@@ -91,7 +109,7 @@ public class HistoryBeaconFragment extends Fragment implements View.OnClickListe
 
         new AsyncTask<Void, CustomBeaconCard, List<CustomBeaconCard>>() {
 
-            int number = mMaterialGridView.getAdapter().getCount();
+            int number = materialObservableGridView.getAdapter().getCount();
             final List<CustomBeaconCard> beaconToInsert = new ArrayList<>();
 
             @Override
@@ -101,7 +119,7 @@ public class HistoryBeaconFragment extends Fragment implements View.OnClickListe
                     Log.d("testRemove", "test");
 
                     for (int i = 0; i < number; i++) {
-                        CustomBeaconCard customBeaconCard = (CustomBeaconCard) mMaterialGridView.getCard(i);
+                        CustomBeaconCard customBeaconCard = (CustomBeaconCard) materialObservableGridView.getCard(i);
 
                         if (customBeaconCard.getBeaconItemSeen().mBeaconId.equalsIgnoreCase(beaconItemSeen.mBeaconId)) {
                             publishProgress(customBeaconCard);
@@ -118,7 +136,7 @@ public class HistoryBeaconFragment extends Fragment implements View.OnClickListe
             protected void onProgressUpdate(CustomBeaconCard... values) {
                 super.onProgressUpdate(values);
                 Log.d("removing", "removing id " + values[0].getBeaconItemSeen().mBeaconId);
-                mMaterialGridView.getAdapter().remove(values[0]);
+                materialObservableGridView.getAdapter().remove(values[0]);
             }
 
             @Override
@@ -126,11 +144,10 @@ public class HistoryBeaconFragment extends Fragment implements View.OnClickListe
                 super.onPostExecute(customBeaconCards);
 
                 for (CustomBeaconCard customBeaconCard : customBeaconCards) {
-                    mMaterialGridView.getAdapter().insert(customBeaconCard, 0);
+                    materialObservableGridView.getAdapter().insert(customBeaconCard, 0);
                 }
-                mMaterialGridView.notifyDataSetChanged();
+                materialObservableGridView.notifyDataSetChanged();
             }
         }.execute();
-
     }
 }

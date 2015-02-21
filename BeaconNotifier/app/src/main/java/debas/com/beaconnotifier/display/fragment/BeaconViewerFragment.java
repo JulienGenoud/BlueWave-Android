@@ -5,13 +5,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +26,9 @@ import debas.com.beaconnotifier.utils.Constants;
 import debas.com.beaconnotifier.utils.SortBeacon;
 
 
-public class BeaconViewerFragment extends Fragment {
+public class BeaconViewerFragment extends BaseFragment {
+
+    public static final String ARG_SCROLL_Y = "ARG_SCROLL_Y";
 
     private ListView mListView = null;
     private DisplayBeaconAdapter mDisplayBeaconAdapter = null;
@@ -37,6 +41,14 @@ public class BeaconViewerFragment extends Fragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.beacon_viewer, container, false);
+
+        final ObservableScrollView scrollView = (ObservableScrollView) rootView.findViewById(R.id.scroll);
+        Activity parentActivity = getActivity();
+        scrollView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
+        if (parentActivity instanceof ObservableScrollViewCallbacks) {
+            // Scroll to the specified offset after layout
+            scrollView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
+        }
 
         mListView = (ListView) rootView.findViewById(R.id.listView);
 

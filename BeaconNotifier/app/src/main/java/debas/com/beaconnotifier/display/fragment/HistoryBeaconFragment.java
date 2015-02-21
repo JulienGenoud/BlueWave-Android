@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
@@ -18,8 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import debas.com.beaconnotifier.MaterialObservableGridView;
+import debas.com.beaconnotifier.OnHistoryBeaconClickListener;
 import debas.com.beaconnotifier.R;
-import debas.com.beaconnotifier.display.CustomBeaconCard;
+import debas.com.beaconnotifier.display.BeaconHistoryCard;
 import debas.com.beaconnotifier.model.BeaconItemSeen;
 
 /**
@@ -30,6 +32,23 @@ public class HistoryBeaconFragment extends BaseFragment implements View.OnClickL
     private Typeface mLight, mBold;
     private TextView currentSelection;
     private MaterialObservableGridView materialObservableGridView;
+    private OnHistoryBeaconClickListener mOnHistoryBeaconClickListener = new OnHistoryBeaconClickListener() {
+        @Override
+        public void onBeaconClick(View v, BeaconHistoryCard beaconHistoryCard) {
+            if (v.getId() == R.id.favorites_heart) {
+                ImageView favoritesView = (ImageView) v;
+
+                BeaconItemSeen beaconItemSeen = beaconHistoryCard.getBeaconItemSeen();
+                if (beaconItemSeen.mFavorites) {
+                    favoritesView.setImageResource(R.drawable.favorites_empty);
+                } else {
+                    favoritesView.setImageResource(R.drawable.favorites_full);
+                }
+                beaconItemSeen.mFavorites = !beaconItemSeen.mFavorites;
+                beaconItemSeen.save();
+            }
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -81,7 +100,7 @@ public class HistoryBeaconFragment extends BaseFragment implements View.OnClickL
             protected void onPostExecute(List<BeaconItemSeen> beaconItemSeens) {
 
                 for (BeaconItemSeen beaconItemSeen : beaconItemSeens) {
-                    materialObservableGridView.getAdapter().insert(new CustomBeaconCard(beaconItemSeen), 0);
+                    materialObservableGridView.getAdapter().insert(new BeaconHistoryCard(beaconItemSeen, mOnHistoryBeaconClickListener), 0);
                 }
             }
         }.execute();
@@ -107,44 +126,44 @@ public class HistoryBeaconFragment extends BaseFragment implements View.OnClickL
 
     public void updateHistory(final List<BeaconItemSeen> beaconItemAround) {
 
-        new AsyncTask<Void, CustomBeaconCard, List<CustomBeaconCard>>() {
+        new AsyncTask<Void, BeaconHistoryCard, List<BeaconHistoryCard>>() {
 
             int number = materialObservableGridView.getAdapter().getCount();
-            final List<CustomBeaconCard> beaconToInsert = new ArrayList<>();
+            final List<BeaconHistoryCard> beaconToInsert = new ArrayList<>();
 
             @Override
-            protected List<CustomBeaconCard> doInBackground(Void... params) {
+            protected List<BeaconHistoryCard> doInBackground(Void... params) {
                 for (BeaconItemSeen beaconItemSeen : beaconItemAround) {
 
                     Log.d("testRemove", "test");
 
                     for (int i = 0; i < number; i++) {
-                        CustomBeaconCard customBeaconCard = (CustomBeaconCard) materialObservableGridView.getCard(i);
+                        BeaconHistoryCard beaconHistoryCard = (BeaconHistoryCard) materialObservableGridView.getCard(i);
 
-                        if (customBeaconCard.getBeaconItemSeen().mBeaconId.equalsIgnoreCase(beaconItemSeen.mBeaconId)) {
-                            publishProgress(customBeaconCard);
+                        if (beaconHistoryCard.getBeaconItemSeen().mBeaconId.equalsIgnoreCase(beaconItemSeen.mBeaconId)) {
+                            publishProgress(beaconHistoryCard);
                         }
                     }
 
-                    CustomBeaconCard customBeaconCard = new CustomBeaconCard(beaconItemSeen);
-                    beaconToInsert.add(customBeaconCard);
+                    BeaconHistoryCard beaconHistoryCard = new BeaconHistoryCard(beaconItemSeen, mOnHistoryBeaconClickListener);
+                    beaconToInsert.add(beaconHistoryCard);
                 }
                 return beaconToInsert;
             }
 
             @Override
-            protected void onProgressUpdate(CustomBeaconCard... values) {
+            protected void onProgressUpdate(BeaconHistoryCard... values) {
                 super.onProgressUpdate(values);
                 Log.d("removing", "removing id " + values[0].getBeaconItemSeen().mBeaconId);
                 materialObservableGridView.getAdapter().remove(values[0]);
             }
 
             @Override
-            protected void onPostExecute(List<CustomBeaconCard> customBeaconCards) {
-                super.onPostExecute(customBeaconCards);
+            protected void onPostExecute(List<BeaconHistoryCard> beaconHistoryCards) {
+                super.onPostExecute(beaconHistoryCards);
 
-                for (CustomBeaconCard customBeaconCard : customBeaconCards) {
-                    materialObservableGridView.getAdapter().insert(customBeaconCard, 0);
+                for (BeaconHistoryCard beaconHistoryCard : beaconHistoryCards) {
+                    materialObservableGridView.getAdapter().insert(beaconHistoryCard, 0);
                 }
                 materialObservableGridView.notifyDataSetChanged();
             }

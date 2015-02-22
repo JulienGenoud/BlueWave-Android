@@ -1,19 +1,23 @@
 package debas.com.beaconnotifier.display.fragment;
 
 import android.app.Activity;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.shamanland.fab.ShowHideOnScroll;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +31,12 @@ import debas.com.beaconnotifier.model.BeaconItemSeen;
 /**
  * Created by debas on 18/10/14.
  */
-public class HistoryBeaconFragment extends BaseFragment implements View.OnClickListener {
+public class HistoryBeaconFragment extends BaseFragment {
 
     private Typeface mLight, mBold;
     private TextView currentSelection;
     private MaterialObservableGridView materialObservableGridView;
+    private FloatingActionsMenu mFloatingActionsMenu;
     private OnHistoryBeaconClickListener mOnHistoryBeaconClickListener = new OnHistoryBeaconClickListener() {
         @Override
         public void onBeaconClick(View v, BeaconHistoryCard beaconHistoryCard) {
@@ -46,6 +51,9 @@ public class HistoryBeaconFragment extends BaseFragment implements View.OnClickL
                 }
                 beaconItemSeen.mFavorites = !beaconItemSeen.mFavorites;
                 beaconItemSeen.save();
+            }
+            else {
+                Toast.makeText(getActivity(), "should open !", Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -72,20 +80,25 @@ public class HistoryBeaconFragment extends BaseFragment implements View.OnClickL
         mBold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/OpenSans-CondBold.ttf");
 
         setRetainInstance(true);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        TextView[] mFilterText = new TextView[3];
-        mFilterText[0] = (TextView) view.findViewById(R.id.history_all);
-        mFilterText[1] = (TextView) view.findViewById(R.id.not_seen);
-        mFilterText[2] = (TextView) view.findViewById(R.id.favorites);
-
-        for (TextView textView : mFilterText) {
-            textView.setTypeface(mLight);
-            textView.setOnClickListener(this);
-            textView.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
-        }
+//        TextView[] mFilterText = new TextView[3];
+//        mFilterText[0] = (TextView) view.findViewById(R.id.history_all);
+//        mFilterText[1] = (TextView) view.findViewById(R.id.not_seen);
+//        mFilterText[2] = (TextView) view.findViewById(R.id.favorites);
+//
+//        for (TextView textView : mFilterText) {
+//            textView.setTypeface(mLight);
+//            textView.setOnClickListener(this);
+//            textView.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
+//        }
 
         materialObservableGridView = (MaterialObservableGridView) view.findViewById(R.id.scroll);
 //        materialObservableGridView.setCardAnimation(IMaterialView.CardAnimation.SCALE_IN);
@@ -101,28 +114,38 @@ public class HistoryBeaconFragment extends BaseFragment implements View.OnClickL
 
                 for (BeaconItemSeen beaconItemSeen : beaconItemSeens) {
                     materialObservableGridView.getAdapter().insert(new BeaconHistoryCard(beaconItemSeen, mOnHistoryBeaconClickListener), 0);
+                    materialObservableGridView.getAdapter().insert(new BeaconHistoryCard(beaconItemSeen, mOnHistoryBeaconClickListener), 0);
+                    materialObservableGridView.getAdapter().insert(new BeaconHistoryCard(beaconItemSeen, mOnHistoryBeaconClickListener), 0);
+                    materialObservableGridView.getAdapter().insert(new BeaconHistoryCard(beaconItemSeen, mOnHistoryBeaconClickListener), 0);
+                    materialObservableGridView.getAdapter().insert(new BeaconHistoryCard(beaconItemSeen, mOnHistoryBeaconClickListener), 0);
+                    materialObservableGridView.getAdapter().insert(new BeaconHistoryCard(beaconItemSeen, mOnHistoryBeaconClickListener), 0);
+                    materialObservableGridView.getAdapter().insert(new BeaconHistoryCard(beaconItemSeen, mOnHistoryBeaconClickListener), 0);
+                    materialObservableGridView.getAdapter().insert(new BeaconHistoryCard(beaconItemSeen, mOnHistoryBeaconClickListener), 0);
+                    materialObservableGridView.getAdapter().insert(new BeaconHistoryCard(beaconItemSeen, mOnHistoryBeaconClickListener), 0);
+                    materialObservableGridView.getAdapter().insert(new BeaconHistoryCard(beaconItemSeen, mOnHistoryBeaconClickListener), 0);
+                    materialObservableGridView.getAdapter().insert(new BeaconHistoryCard(beaconItemSeen, mOnHistoryBeaconClickListener), 0);
+                    materialObservableGridView.getAdapter().insert(new BeaconHistoryCard(beaconItemSeen, mOnHistoryBeaconClickListener), 0);
+                    materialObservableGridView.getAdapter().insert(new BeaconHistoryCard(beaconItemSeen, mOnHistoryBeaconClickListener), 0);
+                    materialObservableGridView.getAdapter().insert(new BeaconHistoryCard(beaconItemSeen, mOnHistoryBeaconClickListener), 0);
                 }
             }
         }.execute();
 
-        onClick(mFilterText[0]);
+        mFloatingActionsMenu = (FloatingActionsMenu) view.findViewById(R.id.floating_history_menu);
+
+        view.findViewById(R.id.floating_history_all).setOnClickListener(mFloatingButtonClickListener);
+        view.findViewById(R.id.floating_history_notseen).setOnClickListener(mFloatingButtonClickListener);
+        view.findViewById(R.id.floating_history_favorites).setOnClickListener(mFloatingButtonClickListener);
+
+        materialObservableGridView.setOnTouchListener(new ShowHideOnScroll(mFloatingActionsMenu));
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v instanceof TextView) {
-            TextView textView = (TextView) v;
-
-            if (currentSelection != null) {
-                currentSelection.setTypeface(mLight);
-                currentSelection.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
-            }
-            currentSelection = textView;
-            currentSelection.setTypeface(mBold);
-            currentSelection.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG | currentSelection.getPaintFlags());
-
+    private View.OnClickListener mFloatingButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mFloatingActionsMenu.collapse();
         }
-    }
+    };
 
     public void updateHistory(final List<BeaconItemSeen> beaconItemAround) {
 

@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dexafree.materialList.model.CardItemView;
 
@@ -18,29 +17,28 @@ import debas.com.beaconnotifier.R;
  * Created by debas on 18/02/15.
  */
 public class BeaconHistoryCardItemView extends CardItemView<BeaconHistoryCard> {
+
+    private BeaconHistoryCard mBeaconHistoryCard = null;
+    private OnClickListener mOnClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (mBeaconHistoryCard != null) {
+                mBeaconHistoryCard.getOnHistoryBeaconClickListener().onBeaconClick(v, mBeaconHistoryCard);
+            }
+
+        }
+    };
+
     public BeaconHistoryCardItemView(Context context) {
         super(context);
-        init(context);
     }
 
     public BeaconHistoryCardItemView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
     }
 
     public BeaconHistoryCardItemView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
-    }
-
-    private void init(final Context context) {
-        setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Toast.makeText(context, "Long click !", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });
     }
 
     @Override
@@ -52,13 +50,14 @@ public class BeaconHistoryCardItemView extends CardItemView<BeaconHistoryCard> {
         lastTimeSeen.setText(new Date(beaconHistoryCard.getBeaconItemSeen().mSeen).toString());
         textView.setPaintFlags(Paint.FAKE_BOLD_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
 
+        mBeaconHistoryCard = beaconHistoryCard;
+
+        /* favorites image click */
         ImageView favoritesImageView = (ImageView) findViewById(R.id.favorites_heart);
         favoritesImageView.setImageResource(beaconHistoryCard.getBeaconItemSeen().mFavorites ? R.drawable.favorites_full : R.drawable.favorites_empty);
-        favoritesImageView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                beaconHistoryCard.getOnHistoryBeaconClickListener().onBeaconClick(v, beaconHistoryCard);
-            }
-        });
+        favoritesImageView.setOnClickListener(mOnClickListener);
+
+        /* global click card */
+        setOnClickListener(mOnClickListener);
     }
 }

@@ -11,6 +11,8 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -68,18 +70,36 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
     private ScrollState mLastScrollState;
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.action_settings);
+        item.setVisible(false);
+        return true;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_viewpagertab);
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        mToolbarView = findViewById(R.id.toolbar);
+
+        setSupportActionBar((Toolbar) mToolbarView);
+
+        ((Toolbar) mToolbarView).inflateMenu(R.menu.main);
 
         ViewCompat.setElevation(findViewById(R.id.header), getResources().getDimension(R.dimen.toolbar_elevation));
-        mToolbarView = findViewById(R.id.toolbar);
         mPagerAdapter = new NavigationAdapter(getSupportFragmentManager());
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(mPagerAdapter);
+        mPager.setOffscreenPageLimit(3);
+
         // Padding for ViewPager must be set outside the ViewPager itself
         // because with padding, EdgeEffect of ViewPager become strange.
         final int tabHeight = getResources().getDimensionPixelSize(R.dimen.tab_height);
@@ -94,7 +114,7 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         ViewConfiguration vc = ViewConfiguration.get(this);
         mSlop = vc.getScaledTouchSlop();
         mInterceptionLayout = (TouchInterceptionFrameLayout) findViewById(R.id.container);
-        mInterceptionLayout.setScrollInterceptionListener(mInterceptionListener);
+//        mInterceptionLayout.setScrollInterceptionListener(mInterceptionListener);
 
         mBeaconManager.bind(this);
 

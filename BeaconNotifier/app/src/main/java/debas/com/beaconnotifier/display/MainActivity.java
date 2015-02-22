@@ -114,7 +114,7 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         ViewConfiguration vc = ViewConfiguration.get(this);
         mSlop = vc.getScaledTouchSlop();
         mInterceptionLayout = (TouchInterceptionFrameLayout) findViewById(R.id.container);
-//        mInterceptionLayout.setScrollInterceptionListener(mInterceptionListener);
+        mInterceptionLayout.setScrollInterceptionListener(mInterceptionListener);
 
         mBeaconManager.bind(this);
 
@@ -226,6 +226,11 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         public boolean shouldInterceptTouchEvent(MotionEvent ev, boolean moving, float diffX, float diffY) {
             if (!mScrolled && mSlop < Math.abs(diffX) && Math.abs(diffY) < Math.abs(diffX)) {
                 // Horizontal scroll is maybe handled by ViewPager
+                return false;
+            }
+
+            /* fix bug with floating button menu strange position on scroll */
+            if (mPager.getCurrentItem() == 0) {
                 return false;
             }
 

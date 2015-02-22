@@ -3,6 +3,7 @@ package debas.com.beaconnotifier.display;
 import android.content.res.TypedArray;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.AbsListView;
@@ -34,6 +35,7 @@ public class BaseActivity extends ActionBarActivity {
     }
 
     protected int getScreenHeight() {
+        Log.d("height", "" + findViewById(android.R.id.content).getHeight());
         return findViewById(android.R.id.content).getHeight();
     }
 

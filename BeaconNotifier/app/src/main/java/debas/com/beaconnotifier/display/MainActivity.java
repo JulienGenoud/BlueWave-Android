@@ -229,11 +229,6 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
                 return false;
             }
 
-            /* fix bug with floating button menu strange position on scroll */
-            if (mPager.getCurrentItem() == 0) {
-                return false;
-            }
-
             Scrollable scrollable = getCurrentScrollable();
             if (scrollable == null) {
                 mScrolled = false;
@@ -271,15 +266,14 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         public void onMoveMotionEvent(MotionEvent ev, float diffX, float diffY) {
             float translationY = ScrollUtils.getFloat(ViewHelper.getTranslationY(mInterceptionLayout) + diffY, -mToolbarView.getHeight(), 0);
             ViewHelper.setTranslationY(mInterceptionLayout, translationY);
-            if (translationY < 0) {
-                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mInterceptionLayout.getLayoutParams();
-                lp.height = (int) (-translationY + getScreenHeight());
-                mInterceptionLayout.requestLayout();
-            }
+            FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mInterceptionLayout.getLayoutParams();
+            lp.height = (int) ((translationY < 0 ? -translationY : translationY) + getScreenHeight());
+            mInterceptionLayout.requestLayout();
         }
 
         @Override
         public void onUpOrCancelMotionEvent(MotionEvent ev) {
+            /* fix bug with floating button menu strange position on scroll */
             mScrolled = false;
             adjustToolbar(mLastScrollState);
         }

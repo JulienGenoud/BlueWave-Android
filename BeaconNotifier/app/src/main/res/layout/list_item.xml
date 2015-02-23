@@ -21,7 +21,7 @@
     implements the Checkable interface. Once the root view is checked, any children that
     have the duplicateParentState attribute set will inherit this "checked" state.
 -->
-<debas.com.beaconnotifier.CheckableLinearLayout
+<debas.com.beaconnotifier.preferences.CheckableLinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/checkable"
     android:orientation="horizontal"
@@ -60,4 +60,4 @@
         android:layout_height="35dp"
         android:layout_marginLeft="16dp" />
 
-</debas.com.beaconnotifier.CheckableLinearLayout>
+</debas.com.beaconnotifier.preferences.CheckableLinearLayout>

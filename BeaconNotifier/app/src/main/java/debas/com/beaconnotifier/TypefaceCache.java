@@ -12,8 +12,8 @@ public class TypefaceCache {
 
     private static final Hashtable<String, Typeface> CACHE = new Hashtable<String, Typeface>();
 
-    private static final String COND_BOLD = "fonts/OpenSans-CondBold.ttf";
-    private static final String COND_LIGHT = "fonts/OpenSans-CondLight.ttf";
+    private static final String COND_BOLD = "fonts/DINPro-Black.otf";
+    private static final String COND_LIGHT = "fonts/DINPro-Medium.otf";
     private static final String COND_LIGHT_ITALIC = "fonts/OpenSans-CondLightItalic.ttf";
 
     public static Typeface get(AssetManager manager, int typefaceCode) {

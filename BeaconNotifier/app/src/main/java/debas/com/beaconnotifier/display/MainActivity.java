@@ -93,7 +93,6 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         setSupportActionBar((Toolbar) mToolbarView);
 
         ((Toolbar) mToolbarView).inflateMenu(R.menu.main);
-
         ViewCompat.setElevation(findViewById(R.id.header), getResources().getDimension(R.dimen.toolbar_elevation));
         mPagerAdapter = new NavigationAdapter(getSupportFragmentManager());
         mPager = (ViewPager) findViewById(R.id.pager);

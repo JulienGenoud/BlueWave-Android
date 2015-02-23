@@ -12,9 +12,8 @@ import android.widget.TextView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 
-import debas.com.beaconnotifier.CheckableLinearLayout;
 import debas.com.beaconnotifier.R;
-import debas.com.beaconnotifier.preferences.Prefs.Prefs;
+import debas.com.beaconnotifier.preferences.Prefs;
 
 /**
  * Created by debas on 18/10/14.
@@ -67,8 +66,6 @@ public class PreferencesFragment extends BaseFragment {
             if (convertView == null) {
                 convertView = LayoutInflater.from(getActivity()).inflate(R.layout.list_item, container, false);
             }
-
-
 
             ((TextView) convertView.findViewById(android.R.id.text1))
                     .setText(getItem(position));

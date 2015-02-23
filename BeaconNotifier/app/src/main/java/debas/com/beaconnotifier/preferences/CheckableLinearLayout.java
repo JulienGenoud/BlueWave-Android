@@ -1,4 +1,4 @@
-package debas.com.beaconnotifier;
+package debas.com.beaconnotifier.preferences;
 
 import android.content.Context;
 import android.util.AttributeSet;

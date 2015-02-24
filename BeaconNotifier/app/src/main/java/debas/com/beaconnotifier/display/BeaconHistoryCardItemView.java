@@ -23,7 +23,7 @@ public class BeaconHistoryCardItemView extends CardItemView<BeaconHistoryCard> {
         @Override
         public void onClick(View v) {
             if (mBeaconHistoryCard != null) {
-                mBeaconHistoryCard.getOnHistoryBeaconClickListener().onBeaconClick(v, mBeaconHistoryCard);
+                mBeaconHistoryCard.getOnHistoryBeaconClickListener().onBeaconClick(v, mBeaconHistoryCard.getBeaconItemSeen());
             }
 
         }

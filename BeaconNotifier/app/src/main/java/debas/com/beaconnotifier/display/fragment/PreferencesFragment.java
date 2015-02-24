@@ -3,6 +3,7 @@ package debas.com.beaconnotifier.display.fragment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -36,5 +37,10 @@ public class PreferencesFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
 
         setRetainInstance(true);
+    }
+
+    @Override
+    public void buildMenu(Menu menu) {
+
     }
 }

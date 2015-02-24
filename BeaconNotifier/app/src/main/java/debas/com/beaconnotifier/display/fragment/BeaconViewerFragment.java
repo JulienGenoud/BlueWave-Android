@@ -3,6 +3,7 @@ package debas.com.beaconnotifier.display.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -37,11 +39,19 @@ public class BeaconViewerFragment extends BaseFragment {
     private SortBeacon mSortBeacon = new SortBeacon();
     private String LIST_INSTANCE_STATE = "list_instance_state";
 
+    private ImageView myAnimation;
+
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.beacon_viewer, container, false);
+
+        myAnimation = (ImageView)rootView.findViewById(R.id.myanimation);
+        myAnimation.setBackgroundResource(R.drawable.imageanim);
+        AnimationDrawable frameAnimation = (AnimationDrawable) myAnimation.getBackground();
+        frameAnimation.start();
+
 
         final ObservableScrollView scrollView = (ObservableScrollView) rootView.findViewById(R.id.scroll);
         Activity parentActivity = getActivity();
@@ -96,8 +106,14 @@ public class BeaconViewerFragment extends BaseFragment {
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        mDisplayBeaconAdapter.setBeaconList(mBeaconArray);
-                        mDisplayBeaconAdapter.notifyDataSetChanged();
+                        if (mBeaconArray.size() == 0) {
+                            myAnimation.setVisibility(View.VISIBLE);
+                        }
+                        else {
+                            myAnimation.setVisibility(View.GONE);
+                            mDisplayBeaconAdapter.setBeaconList(mBeaconArray);
+                            mDisplayBeaconAdapter.notifyDataSetChanged();
+                        }
               }
           });
          }

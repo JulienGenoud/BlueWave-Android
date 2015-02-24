@@ -1,22 +1,28 @@
 package debas.com.beaconnotifier.display.fragment;
 
 import android.app.Activity;
-import android.graphics.Typeface;
+import android.app.SearchManager;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.orm.SugarDb;
 import com.shamanland.fab.ShowHideOnScroll;
 
 import java.util.ArrayList;
@@ -25,25 +31,25 @@ import java.util.List;
 import debas.com.beaconnotifier.MaterialObservableGridView;
 import debas.com.beaconnotifier.OnHistoryBeaconClickListener;
 import debas.com.beaconnotifier.R;
+import debas.com.beaconnotifier.adapter.SearchViewAdapter;
 import debas.com.beaconnotifier.display.BeaconHistoryCard;
 import debas.com.beaconnotifier.model.BeaconItemSeen;
 
 /**
  * Created by debas on 18/10/14.
  */
-public class HistoryBeaconFragment extends BaseFragment {
+public class HistoryBeaconFragment extends BaseFragment implements BaseFragment.SearchRequestedCallback {
 
-    private Typeface mLight, mBold;
-    private TextView currentSelection;
     private MaterialObservableGridView materialObservableGridView;
     private FloatingActionsMenu mFloatingActionsMenu;
+    private SearchViewAdapter mSearchViewAdapter = null;
+
     private OnHistoryBeaconClickListener mOnHistoryBeaconClickListener = new OnHistoryBeaconClickListener() {
         @Override
-        public void onBeaconClick(View v, BeaconHistoryCard beaconHistoryCard) {
+        public void onBeaconClick(View v, BeaconItemSeen beaconItemSeen) {
             if (v.getId() == R.id.favorites_heart) {
                 ImageView favoritesView = (ImageView) v;
 
-                BeaconItemSeen beaconItemSeen = beaconHistoryCard.getBeaconItemSeen();
                 if (beaconItemSeen.mFavorites) {
                     favoritesView.setImageResource(R.drawable.favorites_empty);
                 } else {
@@ -69,6 +75,7 @@ public class HistoryBeaconFragment extends BaseFragment {
         if (parentActivity instanceof ObservableScrollViewCallbacks) {
             materialObservableGridView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
         }
+
         return view;
     }
 
@@ -76,32 +83,17 @@ public class HistoryBeaconFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/OpenSans-CondLight.ttf");
-        mBold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/OpenSans-CondBold.ttf");
-
         setRetainInstance(true);
-        setHasOptionsMenu(true);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     }
 
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-//        TextView[] mFilterText = new TextView[3];
-//        mFilterText[0] = (TextView) view.findViewById(R.id.history_all);
-//        mFilterText[1] = (TextView) view.findViewById(R.id.not_seen);
-//        mFilterText[2] = (TextView) view.findViewById(R.id.favorites);
-//
-//        for (TextView textView : mFilterText) {
-//            textView.setTypeface(mLight);
-//            textView.setOnClickListener(this);
-//            textView.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
-//        }
-
         materialObservableGridView = (MaterialObservableGridView) view.findViewById(R.id.scroll);
-//        materialObservableGridView.setCardAnimation(IMaterialView.CardAnimation.SCALE_IN);
 
         new AsyncTask<Void, Void, List<BeaconItemSeen>>() {
             @Override
@@ -124,7 +116,8 @@ public class HistoryBeaconFragment extends BaseFragment {
         view.findViewById(R.id.floating_history_notseen).setOnClickListener(mFloatingButtonClickListener);
         view.findViewById(R.id.floating_history_favorites).setOnClickListener(mFloatingButtonClickListener);
 
-        materialObservableGridView.setOnTouchListener(new ShowHideOnScroll(mFloatingActionsMenu));
+        ShowHideOnScroll mShowHideOnScroll = new ShowHideOnScroll(mFloatingActionsMenu);
+        materialObservableGridView.setOnTouchListener(mShowHideOnScroll);
     }
 
     private View.OnClickListener mFloatingButtonClickListener = new View.OnClickListener() {
@@ -178,5 +171,76 @@ public class HistoryBeaconFragment extends BaseFragment {
                 materialObservableGridView.notifyDataSetChanged();
             }
         }.execute();
+    }
+
+    @Override
+    public void buildMenu(final Menu menu) {
+//        searchItem = menu.add(android.R.string.search_go);
+
+        getActivity().getMenuInflater().inflate(R.menu.history_menu, menu);
+        MenuItem item = menu.findItem(R.id.filter);
+        final SearchView searchView = (SearchView) item.getActionView();
+        SearchManager manager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(manager.getSearchableInfo(getActivity().getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                if (newText == null || newText.length() == 0) {
+                    if (mSearchViewAdapter != null) {
+                        mSearchViewAdapter.swapCursor(null);
+                        mSearchViewAdapter.notifyDataSetChanged();
+                    }
+                    return true;
+                }
+
+                SQLiteDatabase sqLiteDatabase = new SugarDb(getActivity()).getReadableDatabase();
+                Cursor cursor = sqLiteDatabase.rawQuery("SELECT rowid _id,* FROM " + BeaconItemSeen.getTableName(BeaconItemSeen.class) +  " WHERE M_NOTIFICATION LIKE "
+                        + " '%" + newText + "%'", null); // Example database query
+
+                mSearchViewAdapter = new SearchViewAdapter(((ActionBarActivity) getActivity()).getSupportActionBar().getThemedContext(), cursor, mOnHistoryBeaconClickListener);
+                searchView.setSuggestionsAdapter(mSearchViewAdapter);
+                searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+                    @Override
+                    public boolean onSuggestionSelect(int i) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onSuggestionClick(int i) {
+                        Cursor historyClickCursor = mSearchViewAdapter.getCursor();
+                        historyClickCursor.move(i);
+
+                        BeaconItemSeen beaconItemSeen = new BeaconItemSeen();
+                        beaconItemSeen.mSeen = historyClickCursor.getLong(historyClickCursor.getColumnIndex("M_SEEN"));
+                        beaconItemSeen.mFavorites = (historyClickCursor.getInt(historyClickCursor.getColumnIndex("M_FAVORITES")) == 1);
+                        beaconItemSeen.mBeaconId = historyClickCursor.getString(historyClickCursor.getColumnIndex("M_BEACON_ID"));
+                        beaconItemSeen.mUuid = historyClickCursor.getString(historyClickCursor.getColumnIndex("M_UUID"));
+                        beaconItemSeen.mNotification = historyClickCursor.getString(historyClickCursor.getColumnIndex("M_NOTIFICATION"));
+                        beaconItemSeen.mMajor = historyClickCursor.getInt(historyClickCursor.getColumnIndex("M_MAJOR"));
+                        beaconItemSeen.mMinor = historyClickCursor.getInt(historyClickCursor.getColumnIndex("M_MINOR"));
+                        beaconItemSeen.mRange = historyClickCursor.getInt(historyClickCursor.getColumnIndex("M_RANGE"));
+
+                        Toast.makeText(getActivity(), "on click " + i + " | " + beaconItemSeen.mNotification, Toast.LENGTH_SHORT).show();
+
+                        return true;
+                    }
+                });
+                return true;
+            }
+        });
+    }
+
+    /**
+     * Called when the hardware search button is pressed
+     */
+    @Override
+    public boolean onSearchRequested() {
+        return false;
     }
 }

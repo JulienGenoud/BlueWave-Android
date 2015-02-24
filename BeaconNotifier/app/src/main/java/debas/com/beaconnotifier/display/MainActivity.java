@@ -12,7 +12,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -43,6 +42,7 @@ import debas.com.beaconnotifier.BeaconNotifierApp;
 import debas.com.beaconnotifier.R;
 import debas.com.beaconnotifier.SlidingTabLayout;
 import debas.com.beaconnotifier.database.BeaconDataBase;
+import debas.com.beaconnotifier.display.fragment.BaseFragment;
 import debas.com.beaconnotifier.display.fragment.BeaconViewerFragment;
 import debas.com.beaconnotifier.display.fragment.HistoryBeaconFragment;
 import debas.com.beaconnotifier.display.fragment.PreferencesFragment;
@@ -68,17 +68,29 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
     private int mSlop;
     private boolean mScrolled;
     private ScrollState mLastScrollState;
+    private BaseFragment.SearchRequestedCallback searchRequestedCallback = null;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        Log.d("menu", "onCreateOptionsMenu");
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item= menu.findItem(R.id.action_settings);
-        item.setVisible(false);
+        Log.d("menu", "" + getCurrentFragment());
+        menu.clear();
+        Fragment fragment = getCurrentFragment();
+        if (fragment instanceof BaseFragment) {
+            ((BaseFragment) fragment).buildMenu(menu);
+        }
+
+        if (fragment instanceof BaseFragment.SearchRequestedCallback) {
+            searchRequestedCallback = (BaseFragment.SearchRequestedCallback) fragment;
+        } else {
+            searchRequestedCallback = null;
+        }
         return true;
     }
 
@@ -110,6 +122,23 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         slidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
         slidingTabLayout.setDistributeEvenly(true);
         slidingTabLayout.setViewPager(mPager);
+        slidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                Log.d("page", "selected page change to " + position);
+                supportInvalidateOptionsMenu();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         ViewConfiguration vc = ViewConfiguration.get(this);
         mSlop = vc.getScaledTouchSlop();
@@ -273,7 +302,6 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
 
         @Override
         public void onUpOrCancelMotionEvent(MotionEvent ev) {
-            /* fix bug with floating button menu strange position on scroll */
             mScrolled = false;
             adjustToolbar(mLastScrollState);
         }
@@ -393,5 +421,14 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         public CharSequence getPageTitle(int position) {
             return TITLES[position];
         }
+    }
+
+    @Override
+    public boolean onSearchRequested() {
+        Log.d("search", "");
+        if (searchRequestedCallback != null) {
+            return searchRequestedCallback.onSearchRequested();
+        }
+        return super.onSearchRequested();
     }
 }

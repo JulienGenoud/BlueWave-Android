@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
@@ -67,4 +68,10 @@ public abstract class BaseFragment extends Fragment {
         protected void setDummyDataWithHeader(RecyclerView recyclerView, View headerView) {
             recyclerView.setAdapter(new SimpleHeaderRecyclerAdapter(getActivity(), getDummyData(), headerView));
         }
+
+    public abstract void buildMenu(Menu menu);
+
+    public interface SearchRequestedCallback {
+        public boolean onSearchRequested();
     }
+}

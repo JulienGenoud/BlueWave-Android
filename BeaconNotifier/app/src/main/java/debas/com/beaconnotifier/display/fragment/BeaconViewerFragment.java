@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -110,4 +111,8 @@ public class BeaconViewerFragment extends BaseFragment {
         outState.putParcelable(LIST_INSTANCE_STATE, mListView.onSaveInstanceState());
     }
 
+    @Override
+    public void buildMenu(Menu menu) {
+
+    }
 }

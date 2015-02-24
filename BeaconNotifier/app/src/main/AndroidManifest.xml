@@ -40,6 +40,11 @@
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
+
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value="debas.com.beaconnotifier.MainActivity" >
+            </meta-data>
         </activity>
 
         <service android:name="debas.com.beaconnotifier.service.PullBeaconService" />

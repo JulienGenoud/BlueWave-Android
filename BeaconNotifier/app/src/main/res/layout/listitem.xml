@@ -3,6 +3,8 @@
     android:layout_height="wrap_content"
     android:layout_alignParentTop="true"
     android:orientation="horizontal"
+
+    android:padding="30dp"
     >
 
     <ImageView

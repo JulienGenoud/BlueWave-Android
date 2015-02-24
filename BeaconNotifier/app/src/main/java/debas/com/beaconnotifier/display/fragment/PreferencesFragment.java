@@ -6,11 +6,15 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 
 import debas.com.beaconnotifier.R;
+import debas.com.beaconnotifier.preferences.Prefs;
 
 /**
  * Created by debas on 18/10/14.
@@ -22,6 +26,9 @@ public class PreferencesFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.preferences, container, false);
+
+        ListView lv = (ListView) rootView.findViewById(R.id.list);
+        lv.setAdapter(new MyAdapter());
 
         final ObservableScrollView scrollView = (ObservableScrollView) rootView.findViewById(R.id.scroll);
         Activity parentActivity = getActivity();
@@ -42,5 +49,33 @@ public class PreferencesFragment extends BaseFragment {
     @Override
     public void buildMenu(Menu menu) {
 
+    }
+
+    private class MyAdapter extends BaseAdapter {
+        @Override
+        public int getCount() {
+            return Prefs.PREFS.length;
+        }
+
+        @Override
+        public String getItem(int position) {
+            return Prefs.PREFS[position];
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return Prefs.PREFS[position].hashCode();
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup container) {
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getActivity()).inflate(R.layout.list_item, container, false);
+            }
+            ((TextView) convertView.findViewById(android.R.id.text1))
+                    .setText(getItem(position));
+
+            return convertView;
+        }
     }
 }

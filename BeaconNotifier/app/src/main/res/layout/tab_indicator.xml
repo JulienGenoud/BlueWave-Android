@@ -21,5 +21,5 @@
     android:gravity="center"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:textColor="@color/tab_text_color"
+    android:textColor="@color/title"
     android:textSize="14sp" />

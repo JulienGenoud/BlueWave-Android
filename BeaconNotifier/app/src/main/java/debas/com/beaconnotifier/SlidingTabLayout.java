@@ -217,6 +217,10 @@ public class SlidingTabLayout extends HorizontalScrollView {
         }
     }
 
+    public SlidingTabStrip getTabStrip() {
+        return mTabStrip;
+    }
+
     private class InternalViewPagerListener implements ViewPager.OnPageChangeListener {
         private int mScrollState;
 

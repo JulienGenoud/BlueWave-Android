@@ -8,8 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dexafree.materialList.model.CardItemView;
-
-import java.util.Date;
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 
 import debas.com.beaconnotifier.R;
 
@@ -19,7 +18,7 @@ import debas.com.beaconnotifier.R;
 public class BeaconHistoryCardItemView extends CardItemView<BeaconHistoryCard> {
 
     private BeaconHistoryCard mBeaconHistoryCard = null;
-    private OnClickListener mOnClickListener = new OnClickListener() {
+    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (mBeaconHistoryCard != null) {
@@ -44,10 +43,10 @@ public class BeaconHistoryCardItemView extends CardItemView<BeaconHistoryCard> {
     @Override
     public void build(final BeaconHistoryCard beaconHistoryCard) {
         TextView textView = (TextView) findViewById(R.id.name_beacon);
-        TextView lastTimeSeen = (TextView) findViewById(R.id.last_time_seen);
+        final RelativeTimeTextView lastTimeSeen = (RelativeTimeTextView) findViewById(R.id.last_time_seen);
 
         textView.setText(beaconHistoryCard.getBeaconItemSeen().mNotification);
-        lastTimeSeen.setText(new Date(beaconHistoryCard.getBeaconItemSeen().mSeen).toString());
+        lastTimeSeen.setReferenceTime(beaconHistoryCard.getBeaconItemSeen().mSeen);
         textView.setPaintFlags(Paint.FAKE_BOLD_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
 
         mBeaconHistoryCard = beaconHistoryCard;

@@ -9,9 +9,11 @@
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:id="@+id/imageView3"
-        android:src="@drawable/example"
-        android:maxHeight="50dp"
-        android:layout_marginRight="20dp"/>
+        android:src="@drawable/ic_launcher"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"/>
 
     <TextView
         android:id="@+id/item"

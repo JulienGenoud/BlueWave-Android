@@ -6,6 +6,9 @@ android {
 
     repositories {
         mavenCentral()
+        maven {
+            url 'http://dl.bintray.com/amulyakhare/maven'
+        }
     }
 
     defaultConfig {
@@ -40,5 +43,7 @@ dependencies {
     compile 'com.getbase:floatingactionbutton:1.8.0'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.shamanland:fab:0.0.8'
+    compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     compile files('libs/cwac-wakeful-1.0.3.jar')
+    compile project(':app:libs:android-ago')
 }

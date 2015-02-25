@@ -70,8 +70,4 @@ public abstract class BaseFragment extends Fragment {
         }
 
     public abstract void buildMenu(Menu menu);
-
-    public interface SearchRequestedCallback {
-        public boolean onSearchRequested();
-    }
 }

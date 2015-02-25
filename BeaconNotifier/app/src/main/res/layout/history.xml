@@ -19,52 +19,7 @@
     android:background="@color/primary2"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="10dp">
-
-    <!--<RelativeLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:gravity="center_horizontal"-->
-        <!--android:layout_marginTop="10dp"-->
-        <!--android:layout_marginBottom="10dp"-->
-        <!--android:id="@+id/relativeLayout">-->
-
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-            <!--android:text="@string/history_all"-->
-            <!--android:id="@+id/history_all"-->
-            <!--android:textAllCaps="true"-->
-            <!--android:layout_gravity="center_vertical" />-->
-
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-            <!--android:text="@string/not_seen"-->
-            <!--android:id="@+id/not_seen"-->
-            <!--android:textAllCaps="true"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_toRightOf="@+id/history_all"-->
-            <!--android:layout_toEndOf="@+id/history_all"-->
-            <!--android:layout_marginRight="15dp"-->
-            <!--android:layout_marginLeft="15dp"/>-->
-
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-            <!--android:text="@string/favorites"-->
-            <!--android:id="@+id/favorites"-->
-            <!--android:textAllCaps="true"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_toRightOf="@+id/not_seen"-->
-            <!--android:layout_toEndOf="@+id/not_seen" />-->
-
-    <!--</RelativeLayout>-->
-
+    android:layout_height="match_parent">
 
     <debas.com.beaconnotifier.MaterialObservableGridView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -73,19 +28,16 @@
         android:layout_height="match_parent"
         tools:column_count_portrait="2"
         tools:column_count_land="3"
-        android:layout_below="@+id/relativeLayout" />
+        android:padding="10dp"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_below="@+id/relativeLayout">
+        android:layout_height="match_parent">
 
         <com.getbase.floatingactionbutton.FloatingActionsMenu
             android:id="@+id/floating_history_menu"
             android:layout_width="wrap_content"
-            android:layout_height="562dp"
+            android:layout_height="wrap_content"
             fab:fab_addButtonColorNormal="@color/white"
             fab:fab_addButtonColorPressed="@color/white_pressed"
             fab:fab_addButtonPlusIconColor="@color/half_black"
@@ -95,7 +47,6 @@
             android:layout_gravity="right|bottom"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true">
 
             <com.getbase.floatingactionbutton.FloatingActionButton

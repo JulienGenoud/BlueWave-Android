@@ -96,6 +96,8 @@ public class HistoryBeaconFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         materialObservableGridView = (MaterialObservableGridView) view.findViewById(R.id.scroll);
 
+        BeaconItemSeen.generateRandom().save();
+
         new AsyncTask<Void, Void, List<BeaconItemSeen>>() {
             @Override
             protected List<BeaconItemSeen> doInBackground(Void... params) {
@@ -185,28 +187,44 @@ public class HistoryBeaconFragment extends BaseFragment {
         searchView.setSearchableInfo(manager.getSearchableInfo(getActivity().getComponentName()));
         searchView.setSuggestionsAdapter(mSearchViewAdapter);
         searchView.setOnSuggestionListener(mOnSuggestionListener);
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            private String oldString = "";
+
             @Override
             public boolean onQueryTextSubmit(String query) {
+                Log.d("onQueryTextSubmit", query);
+
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public boolean onQueryTextChange(final String newText) {
 
-                if (newText == null || newText.length() == 0) {
+                if (newText == null || newText.isEmpty()) {
                     if (mSearchViewAdapter != null) {
                         mSearchViewAdapter.swapCursor(null);
-                        mSearchViewAdapter.notifyDataSetChanged();
                     }
                     return true;
                 }
 
-                SQLiteDatabase sqLiteDatabase = new SugarDb(getActivity()).getReadableDatabase();
-                Cursor cursor = sqLiteDatabase.rawQuery("SELECT rowid _id,* FROM " + BeaconItemSeen.getTableName(BeaconItemSeen.class)
-                        +  " WHERE M_NOTIFICATION LIKE "
-                        + " '%" + newText + "%'", null);
-                mSearchViewAdapter.swapCursor(cursor);
+
+                Log.d("onQueryTextChange", "\"" + newText + "\"");
+
+                new AsyncTask<Void, Void, Cursor>() {
+                    @Override
+                    protected Cursor doInBackground(Void... params) {
+                        SQLiteDatabase sqLiteDatabase = new SugarDb(getActivity()).getReadableDatabase();
+                        return sqLiteDatabase.rawQuery("SELECT rowid _id,* FROM " + BeaconItemSeen.getTableName(BeaconItemSeen.class)
+                                +  " WHERE M_NOTIFICATION LIKE "
+                                + " '%" + newText + "%'", null);
+                    }
+
+                    @Override
+                    protected void onPostExecute(Cursor cursor) {
+                        mSearchViewAdapter.swapCursor(cursor);
+                    }
+                }.execute();
 
                 return true;
             }

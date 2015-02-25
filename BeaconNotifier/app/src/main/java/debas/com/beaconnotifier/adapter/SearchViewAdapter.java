@@ -19,6 +19,7 @@ public class SearchViewAdapter extends CursorAdapter {
         super(context, null, false);
     }
 
+
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -29,12 +30,14 @@ public class SearchViewAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, final Context context, final Cursor cursor) {
-        String[] strings = cursor.getColumnNames();
-        for (int i = 0; i < strings.length; i++) {
-            System.out.println("column " + i + " : " + strings[i]);
+        if (cursor != null && !cursor.isClosed()) {
+            String[] strings = cursor.getColumnNames();
+            for (int i = 0; i < strings.length; i++) {
+                System.out.println("column " + i + " : " + strings[i]);
+            }
+            TextView textView = (TextView) view.findViewById(R.id.item);
+            textView.setText(cursor.getString(cursor.getColumnIndex("M_NOTIFICATION")));
         }
-        TextView textView = (TextView) view.findViewById(R.id.item);
-        textView.setText(cursor.getString(cursor.getColumnIndex("M_NOTIFICATION")));
     }
 
 

@@ -1,0 +1,8 @@
+int attr reference_time 0x7f010002
+int attr relative_time_prefix 0x7f010000
+int attr relative_time_suffix 0x7f010001
+int string just_now 0x7f020000
+int[] styleable RelativeTimeTextView { 0x7f010000, 0x7f010001, 0x7f010002 }
+int styleable RelativeTimeTextView_reference_time 2
+int styleable RelativeTimeTextView_relative_time_prefix 0
+int styleable RelativeTimeTextView_relative_time_suffix 1

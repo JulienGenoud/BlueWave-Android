@@ -13,13 +13,33 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@android:id/text1"
-    style="@style/ThemeOverlay.AppCompat.Light"
+<RelativeLayout
     android:layout_width="wrap_content"
-    android:layout_height="48dp"
-    android:gravity="center"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:textColor="@color/title"
-    android:textSize="14sp" />
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@android:id/text1"
+            style="@style/ThemeOverlay.AppCompat.Light"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="TEST"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textColor="@color/title"
+            android:textSize="14sp"/>
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_launcher"
+            android:id="@+id/tab_around_beacon_count"
+            android:visibility="gone"
+            android:padding="1dp"
+            android:layout_marginRight="16dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@android:id/text1"
+            android:layout_toEndOf="@android:id/text1" />
+</RelativeLayout>

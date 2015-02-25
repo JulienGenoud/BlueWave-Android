@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -68,7 +69,6 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
     private int mSlop;
     private boolean mScrolled;
     private ScrollState mLastScrollState;
-    private BaseFragment.SearchRequestedCallback searchRequestedCallback = null;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -85,12 +85,6 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         if (fragment instanceof BaseFragment) {
             ((BaseFragment) fragment).buildMenu(menu);
         }
-
-        if (fragment instanceof BaseFragment.SearchRequestedCallback) {
-            searchRequestedCallback = (BaseFragment.SearchRequestedCallback) fragment;
-        } else {
-            searchRequestedCallback = null;
-        }
         return true;
     }
 
@@ -98,6 +92,7 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        System.out.println("temps : " + DateUtils.getRelativeTimeSpanString(Calendar.getInstance().getTimeInMillis(), Calendar.getInstance().getTimeInMillis() + 5000, DateUtils.SECOND_IN_MILLIS));
         setContentView(R.layout.activity_viewpagertab);
 
         mToolbarView = findViewById(R.id.toolbar);
@@ -421,14 +416,5 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         public CharSequence getPageTitle(int position) {
             return TITLES[position];
         }
-    }
-
-    @Override
-    public boolean onSearchRequested() {
-        Log.d("search", "");
-        if (searchRequestedCallback != null) {
-            return searchRequestedCallback.onSearchRequested();
-        }
-        return super.onSearchRequested();
     }
 }

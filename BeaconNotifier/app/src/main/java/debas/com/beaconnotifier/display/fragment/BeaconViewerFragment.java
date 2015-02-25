@@ -11,10 +11,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 
@@ -23,15 +27,14 @@ import java.util.Collections;
 import java.util.List;
 
 import debas.com.beaconnotifier.R;
+import debas.com.beaconnotifier.SlidingTabLayout;
+import debas.com.beaconnotifier.SlidingTabStrip;
 import debas.com.beaconnotifier.display.DisplayBeaconAdapter;
 import debas.com.beaconnotifier.model.BeaconItemSeen;
 import debas.com.beaconnotifier.utils.Constants;
 import debas.com.beaconnotifier.utils.SortBeacon;
 
-
 public class BeaconViewerFragment extends BaseFragment {
-
-    public static final String ARG_SCROLL_Y = "ARG_SCROLL_Y";
 
     private ListView mListView = null;
     private DisplayBeaconAdapter mDisplayBeaconAdapter = null;
@@ -95,7 +98,7 @@ public class BeaconViewerFragment extends BaseFragment {
 
 
 
-    public void updateBeaconList(List<BeaconItemSeen> beacons) {
+    public void updateBeaconList(final List<BeaconItemSeen> beacons) {
         mBeaconArray.clear();
         mBeaconArray.addAll(beacons);
         Collections.sort(mBeaconArray, mSortBeacon);
@@ -117,6 +120,38 @@ public class BeaconViewerFragment extends BaseFragment {
               }
           });
          }
+    }
+
+    @Override
+    public void onAttach(final Activity activity) {
+        super.onAttach(activity);
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                SlidingTabLayout slidingTabLayout = (SlidingTabLayout) activity.findViewById(R.id.sliding_tabs);
+                SlidingTabStrip slidingTabStrip = slidingTabLayout.getTabStrip();
+                RelativeLayout view = (RelativeLayout) slidingTabStrip.getChildAt(1);
+                final ImageView imageView = (ImageView) view.findViewById(R.id.tab_around_beacon_count);
+
+                if (!(imageView.getDrawable() instanceof TextDrawable)) {
+                    TextDrawable textDrawable = TextDrawable.builder()
+                            .beginConfig()
+                            .textColor(getResources().getColor(R.color.accent))
+                            .bold()
+                            .endConfig()
+                            .buildRound("0", getResources().getColor(R.color.title));
+
+                    imageView.setImageDrawable(textDrawable);
+
+                    Animation animZoomIn = AnimationUtils.loadAnimation(activity,
+                            R.anim.launch_zoom_in);
+
+                    imageView.setVisibility(View.VISIBLE);
+                    imageView.startAnimation(animZoomIn);
+                }
+            }
+        });
     }
 
     @Override

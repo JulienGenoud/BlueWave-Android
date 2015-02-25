@@ -27,7 +27,8 @@
             android:name=".display.MainActivity"
             android:launchMode="singleInstance"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateUnchanged|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

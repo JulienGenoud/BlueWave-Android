@@ -38,7 +38,7 @@ import debas.com.beaconnotifier.model.BeaconItemSeen;
 /**
  * Created by debas on 18/10/14.
  */
-public class HistoryBeaconFragment extends BaseFragment implements BaseFragment.SearchRequestedCallback {
+public class HistoryBeaconFragment extends BaseFragment {
 
     private MaterialObservableGridView materialObservableGridView;
     private FloatingActionsMenu mFloatingActionsMenu;
@@ -83,6 +83,7 @@ public class HistoryBeaconFragment extends BaseFragment implements BaseFragment.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mSearchViewAdapter = new SearchViewAdapter(((ActionBarActivity) getActivity()).getSupportActionBar().getThemedContext());
         setRetainInstance(true);
     }
 
@@ -182,6 +183,8 @@ public class HistoryBeaconFragment extends BaseFragment implements BaseFragment.
         final SearchView searchView = (SearchView) item.getActionView();
         SearchManager manager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(manager.getSearchableInfo(getActivity().getComponentName()));
+        searchView.setSuggestionsAdapter(mSearchViewAdapter);
+        searchView.setOnSuggestionListener(mOnSuggestionListener);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -200,47 +203,42 @@ public class HistoryBeaconFragment extends BaseFragment implements BaseFragment.
                 }
 
                 SQLiteDatabase sqLiteDatabase = new SugarDb(getActivity()).getReadableDatabase();
-                Cursor cursor = sqLiteDatabase.rawQuery("SELECT rowid _id,* FROM " + BeaconItemSeen.getTableName(BeaconItemSeen.class) +  " WHERE M_NOTIFICATION LIKE "
-                        + " '%" + newText + "%'", null); // Example database query
+                Cursor cursor = sqLiteDatabase.rawQuery("SELECT rowid _id,* FROM " + BeaconItemSeen.getTableName(BeaconItemSeen.class)
+                        +  " WHERE M_NOTIFICATION LIKE "
+                        + " '%" + newText + "%'", null);
+                mSearchViewAdapter.swapCursor(cursor);
 
-                mSearchViewAdapter = new SearchViewAdapter(((ActionBarActivity) getActivity()).getSupportActionBar().getThemedContext(), cursor, mOnHistoryBeaconClickListener);
-                searchView.setSuggestionsAdapter(mSearchViewAdapter);
-                searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
-                    @Override
-                    public boolean onSuggestionSelect(int i) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onSuggestionClick(int i) {
-                        Cursor historyClickCursor = mSearchViewAdapter.getCursor();
-                        historyClickCursor.move(i);
-
-                        BeaconItemSeen beaconItemSeen = new BeaconItemSeen();
-                        beaconItemSeen.mSeen = historyClickCursor.getLong(historyClickCursor.getColumnIndex("M_SEEN"));
-                        beaconItemSeen.mFavorites = (historyClickCursor.getInt(historyClickCursor.getColumnIndex("M_FAVORITES")) == 1);
-                        beaconItemSeen.mBeaconId = historyClickCursor.getString(historyClickCursor.getColumnIndex("M_BEACON_ID"));
-                        beaconItemSeen.mUuid = historyClickCursor.getString(historyClickCursor.getColumnIndex("M_UUID"));
-                        beaconItemSeen.mNotification = historyClickCursor.getString(historyClickCursor.getColumnIndex("M_NOTIFICATION"));
-                        beaconItemSeen.mMajor = historyClickCursor.getInt(historyClickCursor.getColumnIndex("M_MAJOR"));
-                        beaconItemSeen.mMinor = historyClickCursor.getInt(historyClickCursor.getColumnIndex("M_MINOR"));
-                        beaconItemSeen.mRange = historyClickCursor.getInt(historyClickCursor.getColumnIndex("M_RANGE"));
-
-                        Toast.makeText(getActivity(), "on click " + i + " | " + beaconItemSeen.mNotification, Toast.LENGTH_SHORT).show();
-
-                        return true;
-                    }
-                });
                 return true;
             }
         });
     }
 
-    /**
-     * Called when the hardware search button is pressed
-     */
-    @Override
-    public boolean onSearchRequested() {
-        return false;
-    }
+    private SearchView.OnSuggestionListener mOnSuggestionListener = new SearchView.OnSuggestionListener() {
+        @Override
+        public boolean onSuggestionSelect(int i) {
+            return false;
+        }
+
+        @Override
+        public boolean onSuggestionClick(int i) {
+            Cursor historyClickCursor = mSearchViewAdapter.getCursor();
+
+            historyClickCursor.moveToPosition(i);
+
+            BeaconItemSeen beaconItemSeen = new BeaconItemSeen();
+            Log.d("suggestion click : ", i + "" + " | " + historyClickCursor.getColumnName(2));
+            beaconItemSeen.mSeen = historyClickCursor.getLong(historyClickCursor.getColumnIndex("M_SEEN"));
+            beaconItemSeen.mFavorites = (historyClickCursor.getInt(historyClickCursor.getColumnIndex("M_FAVORITES")) == 1);
+            beaconItemSeen.mBeaconId = historyClickCursor.getString(historyClickCursor.getColumnIndex("M_BEACON_ID"));
+            beaconItemSeen.mUuid = historyClickCursor.getString(historyClickCursor.getColumnIndex("M_UUID"));
+            beaconItemSeen.mNotification = historyClickCursor.getString(historyClickCursor.getColumnIndex("M_NOTIFICATION"));
+            beaconItemSeen.mMajor = historyClickCursor.getInt(historyClickCursor.getColumnIndex("M_MAJOR"));
+            beaconItemSeen.mMinor = historyClickCursor.getInt(historyClickCursor.getColumnIndex("M_MINOR"));
+            beaconItemSeen.mRange = historyClickCursor.getInt(historyClickCursor.getColumnIndex("M_RANGE"));
+
+            Toast.makeText(getActivity(), "on click " + i + " | " + beaconItemSeen.mNotification, Toast.LENGTH_SHORT).show();
+
+            return true;
+        }
+    };
 }

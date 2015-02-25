@@ -380,8 +380,9 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
      * This adapter provides two types of fragments as an example.
      * {@linkplain #createItem(int)} should be modified if you use this example for your app.
      */
-    private static class NavigationAdapter extends CacheFragmentStatePagerAdapter {
-        private static final String[] TITLES = new String[]{"Historique", "À Proximité", "Préférences"};
+    private class NavigationAdapter extends CacheFragmentStatePagerAdapter {
+        private final String[] TITLES = new String[]{getResources().getString(R.string.history),
+                getResources().getString(R.string.proximity), getResources().getString(R.string.preferences)};
 
         public NavigationAdapter(FragmentManager fm) {
             super(fm);

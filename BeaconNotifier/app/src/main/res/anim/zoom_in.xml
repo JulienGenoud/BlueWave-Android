@@ -4,7 +4,7 @@
 
     <scale
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:duration="1100"
+        android:duration="1000"
         android:fromXScale="0"
         android:fromYScale="0"
         android:pivotX="50%"
@@ -15,6 +15,6 @@
     <alpha
         android:fromAlpha="0"
         android:toAlpha="1"
-        android:duration="700" />
+        android:duration="500" />
 
 </set>

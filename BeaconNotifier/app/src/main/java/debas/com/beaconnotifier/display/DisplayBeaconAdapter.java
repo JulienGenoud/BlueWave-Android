@@ -53,7 +53,11 @@ public class DisplayBeaconAdapter extends BaseAdapter {
             updated++;
         }
 
-        @Override
+    public List<BeaconItemSeen> getBeaconList() {
+        return mBeaconList;
+    }
+
+    @Override
         public View getView(int arg0, View arg1, ViewGroup arg2) {
 
             if(arg1 == null) {

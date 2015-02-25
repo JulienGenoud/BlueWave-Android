@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,6 +25,7 @@ import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCal
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import debas.com.beaconnotifier.R;
@@ -41,20 +43,38 @@ public class BeaconViewerFragment extends BaseFragment {
     private List<BeaconItemSeen> mBeaconArray = new ArrayList<>();
     private SortBeacon mSortBeacon = new SortBeacon();
     private String LIST_INSTANCE_STATE = "list_instance_state";
-
     private ImageView myAnimation;
+    private ImageView mVignetteImageView;
+    private HashMap<AnimationVignette, Integer> mAnimationHashMap = new HashMap<>();
+
+    public static enum AnimationVignette {
+        EXPAND, COLLAPSE, BOUNCE
+    }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         super.onCreateView(inflater, container, savedInstanceState);
-        View rootView = inflater.inflate(R.layout.beacon_viewer, container, false);
+        return inflater.inflate(R.layout.beacon_viewer, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View rootView, @Nullable Bundle savedInstanceState) {
 
         myAnimation = (ImageView)rootView.findViewById(R.id.myanimation);
         myAnimation.setBackgroundResource(R.drawable.imageanim);
         AnimationDrawable frameAnimation = (AnimationDrawable) myAnimation.getBackground();
         frameAnimation.start();
 
+        SlidingTabLayout slidingTabLayout = (SlidingTabLayout) getActivity().findViewById(R.id.sliding_tabs);
+        SlidingTabStrip slidingTabStrip = slidingTabLayout.getTabStrip();
+        RelativeLayout view = (RelativeLayout) slidingTabStrip.getChildAt(1);
+        mVignetteImageView = (ImageView) view.findViewById(R.id.tab_around_beacon_count);
+
+        mAnimationHashMap.put(AnimationVignette.EXPAND,  R.anim.zoom_in);
+        mAnimationHashMap.put(AnimationVignette.BOUNCE,  R.anim.bounce);
+        mAnimationHashMap.put(AnimationVignette.COLLAPSE,  R.anim.zoom_out);
+
+//        startAnimationVignette(AnimationVignette.EXPAND, "0");
 
         final ObservableScrollView scrollView = (ObservableScrollView) rootView.findViewById(R.id.scroll);
         Activity parentActivity = getActivity();
@@ -78,8 +98,45 @@ public class BeaconViewerFragment extends BaseFragment {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean(Constants.FIRST_LAUNCHED, false).apply();
         }
+    }
 
-        return rootView;
+    private void startAnimationVignette(AnimationVignette animationVignette, String text) {
+        Animation animation = AnimationUtils.loadAnimation(getActivity(), mAnimationHashMap.get(animationVignette));
+        TextDrawable textDrawable = TextDrawable.builder()
+                .beginConfig()
+                .textColor(getResources().getColor(R.color.accent))
+                .bold()
+                .endConfig()
+                .buildRound(text, getResources().getColor(R.color.title));
+        mVignetteImageView.setImageDrawable(textDrawable);
+//        Animation currentAnim = mVignetteImageView.getAnimation();
+//        if (currentAnim != null && !currentAnim.hasEnded()) {
+//            return;
+//        }
+        switch (animationVignette) {
+            case EXPAND:
+                mVignetteImageView.setVisibility(View.VISIBLE);
+                break;
+            case COLLAPSE:
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        mVignetteImageView.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                break;
+        }
+        mVignetteImageView.startAnimation(animation);
     }
 
     @Override
@@ -99,59 +156,40 @@ public class BeaconViewerFragment extends BaseFragment {
 
 
     public void updateBeaconList(final List<BeaconItemSeen> beacons) {
-        mBeaconArray.clear();
-        mBeaconArray.addAll(beacons);
+        mBeaconArray = new ArrayList<>(beacons);
         Collections.sort(mBeaconArray, mSortBeacon);
 
-        Log.d("onBeacon", "test : " + beacons.size());
+        Log.d("update", "beacon " + beacons.size());
 
         Activity activity = getActivity();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        if (mBeaconArray.size() == 0) {
-                            myAnimation.setVisibility(View.VISIBLE);
+                public void run() {
+                    boolean change = true;
+
+                    List<BeaconItemSeen> oldList = mDisplayBeaconAdapter.getBeaconList();
+                    if (mBeaconArray.size() == 0 && oldList.size() != 0) {
+                        myAnimation.setVisibility(View.VISIBLE);
+                        startAnimationVignette(AnimationVignette.COLLAPSE, "" + beacons.size());
+                    }
+                    else {
+                        myAnimation.setVisibility(View.GONE);
+                        if (mBeaconArray.size() != oldList.size() && oldList.size() != 0) {
+                            startAnimationVignette(AnimationVignette.BOUNCE, "" + beacons.size());
+                        } else if (mBeaconArray.size() > 0 && oldList.size() == 0) {
+                            startAnimationVignette(AnimationVignette.EXPAND, "" + beacons.size());
+                        } else {
+                            change = false;
                         }
-                        else {
-                            myAnimation.setVisibility(View.GONE);
-                            mDisplayBeaconAdapter.setBeaconList(mBeaconArray);
-                            mDisplayBeaconAdapter.notifyDataSetChanged();
-                        }
-              }
+                    }
+
+                    if (change) {
+                        mDisplayBeaconAdapter.setBeaconList(mBeaconArray);
+                        mDisplayBeaconAdapter.notifyDataSetChanged();
+                    }
+                }
           });
          }
-    }
-
-    @Override
-    public void onAttach(final Activity activity) {
-        super.onAttach(activity);
-
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                SlidingTabLayout slidingTabLayout = (SlidingTabLayout) activity.findViewById(R.id.sliding_tabs);
-                SlidingTabStrip slidingTabStrip = slidingTabLayout.getTabStrip();
-                RelativeLayout view = (RelativeLayout) slidingTabStrip.getChildAt(1);
-                final ImageView imageView = (ImageView) view.findViewById(R.id.tab_around_beacon_count);
-
-                if (!(imageView.getDrawable() instanceof TextDrawable)) {
-                    TextDrawable textDrawable = TextDrawable.builder()
-                            .beginConfig()
-                            .textColor(getResources().getColor(R.color.accent))
-                            .bold()
-                            .endConfig()
-                            .buildRound("0", getResources().getColor(R.color.title));
-
-                    imageView.setImageDrawable(textDrawable);
-
-                    Animation animZoomIn = AnimationUtils.loadAnimation(activity,
-                            R.anim.launch_zoom_in);
-
-                    imageView.setVisibility(View.VISIBLE);
-                    imageView.startAnimation(animZoomIn);
-                }
-            }
-        });
     }
 
     @Override

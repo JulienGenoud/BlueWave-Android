@@ -48,6 +48,15 @@
             </meta-data>
         </activity>
 
+        <activity
+            android:name="debas.com.beaconnotifier.display.BeaconActivity"
+            android:parentActivityName="debas.com.beaconnotifier.display.MainActivity">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="debas.com.beaconnotifier.display.MainActivity" />
+        </activity>
+
         <service android:name="debas.com.beaconnotifier.service.PullBeaconService" />
 
         <receiver android:name="com.commonsware.cwac.wakeful.AlarmReceiver" >

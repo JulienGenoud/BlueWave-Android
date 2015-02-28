@@ -20,9 +20,13 @@ import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 import org.altbeacon.beacon.startup.BootstrapNotifier;
 import org.altbeacon.beacon.startup.RegionBootstrap;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.List;
 
 import debas.com.beaconnotifier.display.MainActivity;
+import debas.com.beaconnotifier.model.BeaconItemSeen;
 import debas.com.beaconnotifier.service.DailyListener;
 import debas.com.beaconnotifier.utils.Constants;
 
@@ -33,7 +37,7 @@ public class BeaconNotifierApp extends SugarApp implements BootstrapNotifier, Ra
 
     private BeaconManager mBeaconManager;
     private boolean createNotif = false;
-
+    private List<BeaconItemSeen> beaconArround = new ArrayList<>();
     public static final int NOTIFICATION_ID = 12345;
 
     @Override
@@ -54,7 +58,12 @@ public class BeaconNotifierApp extends SugarApp implements BootstrapNotifier, Ra
 
         RegionBootstrap regionBootstrap = new RegionBootstrap(this, region);
 
-        mBeaconManager.setBackgroundBetweenScanPeriod(5000l);
+        mBeaconManager.setBackgroundScanPeriod(1000l);
+        mBeaconManager.setForegroundScanPeriod(1000l);
+
+        /* !! should be set by the user in ui !! */
+        mBeaconManager.setBackgroundBetweenScanPeriod(4000l);
+        mBeaconManager.setForegroundBetweenScanPeriod(1000l);
 
         WakefulIntentService.scheduleAlarms(new DailyListener(), this, false);
     }
@@ -63,27 +72,16 @@ public class BeaconNotifierApp extends SugarApp implements BootstrapNotifier, Ra
     public void didEnterRegion(Region region) {
 
         if (createNotif) {
-            NotificationCompat.Builder builder =
-                    new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.consumer_beacon)
-                            .setContentTitle("BeaconNotifier")
-                            .setContentText("Something interesting happened")
-                            .setAutoCancel(true);
-
-            Intent targetIntent = new Intent(this, MainActivity.class);
-            PendingIntent contentIntent = PendingIntent.getActivity(this, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            builder.setContentIntent(contentIntent);
-            NotificationManager nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            Notification notifiy = builder.build();
-            notifiy.defaults |= Notification.DEFAULT_VIBRATE;
-            notifiy.defaults |= Notification.DEFAULT_SOUND;
-
-            nManager.notify(NOTIFICATION_ID, notifiy);
         }
     }
 
     public void setCreateNotif(boolean bool) {
-        createNotif = bool;
+        this.createNotif = bool;
+        if (createNotif) {
+            BeaconManager.getInstanceForApplication(this).setRangeNotifier(this);
+        } else {
+            oldBeacon = null;
+        }
     }
 
     @Override
@@ -96,8 +94,43 @@ public class BeaconNotifierApp extends SugarApp implements BootstrapNotifier, Ra
 
     }
 
-    @Override
-    public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+    private List<BeaconItemSeen> oldBeacon = null;
 
+    @Override
+    public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region) {
+        final BeaconDetectorManager beaconDetectorManager = BeaconDetectorManager.getInstance();
+        beaconDetectorManager.getCurrentBeaconsAround(beacons, Calendar.getInstance().getTimeInMillis(), new BeaconDetectorManager.OnFinish() {
+            @Override
+            public void result(List<BeaconItemSeen> beaconItemAround) {
+
+                if (oldBeacon == null) {
+                    oldBeacon = new ArrayList<>(beaconItemAround);
+                }
+
+                oldBeacon = beaconDetectorManager.epurNewBeacons(oldBeacon, beaconItemAround);
+                Log.d("background", "new beacons " + beaconItemAround.size());
+                for (BeaconItemSeen beaconItemSeen : beaconItemAround) {
+                    NotificationCompat.Builder builder =
+                            new NotificationCompat.Builder(BeaconNotifierApp.this)
+                                    .setSmallIcon(R.drawable.consumer_beacon)
+                                    .setContentTitle(getString(R.string.app_name))
+                                    .setContentText(beaconItemSeen.mNotification)
+                                    .setAutoCancel(true);
+
+                    Intent targetIntent = new Intent(BeaconNotifierApp.this, MainActivity.class);
+                    PendingIntent contentIntent = PendingIntent.getActivity(BeaconNotifierApp.this, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    builder.setContentIntent(contentIntent);
+                    NotificationManager nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    Notification notifiy = builder.build();
+                    notifiy.defaults |= Notification.DEFAULT_VIBRATE;
+                    notifiy.defaults |= Notification.DEFAULT_SOUND;
+
+                    beaconItemSeen.mSeen = Calendar.getInstance().getTimeInMillis();
+                    beaconItemSeen.save();
+
+                    nManager.notify(NOTIFICATION_ID, notifiy);
+                }
+            }
+        });
     }
 }

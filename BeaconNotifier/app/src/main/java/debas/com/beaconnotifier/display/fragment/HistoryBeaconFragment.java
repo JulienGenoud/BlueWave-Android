@@ -23,7 +23,6 @@ import android.widget.Toast;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.orm.SugarDb;
-import com.shamanland.fab.ShowHideOnScroll;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,8 +95,6 @@ public class HistoryBeaconFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         materialObservableGridView = (MaterialObservableGridView) view.findViewById(R.id.scroll);
 
-        BeaconItemSeen.generateRandom().save();
-
         new AsyncTask<Void, Void, List<BeaconItemSeen>>() {
             @Override
             protected List<BeaconItemSeen> doInBackground(Void... params) {
@@ -119,8 +116,8 @@ public class HistoryBeaconFragment extends BaseFragment {
         view.findViewById(R.id.floating_history_notseen).setOnClickListener(mFloatingButtonClickListener);
         view.findViewById(R.id.floating_history_favorites).setOnClickListener(mFloatingButtonClickListener);
 
-        ShowHideOnScroll mShowHideOnScroll = new ShowHideOnScroll(mFloatingActionsMenu);
-        materialObservableGridView.setOnTouchListener(mShowHideOnScroll);
+//        ShowHideOnScroll mShowHideOnScroll = new ShowHideOnScroll(mFloatingActionsMenu);
+//        materialObservableGridView.setOnTouchListener(mShowHideOnScroll);
     }
 
     private View.OnClickListener mFloatingButtonClickListener = new View.OnClickListener() {
@@ -132,13 +129,15 @@ public class HistoryBeaconFragment extends BaseFragment {
 
     public void updateHistory(final List<BeaconItemSeen> beaconItemAround) {
 
-        new AsyncTask<Void, BeaconHistoryCard, List<BeaconHistoryCard>>() {
+        new AsyncTask<Void, BeaconHistoryCard, Void>() {
 
-            int number = materialObservableGridView.getAdapter().getCount();
-            final List<BeaconHistoryCard> beaconToInsert = new ArrayList<>();
+            private List<BeaconHistoryCard> beaconToInsert = new ArrayList<>();
+            private List<BeaconHistoryCard> beaconToRemove = new ArrayList<>();
 
             @Override
-            protected List<BeaconHistoryCard> doInBackground(Void... params) {
+            protected Void doInBackground(Void... params) {
+                int number = materialObservableGridView.getAdapter().getCount();
+
                 for (BeaconItemSeen beaconItemSeen : beaconItemAround) {
 
                     Log.d("testRemove", "test");
@@ -146,32 +145,30 @@ public class HistoryBeaconFragment extends BaseFragment {
                     for (int i = 0; i < number; i++) {
                         BeaconHistoryCard beaconHistoryCard = (BeaconHistoryCard) materialObservableGridView.getCard(i);
 
-                        if (beaconHistoryCard.getBeaconItemSeen().mBeaconId.equalsIgnoreCase(beaconItemSeen.mBeaconId)) {
-                            publishProgress(beaconHistoryCard);
+                        if (beaconHistoryCard.getBeaconItemSeen().equals(beaconItemSeen)) {
+                            beaconToRemove.add(beaconHistoryCard);
                         }
                     }
 
                     BeaconHistoryCard beaconHistoryCard = new BeaconHistoryCard(beaconItemSeen, mOnHistoryBeaconClickListener);
                     beaconToInsert.add(beaconHistoryCard);
                 }
-                return beaconToInsert;
+                return null;
             }
 
             @Override
-            protected void onProgressUpdate(BeaconHistoryCard... values) {
-                super.onProgressUpdate(values);
-                Log.d("removing", "removing id " + values[0].getBeaconItemSeen().mBeaconId);
-                materialObservableGridView.getAdapter().remove(values[0]);
-            }
-
-            @Override
-            protected void onPostExecute(List<BeaconHistoryCard> beaconHistoryCards) {
-                super.onPostExecute(beaconHistoryCards);
-
-                for (BeaconHistoryCard beaconHistoryCard : beaconHistoryCards) {
-                    materialObservableGridView.getAdapter().insert(beaconHistoryCard, 0);
+            protected void onPostExecute(Void aVoid) {
+                for (BeaconHistoryCard beaconHistoryCard : beaconToRemove) {
+                    Log.d("removing", "removing id " + beaconHistoryCard.getBeaconItemSeen().mBeaconId);
+                    materialObservableGridView.getAdapter().remove(beaconHistoryCard);
                 }
                 materialObservableGridView.notifyDataSetChanged();
+
+                for (BeaconHistoryCard beaconHistoryCard : beaconToInsert) {
+                    materialObservableGridView.getAdapter().insert(beaconHistoryCard, 0);
+                }
+                if (beaconToRemove.size() != 0 || beaconToInsert.size() != 0)
+                    materialObservableGridView.notifyDataSetChanged();
             }
         }.execute();
     }
@@ -229,6 +226,12 @@ public class HistoryBeaconFragment extends BaseFragment {
                 return true;
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        materialObservableGridView.notifyDataSetChanged();
     }
 
     private SearchView.OnSuggestionListener mOnSuggestionListener = new SearchView.OnSuggestionListener() {

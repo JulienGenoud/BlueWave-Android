@@ -31,4 +31,12 @@ public class BeaconHistoryCard extends Card {
         this.mBeaconItemSeen = beaconItemSeen;
         this.mOnClickListener = onClickListener;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof BeaconHistoryCard) {
+            return (((BeaconHistoryCard) o).getBeaconItemSeen().equals(mBeaconItemSeen));
+        }
+        return false;
+    }
 }

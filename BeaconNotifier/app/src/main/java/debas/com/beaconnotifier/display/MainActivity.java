@@ -33,6 +33,7 @@ import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
@@ -55,7 +56,7 @@ import debas.com.beaconnotifier.utils.Utils;
 /**
  * Created by debas on 18/10/14.
  */
-public class MainActivity extends BaseActivity implements BeaconConsumer, ObservableScrollViewCallbacks {
+public class MainActivity extends BaseActivity implements BeaconConsumer, ObservableScrollViewCallbacks, RangeNotifier {
 
     private BeaconManager mBeaconManager = BeaconManager.getInstanceForApplication(this);
     private String TAG = "onBeacon";
@@ -161,6 +162,10 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
                         }
                     }
                 });
+
+                for (int i = 0; i < 10; i++) {
+                    BeaconItemSeen.generateRandom().save();
+                }
             } else {
                 Toast.makeText(this, "Internet needed to update DB", Toast.LENGTH_LONG).show();
             }
@@ -172,8 +177,10 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
     public void onResume() {
         Log.d(TAG, "resume");
         super.onResume();
+
         if (mBeaconManager.isBound(this)) {
             mBeaconManager.setBackgroundMode(false);
+            mBeaconManager.setRangeNotifier(this);
         }
         ((BeaconNotifierApp) getApplication()).setCreateNotif(false);
     }
@@ -199,33 +206,13 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
 
     @Override
     public void onBeaconServiceConnect() {
-        mBeaconManager.setRangeNotifier(new RangeNotifier() {
-            @Override
-            public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region) {
-                final HistoryBeaconFragment historyBeacon = (HistoryBeaconFragment) mPagerAdapter.getItemAt(0);
-                final BeaconViewerFragment aroundBeacons = (BeaconViewerFragment) mPagerAdapter.getItemAt(1);
-
-                mBeaconDetectorManager.getCurrentBeaconsAround(beacons, Calendar.getInstance().getTimeInMillis(),
-                        new BeaconDetectorManager.OnFinish() {
-                            @Override
-                            public void result(List<BeaconItemSeen> beaconItemAround, int newBeacons, int lostBeacon) {
-                                aroundBeacons.updateBeaconList(beaconItemAround);
-
-                                Log.d("new beacons : ", "" + newBeacons);
-                                if (newBeacons != 0) {
-                                    historyBeacon.updateHistory(beaconItemAround);
-                                }
-                            }
-                        });
-            }
-        });
-
+        Log.d("onBeaconServiceConnect", "onBeaconServiceConnect");
+        mBeaconManager.setRangeNotifier(this);
         try {
             mBeaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -374,6 +361,43 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
             });
             animator.start();
         }
+    }
+
+    private List<BeaconItemSeen> oldBeacon = new ArrayList<>();
+
+    @Override
+    public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region) {
+        final HistoryBeaconFragment historyBeacon = (HistoryBeaconFragment) mPagerAdapter.getItemAt(0);
+        final BeaconViewerFragment aroundBeacons = (BeaconViewerFragment) mPagerAdapter.getItemAt(1);
+
+        Beacon beacon = new Beacon.Builder()
+                .setId1("102B84B0-6F03-11E4-9803-0800200C9A66")
+                .setId2("87")
+                .setId3("23")
+                .build();
+        beacons.add(beacon);
+
+        mBeaconDetectorManager.getCurrentBeaconsAround(beacons, Calendar.getInstance().getTimeInMillis(),
+                new BeaconDetectorManager.OnFinish() {
+                    @Override
+                    public void result(List<BeaconItemSeen> beaconItemAround) {
+                        if (oldBeacon == null) {
+                            oldBeacon = new ArrayList<>(beaconItemAround);
+                        }
+
+                        aroundBeacons.updateBeaconList(beaconItemAround);
+                        if (!beaconItemAround.equals(oldBeacon)) {
+                            Log.d("contains", "" + beaconItemAround.size());
+                            historyBeacon.updateHistory(beaconItemAround);
+                        }
+
+                        oldBeacon = mBeaconDetectorManager.epurNewBeacons(oldBeacon, beaconItemAround);
+                        for (BeaconItemSeen beaconItemSeen : beaconItemAround) {
+                            beaconItemSeen.mSeen = Calendar.getInstance().getTimeInMillis();
+                            beaconItemSeen.save();
+                        }
+                    }
+                });
     }
 
     /**

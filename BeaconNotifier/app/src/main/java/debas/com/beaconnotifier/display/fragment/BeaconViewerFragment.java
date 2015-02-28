@@ -55,7 +55,7 @@ public class BeaconViewerFragment extends BaseFragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        return inflater.inflate(R.layout.beacon_viewer2, container, false);
+        return inflater.inflate(R.layout.beacon_viewer, container, false);
     }
 
     @Override

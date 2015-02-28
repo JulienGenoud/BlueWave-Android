@@ -69,7 +69,6 @@ public class DisplayBeaconAdapter extends BaseAdapter {
 
             if (mBeaconList.size() > arg0) {
                 BeaconItemSeen beacon = mBeaconList.get(arg0);
-
                 beacon_UUID.setText(beacon.mUuid + " - " + beacon.mMajor + " - " + beacon.mMinor);
                 beacon_Distance.setText(String.format("%.2f meters away", beacon.mDistance) + " - updated : " + updated);
             }

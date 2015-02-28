@@ -14,6 +14,7 @@ import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 
 import debas.com.beaconnotifier.R;
+import debas.com.beaconnotifier.preferences.CheckableLinearLayout;
 import debas.com.beaconnotifier.preferences.Prefs;
 
 /**
@@ -29,6 +30,13 @@ public class PreferencesFragment extends BaseFragment {
 
         ListView lv = (ListView) rootView.findViewById(R.id.list);
         lv.setAdapter(new MyAdapter());
+
+        for (int i = 0; i < lv.getAdapter().getCount(); i++) {
+            lv.setItemChecked(i,true);
+        }
+
+        lv.setItemChecked(4,true);
+
 
         final ObservableScrollView scrollView = (ObservableScrollView) rootView.findViewById(R.id.scroll);
         Activity parentActivity = getActivity();
@@ -74,6 +82,7 @@ public class PreferencesFragment extends BaseFragment {
             }
             ((TextView) convertView.findViewById(android.R.id.text1))
                     .setText(getItem(position));
+
 
             return convertView;
         }

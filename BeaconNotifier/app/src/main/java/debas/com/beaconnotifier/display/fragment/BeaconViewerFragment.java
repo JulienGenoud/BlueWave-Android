@@ -60,8 +60,6 @@ public class BeaconViewerFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View rootView, @Nullable Bundle savedInstanceState) {
-
-
         beaconView = (RelativeLayout)rootView.findViewById(R.id.nobeacon);
 
         myAnimation = (ImageView)rootView.findViewById(R.id.myanimation);

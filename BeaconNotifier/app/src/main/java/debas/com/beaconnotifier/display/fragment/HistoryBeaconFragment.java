@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -132,11 +133,62 @@ public class HistoryBeaconFragment extends BaseFragment {
         searchView.setSuggestionsAdapter(mSearchViewAdapter);
         searchView.setOnSuggestionListener(mOnSuggestionListener);
 
+        MenuItemCompat.setOnActionExpandListener(item, new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                Log.d("collapse", "close");
+
+                new AsyncTask<Void, Void, Cursor>() {
+
+                    @Override
+                    protected Cursor doInBackground(Void... params) {
+                        SugarDb sugarDb = new SugarDb(getActivity());
+                        SQLiteDatabase sqLiteDatabase = sugarDb.getReadableDatabase();
+                        return sqLiteDatabase.rawQuery("SELECT rowid _id,* FROM " + BeaconItemSeen.getTableName(BeaconItemSeen.class)
+                                +  " order by m_seen desc " , null);
+                    }
+
+                    @Override
+                    protected void onPostExecute(Cursor cursor) {
+                        historyGridAdapter.swapCursor(cursor);
+                        materialObservableGridView.setAdapter(historyGridAdapter);
+                    }
+                }.execute();
+
+                return true;  // Return true to collapse action view
+            }
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                // Do something when expanded
+                return true;  // Return true to expand action view
+            }
+        });
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
-            public boolean onQueryTextSubmit(String query) {
+            public boolean onQueryTextSubmit(final String query) {
                 Log.d("onQueryTextSubmit", query);
+
+                new AsyncTask<Void, Void, Cursor>() {
+
+                    @Override
+                    protected Cursor doInBackground(Void... params) {
+                        SugarDb sugarDb = new SugarDb(getActivity());
+                        SQLiteDatabase sqLiteDatabase = sugarDb.getReadableDatabase();
+                        return sqLiteDatabase.rawQuery("SELECT rowid _id,* FROM " + BeaconItemSeen.getTableName(BeaconItemSeen.class)
+                                +  " WHERE M_NOTIFICATION LIKE "
+                                + " '%" + query + "%'"
+                                +  " order by m_seen desc " , null);
+                    }
+
+                    @Override
+                    protected void onPostExecute(Cursor cursor) {
+                        historyGridAdapter.swapCursor(cursor);
+                        materialObservableGridView.setAdapter(historyGridAdapter);
+                    }
+                }.execute();
 
                 return false;
             }
@@ -145,12 +197,9 @@ public class HistoryBeaconFragment extends BaseFragment {
             public boolean onQueryTextChange(final String newText) {
 
                 if (newText == null || newText.isEmpty()) {
-                    if (mSearchViewAdapter != null) {
-                        mSearchViewAdapter.swapCursor(null);
-                    }
-                    return true;
+                    mSearchViewAdapter.swapCursor(null);
+                    return false;
                 }
-
 
                 Log.d("onQueryTextChange", "\"" + newText + "\"");
 
@@ -160,7 +209,8 @@ public class HistoryBeaconFragment extends BaseFragment {
                         SQLiteDatabase sqLiteDatabase = new SugarDb(getActivity()).getReadableDatabase();
                         return sqLiteDatabase.rawQuery("SELECT rowid _id,* FROM " + BeaconItemSeen.getTableName(BeaconItemSeen.class)
                                 +  " WHERE M_NOTIFICATION LIKE "
-                                + " '%" + newText + "%'", null);
+                                + " '%" + newText + "%'"
+                                +  " order by m_seen desc " , null);
                     }
 
                     @Override

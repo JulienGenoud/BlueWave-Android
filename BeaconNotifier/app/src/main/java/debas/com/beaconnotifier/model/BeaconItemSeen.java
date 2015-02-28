@@ -1,5 +1,7 @@
 package debas.com.beaconnotifier.model;
 
+import android.database.Cursor;
+
 import com.orm.dsl.Ignore;
 
 import java.util.Random;
@@ -54,5 +56,20 @@ public class BeaconItemSeen extends BeaconItemDB {
                 && this.mMajor == b.mMajor)
             return true;
         return false;
+    }
+
+    public static BeaconItemSeen fromCursor(Cursor cursor) {
+        BeaconItemSeen beaconItemSeen = new BeaconItemSeen();
+
+        beaconItemSeen.mSeen = cursor.getLong(cursor.getColumnIndex("M_SEEN"));
+        beaconItemSeen.mFavorites = (cursor.getInt(cursor.getColumnIndex("M_FAVORITES")) == 1);
+        beaconItemSeen.mBeaconId = cursor.getString(cursor.getColumnIndex("M_BEACON_ID"));
+        beaconItemSeen.mUuid = cursor.getString(cursor.getColumnIndex("M_UUID"));
+        beaconItemSeen.mNotification = cursor.getString(cursor.getColumnIndex("M_NOTIFICATION"));
+        beaconItemSeen.mMajor = cursor.getInt(cursor.getColumnIndex("M_MAJOR"));
+        beaconItemSeen.mMinor = cursor.getInt(cursor.getColumnIndex("M_MINOR"));
+        beaconItemSeen.mRange = cursor.getInt(cursor.getColumnIndex("M_RANGE"));
+
+        return beaconItemSeen;
     }
 }

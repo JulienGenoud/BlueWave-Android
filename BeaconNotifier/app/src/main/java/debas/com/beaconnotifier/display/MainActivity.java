@@ -136,6 +136,8 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
             }
         });
 
+        Log.d("database", BeaconItemSeen.listAll(BeaconItemSeen.class).size() + "");
+
         ViewConfiguration vc = ViewConfiguration.get(this);
         mSlop = vc.getScaledTouchSlop();
         mInterceptionLayout = (TouchInterceptionFrameLayout) findViewById(R.id.container);
@@ -388,11 +390,12 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
                         aroundBeacons.updateBeaconList(beaconItemAround);
                         if (!beaconItemAround.equals(oldBeacon)) {
                             Log.d("contains", "" + beaconItemAround.size());
-                            historyBeacon.updateHistory(beaconItemAround);
+                            historyBeacon.updateHistory();
                         }
 
                         oldBeacon = mBeaconDetectorManager.epurNewBeacons(oldBeacon, beaconItemAround);
                         for (BeaconItemSeen beaconItemSeen : beaconItemAround) {
+                            Log.d("fav", "" + beaconItemSeen.mFavorites);
                             beaconItemSeen.mSeen = Calendar.getInstance().getTimeInMillis();
                             beaconItemSeen.save();
                         }

@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<com.github.ksoichiro.android.observablescrollview.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:customAttribute="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary3"
+    android:fillViewport="true"
+    android:overScrollMode="never">
 
     <!--<ImageView-->
         <!--android:layout_width="260dp"-->
@@ -15,11 +20,105 @@
         <!--android:layout_width="fill_parent"-->
         <!--android:layout_height="wrap_content"-->
         <!--android:text="@string/hello" />-->
+
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/nobeacon">
     <ImageView
         android:id="@+id/myanimation"
+        android:layout_width="300dp"
+        android:layout_height="253dp"
+        android:background="@drawable/imageanim"
+        android:layout_marginTop="47dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <debas.com.beaconnotifier.TypefacedTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/imageanim"/>
+        customAttribute:fontStyle="cond_light"
+        android:textColor="@color/white"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="20sp"
+        android:text="@string/start1"
+        android:id="@+id/textView2"
+        android:layout_below="@+id/myanimation"
+        android:layout_centerHorizontal="true" />
+
+    <debas.com.beaconnotifier.TypefacedTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        customAttribute:fontStyle="cond_light"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/start2"
+        android:id="@+id/textView4"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true"/>
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="visible"
+        android:orientation="vertical">
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical" android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/beacon_viewer">
+
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/listView"
+                android:layout_gravity="center_horizontal" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/bluetooth_disabled"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_margin="16dp"/>
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="COUCOU"
+                    android:id="@+id/textView"
+                    android:layout_gravity="center_horizontal" />
+
+            </LinearLayout>
+
+            <!--<ImageView-->
+                <!--android:id="@+id/myanimation"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:visibility="gone"-->
+                <!--android:background="@drawable/imageanim"/>-->
+
+        </RelativeLayout>
+    </LinearLayout>
+
 </RelativeLayout>
+
+
+</com.github.ksoichiro.android.observablescrollview.ObservableScrollView>

@@ -379,6 +379,8 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
                 .build();
         beacons.add(beacon);
 
+        if (aroundBeacons == null || historyBeacon == null)
+            return;
         mBeaconDetectorManager.getCurrentBeaconsAround(beacons, Calendar.getInstance().getTimeInMillis(),
                 new BeaconDetectorManager.OnFinish() {
                     @Override

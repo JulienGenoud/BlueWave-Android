@@ -41,4 +41,18 @@ public class BeaconItemSeen extends BeaconItemDB {
 
         return beaconItemSeen;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof BeaconItemSeen)) {
+            return false;
+        }
+        BeaconItemSeen b = (BeaconItemSeen) o;
+        if (this.mUuid.equalsIgnoreCase(b.mUuid)
+                && this.mBeaconId.equalsIgnoreCase(b.mBeaconId)
+                && this.mMinor == b.mMinor
+                && this.mMajor == b.mMajor)
+            return true;
+        return false;
+    }
 }

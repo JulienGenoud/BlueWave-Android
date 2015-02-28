@@ -109,10 +109,6 @@ public class BeaconViewerFragment extends BaseFragment {
                 .endConfig()
                 .buildRound(text, getResources().getColor(R.color.title));
         mVignetteImageView.setImageDrawable(textDrawable);
-//        Animation currentAnim = mVignetteImageView.getAnimation();
-//        if (currentAnim != null && !currentAnim.hasEnded()) {
-//            return;
-//        }
         switch (animationVignette) {
             case EXPAND:
                 mVignetteImageView.setVisibility(View.VISIBLE);
@@ -153,8 +149,6 @@ public class BeaconViewerFragment extends BaseFragment {
         setRetainInstance(true);
     }
 
-
-
     public void updateBeaconList(final List<BeaconItemSeen> beacons) {
         mBeaconArray = new ArrayList<>(beacons);
         Collections.sort(mBeaconArray, mSortBeacon);
@@ -183,7 +177,7 @@ public class BeaconViewerFragment extends BaseFragment {
                         }
                     }
 
-                    if (change) {
+                    if (beacons.size() != 0 || change) {
                         mDisplayBeaconAdapter.setBeaconList(mBeaconArray);
                         mDisplayBeaconAdapter.notifyDataSetChanged();
                     }

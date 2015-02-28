@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/BeaconNotifier.iml" filepath="$PROJECT_DIR$/BeaconNotifier.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/libs/android-ago/android-ago.iml" filepath="$PROJECT_DIR$/app/libs/android-ago/android-ago.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/libs/libs.iml" filepath="$PROJECT_DIR$/app/libs/libs.iml" />
     </modules>
   </component>
 </project>

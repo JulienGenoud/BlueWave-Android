@@ -386,12 +386,14 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         final HistoryBeaconFragment historyBeacon = (HistoryBeaconFragment) mPagerAdapter.getItemAt(0);
         final BeaconViewerFragment aroundBeacons = (BeaconViewerFragment) mPagerAdapter.getItemAt(1);
 
-        Beacon beacon = new Beacon.Builder()
-                .setId1("102B84B0-6F03-11E4-9803-0800200C9A66")
-                .setId2("87")
-                .setId3("23")
-                .build();
-        beacons.add(beacon);
+
+        // FUCK THIS BEACONS
+//        Beacon beacon = new Beacon.Builder()
+//                .setId1("102B84B0-6F03-11E4-9803-0800200C9A66")
+//                .setId2("87")
+//                .setId3("23")
+//                .build();
+//        beacons.add(beacon);
 
         if (aroundBeacons == null || historyBeacon == null)
             return;

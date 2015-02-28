@@ -1,62 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.github.ksoichiro.android.observablescrollview.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:customAttribute="http://schemas.android.com/apk/res-auto"
     android:id="@+id/scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary2"
+    android:background="@color/primary3"
     android:fillViewport="true"
     android:overScrollMode="never">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical">
+    <!--<ImageView-->
+    <!--android:layout_width="260dp"-->
+    <!--android:layout_height="260dp"-->
+    <!--android:id="@+id/imageanim"-->
+    <!--android:layout_centerVertical="true"-->
+    <!--android:layout_centerHorizontal="true"-->
+    <!--/>-->
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="vertical" android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/beacon_viewer">
+    <!--<TextView-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="@string/hello" />-->
 
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
-            <ListView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/listView"
-                android:layout_gravity="center_horizontal" />
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/bluetooth_disabled"
-                android:visibility="gone">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:layout_margin="16dp"/>
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="COUCOU"
-                    android:id="@+id/textView"
-                    android:layout_gravity="center_horizontal" />
-
-            </LinearLayout>
+        <RelativeLayout
+            android:id="@+id/nobeacon"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
             <ImageView
                 android:id="@+id/myanimation"
+                android:layout_width="300dp"
+                android:layout_height="253dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="47dp"
+                android:background="@drawable/imageanim" />
+
+            <debas.com.beaconnotifier.TypefacedTextView
+                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+                android:layout_below="@+id/myanimation"
                 android:layout_centerHorizontal="true"
-                android:visibility="gone"
-                android:background="@drawable/imageanim"/>
+                android:text="@string/start1"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                customAttribute:fontStyle="cond_light" />
+
+            <debas.com.beaconnotifier.TypefacedTextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView2"
+                android:layout_centerHorizontal="true"
+                android:text="@string/start2"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                customAttribute:fontStyle="cond_light" />
 
         </RelativeLayout>
-    </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/beacon_viewer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <ListView
+                    android:id="@+id/listView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal" />
+
+                <LinearLayout
+                    android:id="@+id/bluetooth_disabled"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_margin="16dp" />
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center"
+                        android:text="COUCOU" />
+
+                </LinearLayout>
+
+                <!--<ImageView-->
+                <!--android:id="@+id/myanimation"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:visibility="gone"-->
+                <!--android:background="@drawable/imageanim"/>-->
+
+            </RelativeLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
 </com.github.ksoichiro.android.observablescrollview.ObservableScrollView>

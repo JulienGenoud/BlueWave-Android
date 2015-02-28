@@ -46,6 +46,7 @@ public class BeaconViewerFragment extends BaseFragment {
     private ImageView myAnimation;
     private ImageView mVignetteImageView;
     private HashMap<AnimationVignette, Integer> mAnimationHashMap = new HashMap<>();
+    private RelativeLayout beaconView;
 
     public static enum AnimationVignette {
         EXPAND, COLLAPSE, BOUNCE
@@ -59,6 +60,7 @@ public class BeaconViewerFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View rootView, @Nullable Bundle savedInstanceState) {
+        beaconView = (RelativeLayout)rootView.findViewById(R.id.nobeacon);
 
         myAnimation = (ImageView)rootView.findViewById(R.id.myanimation);
         myAnimation.setBackgroundResource(R.drawable.imageanim);
@@ -74,7 +76,7 @@ public class BeaconViewerFragment extends BaseFragment {
         mAnimationHashMap.put(AnimationVignette.BOUNCE,  R.anim.bounce);
         mAnimationHashMap.put(AnimationVignette.COLLAPSE,  R.anim.zoom_out);
 
-//        startAnimationVignette(AnimationVignette.EXPAND, "0");
+        startAnimationVignette(AnimationVignette.EXPAND, "0");
 
         final ObservableScrollView scrollView = (ObservableScrollView) rootView.findViewById(R.id.scroll);
         Activity parentActivity = getActivity();
@@ -162,12 +164,17 @@ public class BeaconViewerFragment extends BaseFragment {
                     boolean change = true;
 
                     List<BeaconItemSeen> oldList = mDisplayBeaconAdapter.getBeaconList();
+
+
+
                     if (mBeaconArray.size() == 0 && oldList.size() != 0) {
-                        myAnimation.setVisibility(View.VISIBLE);
+//                        myAnimation.setVisibility(View.VISIBLE);
+                        Log.e("TAG", "tot");
                         startAnimationVignette(AnimationVignette.COLLAPSE, "" + beacons.size());
                     }
                     else {
-                        myAnimation.setVisibility(View.GONE);
+                        beaconView.setVisibility(View.GONE);
+//                        myAnimation.setVisibility(View.GONE);
                         if (mBeaconArray.size() != oldList.size() && oldList.size() != 0) {
                             startAnimationVignette(AnimationVignette.BOUNCE, "" + beacons.size());
                         } else if (mBeaconArray.size() > 0 && oldList.size() == 0) {
@@ -176,6 +183,9 @@ public class BeaconViewerFragment extends BaseFragment {
                             change = false;
                         }
                     }
+
+                    if (mBeaconArray.size() == 0)
+                        beaconView.setVisibility(View.VISIBLE);
 
                     if (beacons.size() != 0 || change) {
                         mDisplayBeaconAdapter.setBeaconList(mBeaconArray);

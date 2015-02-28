@@ -118,6 +118,9 @@ public class BeaconNotifierApp extends SugarApp implements BootstrapNotifier, Ra
                                     .setAutoCancel(true);
 
                     Intent targetIntent = new Intent(BeaconNotifierApp.this, MainActivity.class);
+                    targetIntent.putExtra("FROM_NOTIFICATION", true);
+                    targetIntent.putExtra("TEST", "Guillaume fillon suce des chibres");
+
                     PendingIntent contentIntent = PendingIntent.getActivity(BeaconNotifierApp.this, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                     builder.setContentIntent(contentIntent);
                     NotificationManager nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

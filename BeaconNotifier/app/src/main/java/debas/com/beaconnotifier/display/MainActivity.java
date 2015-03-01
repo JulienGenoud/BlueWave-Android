@@ -2,6 +2,7 @@ package debas.com.beaconnotifier.display;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -94,6 +95,10 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         super.onCreate(savedInstanceState);
 
         System.out.println("temps : " + DateUtils.getRelativeTimeSpanString(Calendar.getInstance().getTimeInMillis(), Calendar.getInstance().getTimeInMillis() + 5000, DateUtils.SECOND_IN_MILLIS));
+
+
+        onNewIntent(getIntent());
+
         setContentView(R.layout.activity_viewpagertab);
 
         mToolbarView = findViewById(R.id.toolbar);
@@ -174,6 +179,15 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         }
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getBooleanExtra("FROM_NOTIFICATION", false)) {
+            Intent beaconIntent = new Intent(this, BeaconActivity.class);
+            beaconIntent.putExtras(getIntent().getExtras());
+            startActivity(beaconIntent);
+        }
+    }
 
     @Override
     public void onResume() {

@@ -27,8 +27,8 @@
                     android:id="@+id/imageView"/>
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:padding="5dp"
                     android:src="@drawable/favorites_empty"
                     android:layout_gravity="end|top"

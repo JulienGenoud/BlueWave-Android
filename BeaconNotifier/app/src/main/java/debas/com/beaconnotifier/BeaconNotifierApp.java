@@ -1,11 +1,5 @@
 package debas.com.beaconnotifier;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.commonsware.cwac.wakeful.WakefulIntentService;
@@ -25,7 +19,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
-import debas.com.beaconnotifier.display.MainActivity;
 import debas.com.beaconnotifier.model.BeaconItemSeen;
 import debas.com.beaconnotifier.service.DailyListener;
 import debas.com.beaconnotifier.utils.Constants;
@@ -110,28 +103,10 @@ public class BeaconNotifierApp extends SugarApp implements BootstrapNotifier, Ra
                 oldBeacon = beaconDetectorManager.epurNewBeacons(oldBeacon, beaconItemAround);
                 Log.d("background", "new beacons " + beaconItemAround.size());
                 for (BeaconItemSeen beaconItemSeen : beaconItemAround) {
-                    NotificationCompat.Builder builder =
-                            new NotificationCompat.Builder(BeaconNotifierApp.this)
-                                    .setSmallIcon(R.drawable.consumer_beacon)
-                                    .setContentTitle(getString(R.string.app_name))
-                                    .setContentText(beaconItemSeen.mNotification)
-                                    .setAutoCancel(true);
 
-                    Intent targetIntent = new Intent(BeaconNotifierApp.this, MainActivity.class);
-                    targetIntent.putExtra("FROM_NOTIFICATION", true);
-                    targetIntent.putExtra("TEST", "Guillaume fillon suce des chibres");
-
-                    PendingIntent contentIntent = PendingIntent.getActivity(BeaconNotifierApp.this, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                    builder.setContentIntent(contentIntent);
-                    NotificationManager nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                    Notification notifiy = builder.build();
-                    notifiy.defaults |= Notification.DEFAULT_VIBRATE;
-                    notifiy.defaults |= Notification.DEFAULT_SOUND;
-
+                    NotificationManager.createNotificationLaunchApp(BeaconNotifierApp.this, beaconItemSeen);
                     beaconItemSeen.mSeen = Calendar.getInstance().getTimeInMillis();
                     beaconItemSeen.save();
-
-                    nManager.notify(NOTIFICATION_ID, notifiy);
                 }
             }
         });

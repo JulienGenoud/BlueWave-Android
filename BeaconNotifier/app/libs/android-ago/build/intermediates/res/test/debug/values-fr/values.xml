@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/Users/julien/Workspace/BlueWave-Android/BeaconNotifier/app/libs/android-ago/build/intermediates/bundles/debug/res/values-fr/values.xml -->
+    <!-- From: file:/home/debas/Project/tek3/PFA/BlueWave-Android/BeaconNotifier/app/libs/android-ago/build/intermediates/bundles/debug/res/values-fr/values.xml -->
     <eat-comment/>
     <string name="just_now">à l\'instant</string>
 </resources>

@@ -59,6 +59,11 @@ import debas.com.beaconnotifier.utils.Utils;
  */
 public class MainActivity extends BaseActivity implements BeaconConsumer, ObservableScrollViewCallbacks, RangeNotifier {
 
+    public static final String LAUNCH_PAGE = "launch_page";
+    public static final int AROUND_PAGE = 1;
+    public static final int PREFERENCE_PAGE = 2;
+    public static final int HISTORY_PAGE = 0;
+
     private BeaconManager mBeaconManager = BeaconManager.getInstanceForApplication(this);
     private String TAG = "onBeacon";
 
@@ -96,9 +101,6 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
 
         System.out.println("temps : " + DateUtils.getRelativeTimeSpanString(Calendar.getInstance().getTimeInMillis(), Calendar.getInstance().getTimeInMillis() + 5000, DateUtils.SECOND_IN_MILLIS));
 
-
-        onNewIntent(getIntent());
-
         setContentView(R.layout.activity_viewpagertab);
 
         mToolbarView = findViewById(R.id.toolbar);
@@ -112,6 +114,8 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(mPagerAdapter);
         mPager.setOffscreenPageLimit(3);
+
+        mPager.setCurrentItem(AROUND_PAGE);
 
         // Padding for ViewPager must be set outside the ViewPager itself
         // because with padding, EdgeEffect of ViewPager become strange.
@@ -183,17 +187,14 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (intent.getBooleanExtra("FROM_NOTIFICATION", false)) {
-            Intent beaconIntent = new Intent(this, BeaconActivity.class);
-            beaconIntent.putExtras(getIntent().getExtras());
-            startActivity(beaconIntent);
+            mPager.setCurrentItem(intent.getIntExtra(LAUNCH_PAGE, AROUND_PAGE));
         }
     }
 
     @Override
     public void onResume() {
-        Log.d(TAG, "resume");
+        Log.d("TEST", "resume");
         super.onResume();
-
         if (mBeaconManager.isBound(this)) {
             mBeaconManager.setBackgroundMode(false);
             mBeaconManager.setRangeNotifier(this);
@@ -206,6 +207,7 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         Log.d(TAG, "Pause");
 
         super.onResume();
+
         if (mBeaconManager.isBound(this)) {
             mBeaconManager.setBackgroundMode(true);
         }
@@ -383,8 +385,8 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
 
     @Override
     public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region) {
-        final HistoryBeaconFragment historyBeacon = (HistoryBeaconFragment) mPagerAdapter.getItemAt(0);
-        final BeaconViewerFragment aroundBeacons = (BeaconViewerFragment) mPagerAdapter.getItemAt(1);
+        final HistoryBeaconFragment historyBeacon = (HistoryBeaconFragment) mPagerAdapter.getItemAt(HISTORY_PAGE);
+        final BeaconViewerFragment aroundBeacons = (BeaconViewerFragment) mPagerAdapter.getItemAt(AROUND_PAGE);
 
 
         // FUCK THIS BEACONS

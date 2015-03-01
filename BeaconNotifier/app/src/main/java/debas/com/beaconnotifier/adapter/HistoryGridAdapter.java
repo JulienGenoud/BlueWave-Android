@@ -11,8 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.curioustechizen.ago.RelativeTimeTextView;
-import com.orm.query.Condition;
-import com.orm.query.Select;
 
 import debas.com.beaconnotifier.R;
 import debas.com.beaconnotifier.model.BeaconItemSeen;
@@ -22,8 +20,11 @@ import debas.com.beaconnotifier.model.BeaconItemSeen;
  */
 public class HistoryGridAdapter extends CursorAdapter {
 
-    public HistoryGridAdapter(Context context) {
+    private View.OnClickListener mOnClickListner;
+
+    public HistoryGridAdapter(Context context, View.OnClickListener onClickListener) {
         super(context, null, false);
+        this.mOnClickListner = onClickListener;
     }
 
     @Override
@@ -45,28 +46,7 @@ public class HistoryGridAdapter extends CursorAdapter {
         /* favorites image click */
         ImageView favoritesImageView = (ImageView) view.findViewById(R.id.favorites_heart);
         favoritesImageView.setImageResource(beaconItemSeen.mFavorites ? R.drawable.favorites_full : R.drawable.favorites_empty);
-        favoritesImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ImageView imageView = (ImageView) v;
-                Class beaconClass = BeaconItemSeen.class;
-                Select select = Select.from(beaconClass)
-                        .where(Condition.prop("m_uuid").eq(beaconItemSeen.mUuid),
-                                Condition.prop("m_major").eq(beaconItemSeen.mMajor),
-                                Condition.prop("m_minor").eq(beaconItemSeen.mMinor));
-                if (select.count() > 0) {
-                    BeaconItemSeen beaconItemSeenSugar = (BeaconItemSeen) select.first();
-
-                    if (beaconItemSeenSugar.mFavorites) {
-                        imageView.setImageResource(R.drawable.favorites_empty);
-                    } else {
-                        imageView.setImageResource(R.drawable.favorites_full);
-                    }
-                    beaconItemSeenSugar.mFavorites = !beaconItemSeenSugar.mFavorites;
-                    beaconItemSeenSugar.save();
-                }
-            }
-        });
-        view.setTag(beaconItemSeen);
+        favoritesImageView.setOnClickListener(mOnClickListner);
+        favoritesImageView.setTag(beaconItemSeen);
     }
 }

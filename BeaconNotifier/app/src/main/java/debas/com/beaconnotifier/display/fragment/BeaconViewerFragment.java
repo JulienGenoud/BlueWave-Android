@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -22,10 +21,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.orm.query.Condition;
-import com.orm.query.Select;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,14 +78,6 @@ public class BeaconViewerFragment extends BaseFragment {
         mAnimationHashMap.put(AnimationVignette.COLLAPSE,  R.anim.zoom_out);
 
         startAnimationVignette(AnimationVignette.EXPAND, "0");
-
-        final ObservableScrollView scrollView = (ObservableScrollView) rootView.findViewById(R.id.scroll);
-        Activity parentActivity = getActivity();
-        scrollView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
-        if (parentActivity instanceof ObservableScrollViewCallbacks) {
-            // Scroll to the specified offset after layout
-            scrollView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
-        }
 
         mListView = (ListView) rootView.findViewById(R.id.listView);
 

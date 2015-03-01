@@ -1,6 +1,5 @@
 package debas.com.beaconnotifier.display.fragment;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -20,11 +19,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.orm.SugarDb;
+import com.orm.query.Condition;
+import com.orm.query.Select;
 
 import debas.com.beaconnotifier.MaterialObservableGridView;
 import debas.com.beaconnotifier.R;
@@ -58,14 +59,6 @@ public class HistoryBeaconFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.history, container, false);
 
-        Activity parentActivity = getActivity();
-        materialObservableGridView = (MaterialObservableGridView) view.findViewById(R.id.scroll);
-        materialObservableGridView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
-
-        if (parentActivity instanceof ObservableScrollViewCallbacks) {
-            materialObservableGridView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
-        }
-
         return view;
     }
 
@@ -81,12 +74,42 @@ public class HistoryBeaconFragment extends BaseFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     }
 
+    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.favorites_heart:
+                    ImageView imageView = (ImageView) v;
+                    BeaconItemSeen beaconItemSeen = (BeaconItemSeen) v.getTag();
+                    Class beaconClass = BeaconItemSeen.class;
+                    Select select = Select.from(beaconClass)
+                            .where(Condition.prop("m_uuid").eq(beaconItemSeen.mUuid),
+                                    Condition.prop("m_major").eq(beaconItemSeen.mMajor),
+                                    Condition.prop("m_minor").eq(beaconItemSeen.mMinor));
+                    if (select.count() > 0) {
+                        BeaconItemSeen beaconItemSeenSugar = (BeaconItemSeen) select.first();
+
+                        if (beaconItemSeenSugar.mFavorites) {
+                            imageView.setImageResource(R.drawable.favorites_empty);
+                        } else {
+                            imageView.setImageResource(R.drawable.favorites_full);
+                        }
+                        beaconItemSeenSugar.mFavorites = !beaconItemSeenSugar.mFavorites;
+                        beaconItemSeenSugar.save();
+                        updateHistory();
+                    }
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         materialObservableGridView = (MaterialObservableGridView) view.findViewById(R.id.scroll);
-        historyGridAdapter = new HistoryGridAdapter(getActivity());
 
+        historyGridAdapter = new HistoryGridAdapter(getActivity(), mOnClickListener);
+
+        materialObservableGridView.setAdapter(historyGridAdapter);
         updateHistory();
 
         materialObservableGridView.setOnItemClickListener(onHistoryItemClickListener);
@@ -127,7 +150,6 @@ public class HistoryBeaconFragment extends BaseFragment {
                     protected void onPostExecute(Cursor beaconItemCursor) {
                         Log.d("cursor", "" + beaconItemCursor.getCount());
                         historyGridAdapter.swapCursor(beaconItemCursor);
-                        materialObservableGridView.setAdapter(historyGridAdapter);
                     }
                 }.execute(whereClause);
             }
@@ -151,7 +173,6 @@ public class HistoryBeaconFragment extends BaseFragment {
             protected void onPostExecute(Cursor beaconItemCursor) {
                 Log.d("cursor", "" + beaconItemCursor.getCount());
                 historyGridAdapter.swapCursor(beaconItemCursor);
-                materialObservableGridView.setAdapter(historyGridAdapter);
             }
         }.execute();
     }
@@ -206,7 +227,6 @@ public class HistoryBeaconFragment extends BaseFragment {
                     @Override
                     protected void onPostExecute(Cursor cursor) {
                         historyGridAdapter.swapCursor(cursor);
-                        materialObservableGridView.setAdapter(historyGridAdapter);
                     }
                 }.execute();
 
@@ -242,7 +262,6 @@ public class HistoryBeaconFragment extends BaseFragment {
                     @Override
                     protected void onPostExecute(Cursor cursor) {
                         historyGridAdapter.swapCursor(cursor);
-                        materialObservableGridView.setAdapter(historyGridAdapter);
                     }
                 }.execute();
 

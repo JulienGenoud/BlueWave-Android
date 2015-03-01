@@ -12,6 +12,7 @@ import java.util.Random;
 public class BeaconItemSeen extends BeaconItemDB {
     public boolean mFavorites = false;
     public long mSeen = 0;
+    public boolean mConsulted = false;
 
     @Ignore
     public double mDistance = 0;
@@ -69,6 +70,7 @@ public class BeaconItemSeen extends BeaconItemDB {
         beaconItemSeen.mMajor = cursor.getInt(cursor.getColumnIndex("M_MAJOR"));
         beaconItemSeen.mMinor = cursor.getInt(cursor.getColumnIndex("M_MINOR"));
         beaconItemSeen.mRange = cursor.getInt(cursor.getColumnIndex("M_RANGE"));
+        beaconItemSeen.mConsulted = (cursor.getInt(cursor.getColumnIndex("M_CONSULTED")) == 1);
 
         return beaconItemSeen;
     }

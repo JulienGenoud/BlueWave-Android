@@ -53,6 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/floating_history_notseen"
+                fab:fab_icon="@drawable/eye_hidden_floating"
                 fab:fab_colorNormal="@color/white"
                 fab:fab_colorPressed="@color/white_pressed"
                 fab:fab_size="mini"
@@ -64,6 +65,7 @@
                 fab:fab_colorNormal="@color/white"
                 android:id="@+id/floating_history_favorites"
                 fab:fab_size="mini"
+                fab:fab_icon="@drawable/heart_full_floating"
                 fab:fab_title="@string/favorites"
                 fab:fab_colorPressed="@color/white_pressed"/>
 
@@ -72,6 +74,7 @@
                 android:layout_height="wrap_content"
                 fab:fab_colorNormal="@color/white"
                 fab:fab_size="mini"
+                fab:fab_icon="@drawable/history_floating"
                 fab:fab_title="@string/history_all"
                 android:id="@+id/floating_history_all"
                 fab:fab_colorPressed="@color/white_pressed"/>

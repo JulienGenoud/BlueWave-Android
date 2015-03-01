@@ -42,6 +42,8 @@ public class HistoryBeaconFragment extends BaseFragment {
     private FloatingActionsMenu mFloatingActionsMenu;
     private SearchViewAdapter mSearchViewAdapter = null;
     public HistoryGridAdapter historyGridAdapter;
+    private int mCurrentSection = R.id.floating_history_all;
+    private String mCurrentWhereFilter = "", mCurrentWhereSearch = "";
 
     private AdapterView.OnItemClickListener onHistoryItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
@@ -93,14 +95,43 @@ public class HistoryBeaconFragment extends BaseFragment {
         view.findViewById(R.id.floating_history_all).setOnClickListener(mFloatingButtonClickListener);
         view.findViewById(R.id.floating_history_notseen).setOnClickListener(mFloatingButtonClickListener);
         view.findViewById(R.id.floating_history_favorites).setOnClickListener(mFloatingButtonClickListener);
-
-//        ShowHideOnScroll mShowHideOnScroll = new ShowHideOnScroll(mFloatingActionsMenu);
-//        materialObservableGridView.setOnTouchListener(mShowHideOnScroll);
     }
 
     private View.OnClickListener mFloatingButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+            if (mCurrentSection != v.getId()) {
+
+                String whereClause = "";
+                switch (v.getId()) {
+                    case R.id.floating_history_favorites:
+                        whereClause += " M_FAVORITES = 1 ";
+                        break;
+                    case R.id.floating_history_notseen:
+                        whereClause += " M_CONSULTED = 0 ";
+                        break;
+                }
+
+                mCurrentWhereFilter = whereClause;
+                new AsyncTask<String, Void, Cursor>() {
+                    @Override
+                    protected Cursor doInBackground(String... params) {
+                        SugarDb sugarDb = new SugarDb(getActivity());
+                        SQLiteDatabase sqLiteDatabase = sugarDb.getReadableDatabase();
+                        return sqLiteDatabase.rawQuery("SELECT rowid _id,* FROM " + BeaconItemSeen.getTableName(BeaconItemSeen.class)
+                                + makeQueryArg(params[0], mCurrentWhereSearch) + " order by m_seen desc", null);
+                    }
+
+                    @Override
+                    protected void onPostExecute(Cursor beaconItemCursor) {
+                        Log.d("cursor", "" + beaconItemCursor.getCount());
+                        historyGridAdapter.swapCursor(beaconItemCursor);
+                        materialObservableGridView.setAdapter(historyGridAdapter);
+                    }
+                }.execute(whereClause);
+            }
+            mCurrentSection = v.getId();
             mFloatingActionsMenu.collapse();
         }
     };
@@ -113,7 +144,7 @@ public class HistoryBeaconFragment extends BaseFragment {
                 SugarDb sugarDb = new SugarDb(getActivity());
                 SQLiteDatabase sqLiteDatabase = sugarDb.getReadableDatabase();
                 return sqLiteDatabase.rawQuery("SELECT rowid _id,* FROM " + BeaconItemSeen.getTableName(BeaconItemSeen.class)
-                        +  " order by m_seen desc " , null);
+                        + makeQueryArg(mCurrentWhereFilter, mCurrentWhereSearch) +  " order by m_seen desc " , null);
             }
 
             @Override
@@ -123,6 +154,24 @@ public class HistoryBeaconFragment extends BaseFragment {
                 materialObservableGridView.setAdapter(historyGridAdapter);
             }
         }.execute();
+    }
+
+    private String makeQueryArg(String... whereClauses) {
+        String finalWhere = "";
+        boolean first = true;
+
+        for (String s : whereClauses) {
+            if (s == null || s.isEmpty())
+                continue;
+            if (first) {
+                finalWhere += " WHERE ";
+                first = false;
+            } else {
+                finalWhere += " AND ";
+            }
+            finalWhere += s + " ";
+        }
+        return finalWhere;
     }
 
     @Override
@@ -142,6 +191,8 @@ public class HistoryBeaconFragment extends BaseFragment {
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 Log.d("collapse", "close");
 
+                mCurrentWhereSearch = "";
+
                 new AsyncTask<Void, Void, Cursor>() {
 
                     @Override
@@ -149,7 +200,7 @@ public class HistoryBeaconFragment extends BaseFragment {
                         SugarDb sugarDb = new SugarDb(getActivity());
                         SQLiteDatabase sqLiteDatabase = sugarDb.getReadableDatabase();
                         return sqLiteDatabase.rawQuery("SELECT rowid _id,* FROM " + BeaconItemSeen.getTableName(BeaconItemSeen.class)
-                                +  " order by m_seen desc " , null);
+                                +  makeQueryArg(mCurrentWhereFilter, mCurrentWhereSearch) + " order by m_seen desc " , null);
                     }
 
                     @Override
@@ -175,6 +226,8 @@ public class HistoryBeaconFragment extends BaseFragment {
             public boolean onQueryTextSubmit(final String query) {
                 Log.d("onQueryTextSubmit", query);
 
+                mCurrentWhereSearch = " M_NOTIFICATION LIKE \'%" + query + "%\' ";
+
                 new AsyncTask<Void, Void, Cursor>() {
 
                     @Override
@@ -182,8 +235,7 @@ public class HistoryBeaconFragment extends BaseFragment {
                         SugarDb sugarDb = new SugarDb(getActivity());
                         SQLiteDatabase sqLiteDatabase = sugarDb.getReadableDatabase();
                         return sqLiteDatabase.rawQuery("SELECT rowid _id,* FROM " + BeaconItemSeen.getTableName(BeaconItemSeen.class)
-                                +  " WHERE M_NOTIFICATION LIKE "
-                                + " '%" + query + "%'"
+                                + makeQueryArg(mCurrentWhereFilter, mCurrentWhereSearch)
                                 +  " order by m_seen desc " , null);
                     }
 
@@ -210,10 +262,10 @@ public class HistoryBeaconFragment extends BaseFragment {
                 new AsyncTask<Void, Void, Cursor>() {
                     @Override
                     protected Cursor doInBackground(Void... params) {
+                        String finalNewText = " M_NOTIFICATION LIKE \'%" + newText + "%\' ";
                         SQLiteDatabase sqLiteDatabase = new SugarDb(getActivity()).getReadableDatabase();
                         return sqLiteDatabase.rawQuery("SELECT rowid _id,* FROM " + BeaconItemSeen.getTableName(BeaconItemSeen.class)
-                                +  " WHERE M_NOTIFICATION LIKE "
-                                + " '%" + newText + "%'"
+                                + makeQueryArg(mCurrentWhereFilter, finalNewText)
                                 +  " order by m_seen desc " , null);
                     }
 

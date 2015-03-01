@@ -21,5 +21,7 @@ Quam libero nulla netus eu porta curae, ut nulla bibendum facilisis et urna sed,
     <string name="search">Search</string>
     <string name="start2">BLUEWAVE pour commencer</string>
     <string name="start1">Approchez vous d\'un beacon</string>
+    <string name="detected">vous avez detecté</string>
+    <string name="musee">MUSÉE</string>
 
 </resources>

@@ -3,6 +3,7 @@ package debas.com.beaconnotifier.display.fragment;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -29,6 +30,7 @@ import debas.com.beaconnotifier.MaterialObservableGridView;
 import debas.com.beaconnotifier.R;
 import debas.com.beaconnotifier.adapter.HistoryGridAdapter;
 import debas.com.beaconnotifier.adapter.SearchViewAdapter;
+import debas.com.beaconnotifier.display.BeaconActivity;
 import debas.com.beaconnotifier.model.BeaconItemSeen;
 
 /**
@@ -45,6 +47,8 @@ public class HistoryBeaconFragment extends BaseFragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Toast.makeText(getActivity(), "Should open !", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity(), BeaconActivity.class);
+            startActivity(intent);
         }
     };
 

@@ -10,11 +10,13 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -22,6 +24,8 @@ import android.widget.Toast;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.orm.query.Condition;
+import com.orm.query.Select;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,6 +51,7 @@ public class BeaconViewerFragment extends BaseFragment {
     private ImageView mVignetteImageView;
     private HashMap<AnimationVignette, Integer> mAnimationHashMap = new HashMap<>();
     private RelativeLayout beaconView;
+    private LinearLayout beaconLay;
 
     public static enum AnimationVignette {
         EXPAND, COLLAPSE, BOUNCE
@@ -61,6 +66,7 @@ public class BeaconViewerFragment extends BaseFragment {
     @Override
     public void onViewCreated(View rootView, @Nullable Bundle savedInstanceState) {
         beaconView = (RelativeLayout)rootView.findViewById(R.id.nobeacon);
+        beaconLay = (LinearLayout)rootView.findViewById(R.id.beacons_lay);
 
         myAnimation = (ImageView)rootView.findViewById(R.id.myanimation);
         myAnimation.setBackgroundResource(R.drawable.imageanim);
@@ -90,6 +96,24 @@ public class BeaconViewerFragment extends BaseFragment {
 
         mDisplayBeaconAdapter = new DisplayBeaconAdapter(getActivity().getApplicationContext());
         mListView.setAdapter(mDisplayBeaconAdapter);
+
+
+//
+//        RelativeLayout beacon1 = (RelativeLayout) rootView.findViewById(R.id.beacon1);
+//        beacon1.setOnClickListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                switch(event.getAction()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        // PRESSED
+//                        return true; // if you want to handle the touch event
+//                    case MotionEvent.ACTION_UP:
+//                        // RELEASED
+//                        return true; // if you want to handle the touch event
+//                }
+//                return false;
+//            }
+//        });
 
         /* check if first run */
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
@@ -174,6 +198,8 @@ public class BeaconViewerFragment extends BaseFragment {
                     }
                     else {
                         beaconView.setVisibility(View.GONE);
+                        beaconLay.setVisibility(View.VISIBLE);
+
 //                        myAnimation.setVisibility(View.GONE);
                         if (mBeaconArray.size() != oldList.size() && oldList.size() != 0) {
                             startAnimationVignette(AnimationVignette.BOUNCE, "" + beacons.size());
@@ -184,8 +210,10 @@ public class BeaconViewerFragment extends BaseFragment {
                         }
                     }
 
-                    if (mBeaconArray.size() == 0)
+                    if (mBeaconArray.size() == 0) {
+                        beaconLay.setVisibility(View.GONE);
                         beaconView.setVisibility(View.VISIBLE);
+                    }
 
                     if (beacons.size() != 0 || change) {
                         mDisplayBeaconAdapter.setBeaconList(mBeaconArray);

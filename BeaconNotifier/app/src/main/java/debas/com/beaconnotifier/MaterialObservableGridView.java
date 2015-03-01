@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 
-import com.dexafree.materialList.view.MaterialStaggeredGridView;
+import com.etsy.android.grid.StaggeredGridView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.Scrollable;
@@ -18,7 +18,7 @@ import com.github.ksoichiro.android.observablescrollview.Scrollable;
 /**
  * Created by debas on 21/02/15.
  */
-public class MaterialObservableGridView extends MaterialStaggeredGridView implements Scrollable {
+public class MaterialObservableGridView extends StaggeredGridView implements Scrollable {
 
     // Fields that should be saved onSaveInstanceState
     private int mPrevFirstVisiblePosition;

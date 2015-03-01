@@ -1,6 +1,5 @@
 package debas.com.beaconnotifier.display.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,11 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-
 import debas.com.beaconnotifier.R;
-import debas.com.beaconnotifier.preferences.CheckableLinearLayout;
 import debas.com.beaconnotifier.preferences.Prefs;
 
 /**
@@ -37,13 +32,6 @@ public class PreferencesFragment extends BaseFragment {
 
         lv.setItemChecked(4,true);
 
-
-        final ObservableScrollView scrollView = (ObservableScrollView) rootView.findViewById(R.id.scroll);
-        Activity parentActivity = getActivity();
-        scrollView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
-        if (parentActivity instanceof ObservableScrollViewCallbacks) {
-            scrollView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
-        }
         return rootView;
     }
 

@@ -24,4 +24,19 @@ Quam libero nulla netus eu porta curae, ut nulla bibendum facilisis et urna sed,
     <string name="detected">vous avez detecté</string>
     <string name="musee">MUSÉE</string>
 
+    <!--preference-->
+    <string name="preference_file_key">preference_key</string>
+
+    <!--"Musées", "Ville", "Magasins", "Historique", "Aéroports", "Entreprises", "Non classés"-->
+
+    <string name="museum_prefs">Musées</string>
+    <string name="town_prefs">Ville</string>
+    <string name="shop_prefs">Magasins</string>
+    <string name="history_prefs">Historique</string>
+    <string name="airport_prefs">Aéroports</string>
+    <string name="enterprise_prefs">Entreprises</string>
+    <string name="not_classed_prefs">Non classés</string>
+    <string name="preferences_filter">Type d\'annonce à détécter</string>
+    <string name="preferences_beacons_section">Base de données de beacons</string>
+
 </resources>

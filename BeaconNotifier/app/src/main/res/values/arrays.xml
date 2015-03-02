@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="pref_beacon_filter">
+        <item>@string/airport_prefs</item>
+        <item>@string/enterprise_prefs</item>
+        <item>@string/history_prefs</item>
+        <item>@string/museum_prefs</item>
+        <item>@string/shop_prefs</item>
+        <item>@string/town_prefs</item>
+        <item>@string/not_classed_prefs</item>
+    </array>
+</resources>

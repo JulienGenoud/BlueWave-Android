@@ -49,6 +49,7 @@ dependencies {
     compile 'com.shamanland:fab:0.0.8'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     compile 'com.commonsware.cwac:wakeful:1.0.5'
+    compile 'com.github.dmytrodanylyk.circular-progress-button:library:1.1.3'
     compile files('libs/cwac-wakeful-1.0.3.jar')
     compile project(':app:libs:android-ago')
 }

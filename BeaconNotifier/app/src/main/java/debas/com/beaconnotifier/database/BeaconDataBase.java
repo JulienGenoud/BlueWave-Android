@@ -14,7 +14,9 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import debas.com.beaconnotifier.AsyncTaskDB;
+import debas.com.beaconnotifier.R;
 import debas.com.beaconnotifier.model.BeaconItemDB;
+import debas.com.beaconnotifier.preferences.PreferencesHelper;
 import debas.com.beaconnotifier.utils.Constants;
 
 /**
@@ -39,8 +41,9 @@ public class BeaconDataBase {
     }
 
     /* update new beacon on api and update new time*/
-    public  void updateDB(final Context context, final SharedPreferences sharedPreferences, final AsyncTaskDB.OnDBUpdated listener) {
-        long lastTimeUpdate = sharedPreferences.getLong(Constants.LAST_TIME_UPDATE_DB, 0);
+    public  void updateDB(final Context context, final AsyncTaskDB.OnDBUpdated listener) {
+        final SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        long lastTimeUpdate = sharedPreferences.getLong(PreferencesHelper.LAST_TIME_UPDATE_DB, 0);
 
         Ion.with(context)
                 .load(Constants.URL_API_DB + String.valueOf(lastTimeUpdate))
@@ -66,8 +69,7 @@ public class BeaconDataBase {
                         List<BeaconItemDB> beaconItemDBList = BeaconItemDB.listAll(BeaconItemDB.class);
 
                         long newLastTimeUpdate = result.get("t").getAsLong();
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong(Constants.LAST_TIME_UPDATE_DB, newLastTimeUpdate).apply();
+                        PreferencesHelper.setLastUpdateDB(context, newLastTimeUpdate * 1000);
 
                         listener.onDBUpdated(true, beaconItemDBList.size());
 

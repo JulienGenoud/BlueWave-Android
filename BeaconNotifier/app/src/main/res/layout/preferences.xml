@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <com.github.ksoichiro.android.observablescrollview.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,6 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp">
 
@@ -48,7 +51,54 @@
         <View
             android:layout_width="fill_parent"
             android:layout_height="2dp"
-            android:background="@android:color/darker_gray"/>
+            android:background="@android:color/darker_gray"
+            android:layout_marginBottom="5dp"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/last_update"
+                android:id="@+id/last_update"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:textSize="15sp"
+                android:paddingRight="2dp"/>
+
+            <com.github.curioustechizen.ago.RelativeTimeTextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/none"
+                android:id="@+id/relative_time_update"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="15sp"
+                android:layout_toRightOf="@+id/last_update"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+            <com.dd.CircularProgressButton
+                android:id="@+id/circular_progress_update"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/cpb_white"
+                android:textSize="18sp"
+                app:cpb_textComplete="@string/complete_update_db"
+                app:cpb_textError="@string/error_update_db"
+                app:cpb_textIdle="@string/update_db"
+                app:cpb_selectorComplete="@drawable/complete_state_selector"
+                app:cpb_selectorIdle="@drawable/complete_state_selector"
+                app:cpb_selectorError="@drawable/error_state_selector"
+                app:cpb_colorProgress="@android:color/transparent"
+                app:cpb_colorIndicator="@color/primary"
+                android:layout_below="@id/relative_time_update"/>
+        </RelativeLayout>
 
     </LinearLayout>
 

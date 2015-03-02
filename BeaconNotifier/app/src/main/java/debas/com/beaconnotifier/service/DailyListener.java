@@ -33,7 +33,7 @@ public class DailyListener implements WakefulIntentService.AlarmListener {
 //            calendar.set(Calendar.SECOND, 0);
 
             mgr.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
-                    60 * 1000, pi);
+                    60 * 10 * 1000, pi);
 //        }
     }
 
@@ -70,6 +70,6 @@ public class DailyListener implements WakefulIntentService.AlarmListener {
     }
 
     public long getMaxAge() {
-        return (60 * 1000);
+        return (60 * 10 * 1000);
     }
 }

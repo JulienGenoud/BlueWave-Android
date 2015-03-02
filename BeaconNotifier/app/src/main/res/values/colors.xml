@@ -2,8 +2,10 @@
 <resources>
     <color name="dark_bluewave">#3F4D52</color>
     <color name="red_bluewave">#FF5D52</color>
+    <color name="red_bluewave_dark">#FF3D52</color>
     <color name="black">#000000</color>
     <color name="primary">#10797E</color>
+    <color name="primary_dark">#10697E</color>
     <color name="primary2">#55d5d5d5</color>
     <color name="primary3">#85c2be</color>
     <color name="title">#FFF</color>

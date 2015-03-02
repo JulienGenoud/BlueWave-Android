@@ -214,7 +214,7 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
             if (Utils.checkInternetConnectivity(getApplicationContext())) {
                 final BeaconDataBase beaconDataBase = BeaconDataBase.getInstance(getApplicationContext());
 
-                beaconDataBase.updateDB(getApplicationContext(), sharedPreferences, new AsyncTaskDB.OnDBUpdated() {
+                beaconDataBase.updateDB(getApplicationContext(), new AsyncTaskDB.OnDBUpdated() {
                     @Override
                     public void onDBUpdated(boolean result, int nbElement) {
                         if (!result) {

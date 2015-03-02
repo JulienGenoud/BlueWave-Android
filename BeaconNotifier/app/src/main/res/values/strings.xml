@@ -38,5 +38,11 @@ Quam libero nulla netus eu porta curae, ut nulla bibendum facilisis et urna sed,
     <string name="not_classed_prefs">Non classés</string>
     <string name="preferences_filter">Type d\'annonce à détécter</string>
     <string name="preferences_beacons_section">Base de données de beacons</string>
+    <string name="last_update">Dernière mise à jour réussi :</string>
+    <string name="none">aucune</string>
 
+    <!--mise à jour db-->
+    <string name="update_db">Mettre à jour</string>
+    <string name="error_update_db">Echec de la mise à jour</string>
+    <string name="complete_update_db">Mise à jour réussi</string>
 </resources>

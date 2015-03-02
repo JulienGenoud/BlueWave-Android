@@ -13,7 +13,8 @@ import debas.com.beaconnotifier.R;
  * Created by debas on 02/03/15.
  */
 public class PreferencesHelper {
-    public static String NOTIFICATION_KEY = "notification_key";
+    public static final String LAST_TIME_UPDATE_DB = "last_update_db";
+    public static final String NOTIFICATION_KEY = "notification_key";
 
     public static List<Prefs.PreferenceFilterBeacon> getFilterBeacon(Context context, TypedArray prefsFilterBeacon) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -22,7 +23,7 @@ public class PreferencesHelper {
             Prefs.PreferenceFilterBeacon preferenceFilterBeacon = new Prefs.PreferenceFilterBeacon();
             String title = prefsFilterBeacon.getString(i);
             preferenceFilterBeacon.Title = title;
-            preferenceFilterBeacon.Checked = sharedPreferences.getBoolean(title, false);
+            preferenceFilterBeacon.Checked = sharedPreferences.getBoolean(title, true);
             prefsFilter.add(preferenceFilterBeacon);
         }
         return prefsFilter;
@@ -45,5 +46,17 @@ public class PreferencesHelper {
     public static boolean getNoticationEnable(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         return sharedPreferences.getBoolean(NOTIFICATION_KEY, true);
+    }
+
+    public static void setLastUpdateDB(Context context, long lastUpdate) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putLong(LAST_TIME_UPDATE_DB, lastUpdate);
+        editor.apply();
+    }
+
+    public static long getLastUpdateDB(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        return sharedPreferences.getLong(LAST_TIME_UPDATE_DB, -1);
     }
 }

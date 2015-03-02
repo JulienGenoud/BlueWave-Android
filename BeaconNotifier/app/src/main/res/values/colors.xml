@@ -20,4 +20,8 @@
     <color name="pink_pressed">#ec407a</color>
     <color name="blue_semi_transparent">#805677fc</color>
     <color name="blue_semi_transparent_pressed">#80738ffe</color>
+
+    <!--preferences-->
+    <color name="preferences_filter_text_unchecked">#6000</color>
+    <color name="preferences_filter_text_checked">#ff0e6669</color>
 </resources>

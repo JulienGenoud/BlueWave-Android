@@ -1,8 +1,11 @@
 package debas.com.beaconnotifier.display;
 
 import android.animation.ValueAnimator;
+import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -11,9 +14,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -50,6 +53,7 @@ import debas.com.beaconnotifier.display.fragment.BeaconViewerFragment;
 import debas.com.beaconnotifier.display.fragment.HistoryBeaconFragment;
 import debas.com.beaconnotifier.display.fragment.PreferencesFragment;
 import debas.com.beaconnotifier.model.BeaconItemSeen;
+import debas.com.beaconnotifier.preferences.PreferencesHelper;
 import debas.com.beaconnotifier.utils.Constants;
 import debas.com.beaconnotifier.utils.Utils;
 
@@ -76,18 +80,64 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
     private int mSlop;
     private boolean mScrolled;
     private ScrollState mLastScrollState;
+    private Menu mOptionsMenu;
 
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
+                        BluetoothAdapter.ERROR);
+                MenuItem bluetoothMenu = mOptionsMenu.findItem(R.id.bluetooth_menu);
+                Log.d("bluetooth" , "change state to " + state);
+                switch (state) {
+                    case BluetoothAdapter.STATE_OFF:
+                        bluetoothMenu.setChecked(false);
+                        break;
+                    case BluetoothAdapter.STATE_ON:
+                        bluetoothMenu.setChecked(true);
+                        break;
+                }
+            }
+        }
+    };
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        Log.d("menu", "onCreateOptionsMenu");
+        mOptionsMenu = menu;
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         Log.d("menu", "" + getCurrentFragment());
-        menu.clear();
+        MenuItem menuItem = menu.findItem(R.id.filter_history);
+        MenuItem notificationItem = menu.findItem(R.id.notification_menu);
+        MenuItem bluetoothItem = menu.findItem(R.id.bluetooth_menu);
+        notificationItem.setChecked(PreferencesHelper.getNoticationEnable(this));
+        notificationItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                item.setChecked(!item.isChecked());
+                PreferencesHelper.setNoticationEnable(MainActivity.this, item.isChecked());
+                return true;
+            }
+        });
+
+        bluetoothItem.setChecked(Utils.getBluetoothState());
+        bluetoothItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Utils.changeBluetoothState(!item.isChecked());
+                return true;
+            }
+        });
+
+        if (menuItem != null) {
+            menuItem.setVisible(false);
+        }
         Fragment fragment = getCurrentFragment();
         if (fragment instanceof BaseFragment) {
             ((BaseFragment) fragment).buildMenu(menu);
@@ -99,8 +149,6 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        System.out.println("temps : " + DateUtils.getRelativeTimeSpanString(Calendar.getInstance().getTimeInMillis(), Calendar.getInstance().getTimeInMillis() + 5000, DateUtils.SECOND_IN_MILLIS));
-
         setContentView(R.layout.activity_viewpagertab);
 
         mToolbarView = findViewById(R.id.toolbar);
@@ -108,7 +156,7 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         setSupportActionBar((Toolbar) mToolbarView);
 
         ((Toolbar) mToolbarView).inflateMenu(R.menu.main);
-        ((Toolbar) mToolbarView).setTitle("BLUEWAVE");
+        ((Toolbar) mToolbarView).setTitle(getString(R.string.app_name).toUpperCase());
         ViewCompat.setElevation(findViewById(R.id.header), getResources().getDimension(R.dimen.toolbar_elevation));
         mPagerAdapter = new NavigationAdapter(getSupportFragmentManager());
         mPager = (ViewPager) findViewById(R.id.pager);
@@ -154,6 +202,9 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
 
         mBeaconManager.bind(this);
 
+
+        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+        registerReceiver(mReceiver, filter);
 
 
         /* check if this is the first time run */
@@ -219,6 +270,7 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         Log.d(TAG, "destroyed");
         super.onDestroy();
         mBeaconManager.unbind(this);
+        unregisterReceiver(mReceiver);
     }
 
 

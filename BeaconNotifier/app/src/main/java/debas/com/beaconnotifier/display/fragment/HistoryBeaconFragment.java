@@ -199,8 +199,14 @@ public class HistoryBeaconFragment extends BaseFragment {
     public void buildMenu(final Menu menu) {
 //        searchItem = menu.add(android.R.string.search_go);
 
+        MenuItem menuItem = menu.findItem(R.id.filter_history);
+        if (menuItem != null) {
+            menuItem.setVisible(true);
+            return;
+        }
+
         getActivity().getMenuInflater().inflate(R.menu.history_menu, menu);
-        MenuItem item = menu.findItem(R.id.filter);
+        MenuItem item = menu.findItem(R.id.filter_history);
         final SearchView searchView = (SearchView) item.getActionView();
         SearchManager manager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(manager.getSearchableInfo(getActivity().getComponentName()));

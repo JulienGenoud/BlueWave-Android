@@ -40,4 +40,10 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
         }
         return drawableState;
     }
+
+    @Override
+    public boolean performClick() {
+        toggle();
+        return super.performClick();
+    }
 }

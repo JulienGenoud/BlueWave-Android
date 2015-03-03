@@ -50,6 +50,13 @@ public class PreferencesFragment extends BaseFragment {
         if (Utils.getBluetoothState()) {
             switchCompatBluetooth.setChecked(true);
         }
+        switchCompatNotif.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PreferencesHelper.setNoticationEnable(getActivity(), ((SwitchCompat) v).isChecked());
+            }
+        });
+
         switchCompatBluetooth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,17 +78,6 @@ public class PreferencesFragment extends BaseFragment {
                 }
             }
         });
-
-        SharedPreferences.OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if (key.equalsIgnoreCase(PreferencesHelper.NOTIFICATION_KEY)) {
-                    switchCompatNotif.setChecked(PreferencesHelper.getNoticationEnable(getActivity()));
-                }
-            }
-        };
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        sharedPreferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
 
         TypedArray prefsFilterBeacon = getActivity().getResources().obtainTypedArray(R.array.pref_beacon_filter);
         mPreferenceFilterBeacons = PreferencesHelper.getFilterBeacon(getActivity(), prefsFilterBeacon);
@@ -141,6 +137,9 @@ public class PreferencesFragment extends BaseFragment {
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if (key.equalsIgnoreCase(PreferencesHelper.LAST_TIME_UPDATE_DB)) {
                     mRelativeTimeUpdateDB.setReferenceTime(PreferencesHelper.getLastUpdateDB(getActivity()));
+                }
+                if (key.equalsIgnoreCase(PreferencesHelper.NOTIFICATION_KEY)) {
+                    switchCompatNotif.setChecked(PreferencesHelper.getNoticationEnable(getActivity()));
                 }
             }
         };

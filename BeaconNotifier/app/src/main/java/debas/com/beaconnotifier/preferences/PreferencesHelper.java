@@ -15,6 +15,7 @@ import debas.com.beaconnotifier.R;
 public class PreferencesHelper {
     public static final String LAST_TIME_UPDATE_DB = "last_update_db";
     public static final String NOTIFICATION_KEY = "notification_key";
+    public static final String FIRST_LAUNCH_KEY = "first_launched";
 
     public static List<Prefs.PreferenceFilterBeacon> getFilterBeacon(Context context, TypedArray prefsFilterBeacon) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -58,5 +59,17 @@ public class PreferencesHelper {
     public static long getLastUpdateDB(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         return sharedPreferences.getLong(LAST_TIME_UPDATE_DB, -1);
+    }
+
+    public static void setFirstLaunch(Context context, boolean bool) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(FIRST_LAUNCH_KEY, bool);
+        editor.apply();
+    }
+
+    public static boolean getFirstLaunch(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(FIRST_LAUNCH_KEY, false);
     }
 }

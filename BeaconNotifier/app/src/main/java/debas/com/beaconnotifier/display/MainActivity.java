@@ -2,10 +2,8 @@ package debas.com.beaconnotifier.display;
 
 import android.animation.ValueAnimator;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.app.Fragment;
@@ -54,7 +52,6 @@ import debas.com.beaconnotifier.display.fragment.HistoryBeaconFragment;
 import debas.com.beaconnotifier.display.fragment.PreferencesFragment;
 import debas.com.beaconnotifier.model.BeaconItemSeen;
 import debas.com.beaconnotifier.preferences.PreferencesHelper;
-import debas.com.beaconnotifier.utils.Constants;
 import debas.com.beaconnotifier.utils.Utils;
 
 
@@ -203,8 +200,7 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
 
 
         /* check if this is the first time run */
-        SharedPreferences sharedPreferences = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
-        boolean firstTimeRun = sharedPreferences.getBoolean(Constants.FIRST_LAUNCHED, true);
+        boolean firstTimeRun = PreferencesHelper.getFirstLaunch(this);
         if (firstTimeRun) {
             if (Utils.checkInternetConnectivity(getApplicationContext())) {
                 final BeaconDataBase beaconDataBase = BeaconDataBase.getInstance(getApplicationContext());
@@ -216,6 +212,7 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
                             Toast.makeText(MainActivity.this, "failed to update DB", Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(MainActivity.this, "success to update DB : new element " + nbElement, Toast.LENGTH_LONG).show();
+                            PreferencesHelper.setFirstLaunch(MainActivity.this, false);
                         }
                     }
                 });

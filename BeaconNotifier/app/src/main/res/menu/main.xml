@@ -3,9 +3,9 @@
     tools:context="com.tracking.bus.maps.SingleViewMapsActivity" >
 
     <item android:id="@+id/bluetooth_menu"
-        android:title="Bluetooth"
+        android:title="@string/bluetooth"
         android:checkable="true" />
     <item android:id="@+id/notification_menu"
-        android:title="Notification"
+        android:title="@string/notification"
         android:checkable="true"/>
 </menu>

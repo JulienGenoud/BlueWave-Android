@@ -2,7 +2,6 @@ package debas.com.beaconnotifier.display;
 
 import android.animation.ValueAnimator;
 import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -45,6 +44,7 @@ import java.util.List;
 import debas.com.beaconnotifier.AsyncTaskDB;
 import debas.com.beaconnotifier.BeaconDetectorManager;
 import debas.com.beaconnotifier.BeaconNotifierApp;
+import debas.com.beaconnotifier.BroadCastBluetoothReceiver;
 import debas.com.beaconnotifier.R;
 import debas.com.beaconnotifier.SlidingTabLayout;
 import debas.com.beaconnotifier.database.BeaconDataBase;
@@ -81,28 +81,8 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
     private boolean mScrolled;
     private ScrollState mLastScrollState;
     private Menu mOptionsMenu;
+    private BroadCastBluetoothReceiver mReceiver;
 
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-
-            if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
-                int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
-                        BluetoothAdapter.ERROR);
-                MenuItem bluetoothMenu = mOptionsMenu.findItem(R.id.bluetooth_menu);
-                Log.d("bluetooth" , "change state to " + state);
-                switch (state) {
-                    case BluetoothAdapter.STATE_OFF:
-                        bluetoothMenu.setChecked(false);
-                        break;
-                    case BluetoothAdapter.STATE_ON:
-                        bluetoothMenu.setChecked(true);
-                        break;
-                }
-            }
-        }
-    };
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -203,6 +183,21 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         mBeaconManager.bind(this);
 
 
+        mReceiver = Utils.getBroadCastBluetoothReceiver();
+        mReceiver.addBroadCastBluetoothListner(new BroadCastBluetoothReceiver.BroadCastBluetoothListener() {
+            @Override
+            public void onChange(int state) {
+                MenuItem bluetoothMenu = mOptionsMenu.findItem(R.id.bluetooth_menu);
+                switch (state) {
+                    case BluetoothAdapter.STATE_OFF:
+                        bluetoothMenu.setChecked(false);
+                        break;
+                    case BluetoothAdapter.STATE_ON:
+                        bluetoothMenu.setChecked(true);
+                        break;
+                }
+            }
+        });
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(mReceiver, filter);
 
@@ -244,7 +239,6 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
 
     @Override
     public void onResume() {
-        Log.d("TEST", "resume");
         super.onResume();
         if (mBeaconManager.isBound(this)) {
             mBeaconManager.setBackgroundMode(false);
@@ -255,8 +249,6 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
 
     @Override
     public void onPause() {
-        Log.d(TAG, "Pause");
-
         super.onResume();
 
         if (mBeaconManager.isBound(this)) {
@@ -267,7 +259,6 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "destroyed");
         super.onDestroy();
         mBeaconManager.unbind(this);
         unregisterReceiver(mReceiver);
@@ -276,7 +267,6 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
 
     @Override
     public void onBeaconServiceConnect() {
-        Log.d("onBeaconServiceConnect", "onBeaconServiceConnect");
         mBeaconManager.setRangeNotifier(this);
         try {
             mBeaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
@@ -439,15 +429,6 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
     public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region) {
         final HistoryBeaconFragment historyBeacon = (HistoryBeaconFragment) mPagerAdapter.getItemAt(HISTORY_PAGE);
         final BeaconViewerFragment aroundBeacons = (BeaconViewerFragment) mPagerAdapter.getItemAt(AROUND_PAGE);
-
-
-        // FUCK THIS BEACONS
-//        Beacon beacon = new Beacon.Builder()
-//                .setId1("102B84B0-6F03-11E4-9803-0800200C9A66")
-//                .setId2("87")
-//                .setId3("23")
-//                .build();
-//        beacons.add(beacon);
 
         if (aroundBeacons == null || historyBeacon == null)
             return;

@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import debas.com.beaconnotifier.model.BeaconItemSeen;
+import debas.com.beaconnotifier.preferences.PreferencesHelper;
 import debas.com.beaconnotifier.service.DailyListener;
 import debas.com.beaconnotifier.utils.Constants;
 
@@ -102,9 +103,13 @@ public class BeaconNotifierApp extends SugarApp implements BootstrapNotifier, Ra
 
                 oldBeacon = beaconDetectorManager.epurNewBeacons(oldBeacon, beaconItemAround);
                 Log.d("background", "new beacons " + beaconItemAround.size());
+
+                boolean createNotif = PreferencesHelper.getNoticationEnable(BeaconNotifierApp.this);
                 for (BeaconItemSeen beaconItemSeen : beaconItemAround) {
 
-                    NotificationManager.createNotificationLaunchApp(BeaconNotifierApp.this, beaconItemSeen);
+                    if (createNotif) {
+                        NotificationManager.createNotificationLaunchApp(BeaconNotifierApp.this, beaconItemSeen);
+                    }
                     beaconItemSeen.mSeen = Calendar.getInstance().getTimeInMillis();
                     beaconItemSeen.save();
                 }

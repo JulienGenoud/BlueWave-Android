@@ -48,4 +48,9 @@ Quam libero nulla netus eu porta curae, ut nulla bibendum facilisis et urna sed,
 
     <string name="bluetooth">Bluetooth</string>
     <string name="notification">Notification</string>
+    <string name="cancel">Retour</string>
+    <string name="add_like">Ajouter à mes favoris</string>
+    <string name="share">Partager</string>
+    <string name="delete">Supprimer</string>
+    <string name="remove_like">Retirer de mes favoris</string>
 </resources>

@@ -10,6 +10,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/app/libs" />
+            <option value="$PROJECT_DIR$/app/libs/AndroidStaggeredGrid" />
             <option value="$PROJECT_DIR$/app/libs/android-ago" />
           </set>
         </option>

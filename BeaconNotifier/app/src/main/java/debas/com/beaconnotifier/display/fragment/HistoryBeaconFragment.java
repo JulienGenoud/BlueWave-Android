@@ -19,9 +19,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.orm.SugarDb;
 import com.orm.query.Condition;
@@ -37,7 +41,7 @@ import debas.com.beaconnotifier.model.BeaconItemSeen;
 /**
  * Created by debas on 18/10/14.
  */
-public class HistoryBeaconFragment extends BaseFragment {
+public class HistoryBeaconFragment extends BaseFragment implements AdapterView.OnItemLongClickListener {
 
     private MaterialObservableGridView materialObservableGridView;
     private FloatingActionsMenu mFloatingActionsMenu;
@@ -112,8 +116,9 @@ public class HistoryBeaconFragment extends BaseFragment {
         materialObservableGridView.setAdapter(historyGridAdapter);
         updateHistory();
 
-        materialObservableGridView.setOnItemClickListener(onHistoryItemClickListener);
         mFloatingActionsMenu = (FloatingActionsMenu) view.findViewById(R.id.floating_history_menu);
+
+        materialObservableGridView.setOnItemLongClickListener(this);
 
         view.findViewById(R.id.floating_history_all).setOnClickListener(mFloatingButtonClickListener);
         view.findViewById(R.id.floating_history_notseen).setOnClickListener(mFloatingButtonClickListener);
@@ -331,4 +336,98 @@ public class HistoryBeaconFragment extends BaseFragment {
             return true;
         }
     };
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        final BeaconItemSeen beaconItemSeen = (BeaconItemSeen) view.getTag();
+        final MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                .adapter(new PopUpAdapter(getActivity(),
+                        new int[] {R.drawable.favorites_full, android.R.drawable.ic_menu_share, android.R.drawable.ic_menu_delete},
+                        new int[] {beaconItemSeen.mFavorites ? R.string.remove_like : R.string.add_like, R.string.share, R.string.delete}))
+                .negativeText(R.string.cancel)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        dialog.cancel();
+                    }
+                })
+                .build();
+        ListView listView = dialog.getListView();
+        if (listView != null) {
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Class beaconClass = BeaconItemSeen.class;
+                    Select select = Select.from(beaconClass)
+                            .where(Condition.prop("m_uuid").eq(beaconItemSeen.mUuid),
+                                    Condition.prop("m_major").eq(beaconItemSeen.mMajor),
+                                    Condition.prop("m_minor").eq(beaconItemSeen.mMinor));
+                    if (select.count() > 0) {
+                        BeaconItemSeen beaconItemSeen_db = (BeaconItemSeen) select.first();
+                        switch (position) {
+                            case 0:
+                                beaconItemSeen_db.mFavorites = !beaconItemSeen_db.mFavorites;
+                                beaconItemSeen_db.save();
+                                updateHistory();
+                                break;
+                            case 1:
+                                Intent sendIntent = new Intent();
+                                sendIntent.setAction(Intent.ACTION_SEND);
+                                sendIntent.putExtra(Intent.EXTRA_TEXT, beaconItemSeen_db.mNotification);
+                                sendIntent.setType("text/plain");
+                                startActivity(sendIntent);
+                                break;
+                            case 2:
+                                beaconItemSeen_db.delete();
+                                updateHistory();
+                                break;
+                        }
+                    }
+                    dialog.cancel();
+                }
+            });
+        }
+        dialog.show();
+        return true;
+    }
+
+    private class PopUpAdapter extends BaseAdapter {
+
+        private Context mContext;
+        private int [] mDrawable;
+        private int [] mTitleRow;
+
+        public PopUpAdapter(Context context, int [] drawable, int[] titleRow) {
+            this.mContext = context;
+            this.mDrawable = drawable;
+            this.mTitleRow = titleRow;
+        }
+
+        @Override
+        public int getCount() {
+            return mTitleRow.length;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mTitleRow[position];
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = LayoutInflater.from(mContext).inflate(R.layout.popup_history_row, null);
+            }
+            ImageView imageView = (ImageView) convertView.findViewById(R.id.image_popup_row);
+            TextView textView = (TextView) convertView.findViewById(R.id.text_popup_row);
+            textView.setText(mContext.getString(mTitleRow[position]));
+            imageView.setImageResource(mDrawable[position]);
+            return convertView;
+        }
+    }
 }

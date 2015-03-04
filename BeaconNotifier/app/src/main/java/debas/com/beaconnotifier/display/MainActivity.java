@@ -26,7 +26,6 @@ import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.github.ksoichiro.android.observablescrollview.Scrollable;
 import com.github.ksoichiro.android.observablescrollview.TouchInterceptionFrameLayout;
-import com.nineoldandroids.view.ViewHelper;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -306,7 +305,7 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
             // If interceptionLayout can move, it should intercept.
             // And once it begins to move, horizontal scroll shouldn't work any longer.
             int toolbarHeight = mToolbarView.getHeight();
-            int translationY = (int) ViewHelper.getTranslationY(mInterceptionLayout);
+            int translationY = (int) mInterceptionLayout.getTranslationY();
             boolean scrollingUp = 0 < diffY;
             boolean scrollingDown = diffY < 0;
             if (scrollingUp) {
@@ -332,8 +331,8 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
 
         @Override
         public void onMoveMotionEvent(MotionEvent ev, float diffX, float diffY) {
-            float translationY = ScrollUtils.getFloat(ViewHelper.getTranslationY(mInterceptionLayout) + diffY, -mToolbarView.getHeight(), 0);
-            ViewHelper.setTranslationY(mInterceptionLayout, translationY);
+            float translationY = ScrollUtils.getFloat(mInterceptionLayout.getTranslationY() + diffY, -mToolbarView.getHeight(), 0);
+            mInterceptionLayout.setTranslationY(translationY);
             FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mInterceptionLayout.getLayoutParams();
             lp.height = (int) ((translationY < 0 ? -translationY : translationY) + getScreenHeight());
             mInterceptionLayout.requestLayout();
@@ -385,11 +384,11 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
     }
 
     private boolean toolbarIsShown() {
-        return ViewHelper.getTranslationY(mInterceptionLayout) == 0;
+        return mInterceptionLayout.getTranslationY() == 0;
     }
 
     private boolean toolbarIsHidden() {
-        return ViewHelper.getTranslationY(mInterceptionLayout) == -mToolbarView.getHeight();
+        return mInterceptionLayout.getTranslationY() == -mToolbarView.getHeight();
     }
 
     private void showToolbar() {
@@ -401,14 +400,14 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
     }
 
     private void animateToolbar(final float toY) {
-        float layoutTranslationY = ViewHelper.getTranslationY(mInterceptionLayout);
+        float layoutTranslationY = mInterceptionLayout.getTranslationY();
         if (layoutTranslationY != toY) {
-            ValueAnimator animator = ValueAnimator.ofFloat(ViewHelper.getTranslationY(mInterceptionLayout), toY).setDuration(200);
+            ValueAnimator animator = ValueAnimator.ofFloat(mInterceptionLayout.getTranslationY(), toY).setDuration(200);
             animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     float translationY = (float) animation.getAnimatedValue();
-                    ViewHelper.setTranslationY(mInterceptionLayout, translationY);
+                    mInterceptionLayout.setTranslationY(translationY);
                     if (translationY < 0) {
                         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mInterceptionLayout.getLayoutParams();
                         lp.height = (int) (-translationY + getScreenHeight());

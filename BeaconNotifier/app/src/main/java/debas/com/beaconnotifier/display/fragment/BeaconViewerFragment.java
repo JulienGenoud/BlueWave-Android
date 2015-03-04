@@ -71,8 +71,6 @@ public class BeaconViewerFragment extends BaseFragment {
         mAnimationHashMap.put(AnimationVignette.BOUNCE,  R.anim.bounce);
         mAnimationHashMap.put(AnimationVignette.COLLAPSE,  R.anim.zoom_out);
 
-        startAnimationVignette(AnimationVignette.EXPAND, "0");
-
         mListView = (ListView) rootView.findViewById(R.id.listView);
 
         mDisplayBeaconAdapter = new DisplayBeaconAdapter(getActivity().getApplicationContext());
@@ -134,9 +132,6 @@ public class BeaconViewerFragment extends BaseFragment {
                     boolean change = true;
 
                     List<BeaconItemSeen> oldList = mDisplayBeaconAdapter.getBeaconList();
-
-
-
                     if (mBeaconArray.size() == 0 && oldList.size() != 0) {
                         startAnimationVignette(AnimationVignette.COLLAPSE, "" + beacons.size());
                     }

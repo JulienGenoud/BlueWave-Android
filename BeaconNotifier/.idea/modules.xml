@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/app/libs/AndroidStaggeredGrid/AndroidStaggeredGrid.iml" filepath="$PROJECT_DIR$/app/libs/AndroidStaggeredGrid/AndroidStaggeredGrid.iml" />
       <module fileurl="file://$PROJECT_DIR$/BeaconNotifier.iml" filepath="$PROJECT_DIR$/BeaconNotifier.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/libs/android-ago/android-ago.iml" filepath="$PROJECT_DIR$/app/libs/android-ago/android-ago.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />

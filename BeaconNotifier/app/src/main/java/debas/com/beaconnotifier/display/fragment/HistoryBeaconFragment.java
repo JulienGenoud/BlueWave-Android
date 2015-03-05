@@ -118,6 +118,7 @@ public class HistoryBeaconFragment extends BaseFragment implements AdapterView.O
 
         mFloatingActionsMenu = (FloatingActionsMenu) view.findViewById(R.id.floating_history_menu);
 
+        materialObservableGridView.setOnItemClickListener(onHistoryItemClickListener);
         materialObservableGridView.setOnItemLongClickListener(this);
 
         view.findViewById(R.id.floating_history_all).setOnClickListener(mFloatingButtonClickListener);

@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -202,25 +204,20 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
         boolean firstTimeRun = PreferencesHelper.getFirstLaunch(this);
         if (firstTimeRun) {
             if (Utils.checkInternetConnectivity(getApplicationContext())) {
-                final BeaconDataBase beaconDataBase = BeaconDataBase.getInstance(getApplicationContext());
+                BeaconDataBase beaconDataBase = BeaconDataBase.getInstance(getApplicationContext());
 
                 beaconDataBase.updateDB(getApplicationContext(), new AsyncTaskDB.OnDBUpdated() {
                     @Override
                     public void onDBUpdated(boolean result, int nbElement) {
                         if (!result) {
-                            Toast.makeText(MainActivity.this, "failed to update DB", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "Failed to get beacon list, check your connection and retry", Toast.LENGTH_LONG).show();
                         } else {
-                            Toast.makeText(MainActivity.this, "success to update DB : new element " + nbElement, Toast.LENGTH_LONG).show();
                             PreferencesHelper.setFirstLaunch(MainActivity.this, false);
                         }
                     }
                 });
-
-                for (int i = 0; i < 10; i++) {
-                    BeaconItemSeen.generateRandom().save();
-                }
             } else {
-                Toast.makeText(this, "Internet needed to update DB", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Failed to get beacon list, check your connection and retry", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -462,6 +459,22 @@ public class MainActivity extends BaseActivity implements BeaconConsumer, Observ
 
         public NavigationAdapter(FragmentManager fm) {
             super(fm);
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            final Object fragment = super.instantiateItem(container, position);
+            try {
+                final Field saveFragmentStateField = Fragment.class.getDeclaredField("mSavedFragmentState");
+                saveFragmentStateField.setAccessible(true);
+                final Bundle savedFragmentState = (Bundle) saveFragmentStateField.get(fragment);
+                if (savedFragmentState != null) {
+                    savedFragmentState.setClassLoader(Fragment.class.getClassLoader());
+                }
+            } catch (Exception e) {
+                Log.w("CustomFragmentStatePagerAdapter", "Could not get mSavedFragmentState field: " + e);
+            }
+            return fragment;
         }
 
         @Override

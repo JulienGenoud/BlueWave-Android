@@ -11,7 +11,7 @@ import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
-import com.nineoldandroids.view.ViewHelper;
+//import com.nineoldandroids.view.ViewHelper;
 
 import debas.com.beaconnotifier.R;
 
@@ -57,7 +57,7 @@ public class BeaconActivity extends BaseActivity implements ObservableScrollView
         if (bundle != null) {
             if (bundle.containsKey("POS")) {
                 //String info = String.valueOf();
-                if (bundle.getInt("POS") == 0) {
+                if (bundle.getInt("POS") == 1) {
                     getSupportActionBar().setTitle("MBA, Eliezer et Rebecca");
                     ((TextView)findViewById(R.id.body)).setText(getResources().getText(R.string.text2));
                 }
@@ -83,7 +83,7 @@ public class BeaconActivity extends BaseActivity implements ObservableScrollView
         int baseColor = getResources().getColor(R.color.primary);
         float alpha = 1 - (float) Math.max(0, mParallaxImageHeight - scrollY) / mParallaxImageHeight;
         mToolbarView.setBackgroundColor(ScrollUtils.getColorWithAlpha(alpha, baseColor));
-        ViewHelper.setTranslationY(mImageView, scrollY / 2);
+        mImageView.setTranslationY(scrollY / 2);
     }
 
     @Override

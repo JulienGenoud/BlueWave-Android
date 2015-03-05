@@ -22,12 +22,7 @@ public class BeaconItemSeen extends BeaconItemDB {
     }
 
     public BeaconItemSeen(BeaconItemDB beaconItemDB) {
-        mBeaconId = beaconItemDB.mBeaconId;
-        mUuid = beaconItemDB.mUuid;
-        mMajor = beaconItemDB.mMajor;
-        mMinor = beaconItemDB.mMinor;
-        mNotification = beaconItemDB.mNotification;
-        mRange = beaconItemDB.mRange;
+        updateField(beaconItemDB);
     }
 
     static Random random = new Random();
@@ -73,5 +68,14 @@ public class BeaconItemSeen extends BeaconItemDB {
         beaconItemSeen.mConsulted = (cursor.getInt(cursor.getColumnIndex("M_CONSULTED")) == 1);
 
         return beaconItemSeen;
+    }
+
+    public void updateField(BeaconItemDB beaconItemDB) {
+        mBeaconId = beaconItemDB.mBeaconId;
+        mUuid = beaconItemDB.mUuid;
+        mMajor = beaconItemDB.mMajor;
+        mMinor = beaconItemDB.mMinor;
+        mNotification = beaconItemDB.mNotification;
+        mRange = beaconItemDB.mRange;
     }
 }

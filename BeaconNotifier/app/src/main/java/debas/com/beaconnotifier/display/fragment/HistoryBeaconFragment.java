@@ -49,8 +49,9 @@ public class HistoryBeaconFragment extends BaseFragment {
     private AdapterView.OnItemClickListener onHistoryItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Toast.makeText(getActivity(), "Should open !", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), "Should open !", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getActivity(), BeaconActivity.class);
+            intent.putExtra("POS", position);
             startActivity(intent);
         }
     };

@@ -23,7 +23,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:adjustViewBounds="true"
-                    android:src="@drawable/example"
+                    android:src="@drawable/tableau"
                     android:id="@+id/imageView"/>
 
                 <ImageView

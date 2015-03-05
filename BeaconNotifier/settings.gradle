@@ -1,1 +1,1 @@
-include ':app', ':app:libs:android-ago'
+include ':app', ':app:libs:android-ago', ':app:libs:AndroidStaggeredGrid'

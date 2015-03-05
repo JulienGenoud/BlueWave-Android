@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="/Users/julien/Workspace/BlueWave-Android/BeaconNotifier/app/libs/AndroidStaggeredGrid/src/main/assets"/></dataSet><dataSet config="release"><source path="/Users/julien/Workspace/BlueWave-Android/BeaconNotifier/app/libs/AndroidStaggeredGrid/src/release/assets"/></dataSet></merger>

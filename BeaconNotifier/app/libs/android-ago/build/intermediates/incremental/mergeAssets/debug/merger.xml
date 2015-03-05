@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="/home/debas/Project/tek3/PFA/BlueWave-Android/BeaconNotifier/app/libs/android-ago/src/main/assets"/></dataSet><dataSet config="debug"><source path="/home/debas/Project/tek3/PFA/BlueWave-Android/BeaconNotifier/app/libs/android-ago/src/debug/assets"/></dataSet></merger>
+<merger version="3"><dataSet config="main"><source path="/Users/julien/Workspace/BlueWave-Android/BeaconNotifier/app/libs/android-ago/src/main/assets"/></dataSet><dataSet config="debug"><source path="/Users/julien/Workspace/BlueWave-Android/BeaconNotifier/app/libs/android-ago/src/debug/assets"/></dataSet></merger>

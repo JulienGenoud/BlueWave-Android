@@ -34,6 +34,7 @@ public class NotificationManager
             i.putExtra(BeaconActivity.BEACON_UUID, beaconItemSeen.mUuid);
             i.putExtra(BeaconActivity.BEACON_MAJOR, beaconItemSeen.mMajor);
             i.putExtra(BeaconActivity.BEACON_MINOR, beaconItemSeen.mMinor);
+            i.putExtra("POS", 0);
             i.putExtra("FROM_NOTIFICATION", true);
 
             PendingIntent contentIntent = PendingIntent

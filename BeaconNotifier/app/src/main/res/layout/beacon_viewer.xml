@@ -82,7 +82,8 @@
                     android:text="@string/activate_bluetooth"
                     android:textColor="@color/white"
                     android:textSize="20sp"
-                    customAttribute:fontStyle="cond_light"/>
+                    customAttribute:fontStyle="cond_light"
+                    android:visibility="gone" />
 
 
             </LinearLayout>
@@ -95,7 +96,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:visibility="gone">
 
 
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"

@@ -29,7 +29,8 @@
         <RelativeLayout
             android:id="@+id/nobeacon"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:visibility="visible">
 
             <ImageView
                 android:id="@+id/myanimation"
@@ -64,31 +65,30 @@
                 android:textSize="20sp"
                 customAttribute:fontStyle="cond_light" />
 
+            <LinearLayout
+                android:id="@+id/bluetooth_disabled"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible"
+                android:layout_below="@+id/textView4"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+
+                <debas.com.beaconnotifier.TypefacedTextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center|top"
+                    android:text="@string/activate_bluetooth"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    customAttribute:fontStyle="cond_light"/>
+
+
+            </LinearLayout>
+
         </RelativeLayout>
 
-
-        <LinearLayout
-            android:id="@+id/bluetooth_disabled"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_margin="16dp" />
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center"
-                android:text="COUCOU" />
-
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/beacons_lay"
@@ -139,7 +139,7 @@
 
 
                 <RelativeLayout
-                    android:layout_width="120dp"
+                    android:layout_width="220dp"
                     android:layout_height="125dp"
                     android:id="@+id/beacon1"
                     android:clickable="true"
@@ -153,35 +153,141 @@
                         android:layout_height="20dp"
                         android:layout_centerHorizontal="true"
                         android:gravity="center|bottom"
-                        android:text="@string/musee"
+                        android:text="@string/type_beacon"
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         customAttribute:fontStyle="cond_bold"
-                        android:id="@+id/view" />
+                        android:id="@+id/view1_1" />
+
 
                     <debas.com.beaconnotifier.TypefacedTextView
                         android:layout_width="fill_parent"
-                        android:layout_height="30dp"
-                        android:gravity="center|top"
-                        android:text="@string/detected"
+                        android:layout_height="20dp"
+                        android:gravity="center|bottom"
+                        android:text="@string/distance"
                         android:textColor="@color/black"
                         android:textSize="15sp"
-                        customAttribute:fontStyle="cond_light"
-                        android:layout_above="@+id/profile_image"
-                        android:layout_centerHorizontal="true" />
+                        customAttribute:fontStyle="cond_bold"
+                        android:id="@+id/view1_2"
+                        android:layout_below="@+id/view1_1"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         xmlns:app="http://schemas.android.com/apk/res-auto"
-                        android:id="@+id/profile_image"
+                        android:id="@+id/image1"
                         android:layout_width="75dp"
                         android:layout_height="75dp"
                         android:src="@drawable/example"
                         app:border_width="3dp"
                         app:border_color="#ffffffff"
                         android:layout_alignParentBottom="true"
-                        android:layout_centerHorizontal="true" />
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="5dp" />
 
                     </RelativeLayout>
+
+
+
+                <RelativeLayout
+                    android:layout_width="220dp"
+                    android:layout_height="125dp"
+                    android:id="@+id/beacon2"
+                    android:clickable="true"
+                    android:layout_below="@+id/beacon1"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true">
+
+
+                    <debas.com.beaconnotifier.TypefacedTextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="20dp"
+                        android:layout_centerHorizontal="true"
+                        android:gravity="center|bottom"
+                        android:text="@string/type_beacon"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        customAttribute:fontStyle="cond_bold"
+                        android:id="@+id/view2_1" />
+
+
+                    <debas.com.beaconnotifier.TypefacedTextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="20dp"
+                        android:gravity="center|bottom"
+                        android:text="@string/distance"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        customAttribute:fontStyle="cond_bold"
+                        android:id="@+id/view2_2"
+                        android:layout_below="@+id/view2_1"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/image2"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:src="@drawable/example"
+                        app:border_width="3dp"
+                        app:border_color="#ffffffff"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="5dp" />
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="220dp"
+                    android:layout_height="125dp"
+                    android:id="@+id/beacon3"
+                    android:clickable="true"
+                    android:layout_below="@+id/beacon1"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true">
+
+
+                    <debas.com.beaconnotifier.TypefacedTextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="20dp"
+                        android:layout_centerHorizontal="true"
+                        android:gravity="center|bottom"
+                        android:text="@string/type_beacon"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        customAttribute:fontStyle="cond_bold"
+                        android:id="@+id/view3_1" />
+
+
+                    <debas.com.beaconnotifier.TypefacedTextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="20dp"
+                        android:gravity="center|bottom"
+                        android:text="@string/distance"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        customAttribute:fontStyle="cond_bold"
+                        android:id="@+id/view3_2"
+                        android:layout_below="@+id/view3_1"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/image3"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:src="@drawable/example"
+                        app:border_width="3dp"
+                        app:border_color="#ffffffff"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="5dp" />
+
+                </RelativeLayout>
+
 
 
                 <!--<com.pkmmte.view.CircularImageView-->

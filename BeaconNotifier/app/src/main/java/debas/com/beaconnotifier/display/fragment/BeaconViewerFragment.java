@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 
@@ -35,12 +36,14 @@ public class BeaconViewerFragment extends BaseFragment {
     private ListView mListView = null;
     private DisplayBeaconAdapter mDisplayBeaconAdapter = null;
     private List<BeaconItemSeen> mBeaconArray = new ArrayList<>();
+    private List<BeaconItemSeen> mBeaconTempArray = new ArrayList<>();
     private SortBeacon mSortBeacon = new SortBeacon();
     private ImageView myAnimation;
     private ImageView mVignetteImageView;
     private HashMap<AnimationVignette, Integer> mAnimationHashMap = new HashMap<>();
     private RelativeLayout beaconView;
     private LinearLayout beaconLay;
+
 
     public static enum AnimationVignette {
         EXPAND, COLLAPSE, BOUNCE
@@ -73,8 +76,8 @@ public class BeaconViewerFragment extends BaseFragment {
 
         mListView = (ListView) rootView.findViewById(R.id.listView);
 
-        mDisplayBeaconAdapter = new DisplayBeaconAdapter(getActivity().getApplicationContext());
-        mListView.setAdapter(mDisplayBeaconAdapter);
+//        mDisplayBeaconAdapter = new DisplayBeaconAdapter(getActivity().getApplicationContext());
+//        mListView.setAdapter(mDisplayBeaconAdapter);
     }
 
     private void startAnimationVignette(AnimationVignette animationVignette, String text) {
@@ -125,13 +128,13 @@ public class BeaconViewerFragment extends BaseFragment {
 
         Log.d("update", "beacon " + beacons.size());
 
-        Activity activity = getActivity();
+        final Activity activity = getActivity();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     boolean change = true;
 
-                    List<BeaconItemSeen> oldList = mDisplayBeaconAdapter.getBeaconList();
+                    List<BeaconItemSeen> oldList = mBeaconTempArray;//mDisplayBeaconAdapter.getBeaconList();
                     if (mBeaconArray.size() == 0 && oldList.size() != 0) {
                         startAnimationVignette(AnimationVignette.COLLAPSE, "" + beacons.size());
                     }
@@ -153,9 +156,43 @@ public class BeaconViewerFragment extends BaseFragment {
                         beaconView.setVisibility(View.VISIBLE);
                     }
 
+
                     if (beacons.size() != 0 || change) {
-                        mDisplayBeaconAdapter.setBeaconList(mBeaconArray);
-                        mDisplayBeaconAdapter.notifyDataSetChanged();
+
+                        mBeaconTempArray = mBeaconArray;
+
+                        for (int i = 0; i < 3; i++) {
+                            int id1 = getResources().getIdentifier("beacon" + String.valueOf(i + 1), "id", activity.getPackageName());
+                            (activity.findViewById(id1)).setVisibility(View.GONE);
+                        }
+
+
+                        for (int i = 0; i < mBeaconArray.size(); i++) {
+
+
+                            int id1 = getResources().getIdentifier("view" + String.valueOf(i + 1) +  "_1", "id", activity.getPackageName());
+                            int id2 = getResources().getIdentifier("view" + String.valueOf(i + 1) +  "_2", "id", activity.getPackageName());
+                            int id3 = getResources().getIdentifier("image" + String.valueOf(i + 1), "id", activity.getPackageName());
+
+                            int id4 = getResources().getIdentifier("beacon" + String.valueOf(i + 1), "id", activity.getPackageName());
+
+                            (activity.findViewById(id4)).setVisibility(View.VISIBLE);
+                            TextView beacon_Title = (TextView) activity.findViewById(id1);
+                            TextView beacon_Distance = (TextView) activity.findViewById(id2);
+
+                            Animation animFadein = AnimationUtils.loadAnimation(activity.getApplicationContext(),
+                                    R.anim.bounce2);
+
+
+                            activity.findViewById(id3).startAnimation(animFadein);
+
+                            BeaconItemSeen beacon = mBeaconArray.get(i);
+
+                            beacon_Title.setText(beacon.mMajor + " - " + beacon.mMinor);
+                            beacon_Distance.setText(String.format("%.2f meters away", beacon.mDistance));
+                        }
+                   //    mDisplayBeaconAdapter.setBeaconList(mBeaconArray);
+   //                     mDisplayBeaconAdapter.notifyDataSetChanged();
                     }
                 }
           });
@@ -166,4 +203,6 @@ public class BeaconViewerFragment extends BaseFragment {
     public void buildMenu(Menu menu) {
 
     }
+
+
 }

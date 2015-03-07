@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:customAttribute="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:layout_margin="7dp"
+    android:background="@color/primary4"
+    android:orientation="vertical"
+    >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="?android:selectableItemBackground"
+        android:clickable="true"
+        android:id="@+id/selectable"
+        android:padding="8dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/image1"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/example"
+            app:border_color="#ffffffff"
+            app:border_width="3dp" />
+
+        <debas.com.beaconnotifier.TypefacedTextView
+            android:id="@+id/name"
+            android:layout_width="fill_parent"
+            android:layout_height="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/image1"
+            android:layout_toRightOf="@+id/image1"
+            android:gravity="center|bottom"
+            android:text="@string/type_beacon"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            customAttribute:fontStyle="cond_bold" />
+
+        <debas.com.beaconnotifier.TypefacedTextView
+            android:id="@+id/distance"
+            android:layout_width="fill_parent"
+            android:layout_height="20dp"
+            android:layout_below="@+id/name"
+            android:layout_toEndOf="@+id/image1"
+            android:layout_toRightOf="@+id/image1"
+            android:gravity="center|bottom"
+            android:text="@string/distance"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            customAttribute:fontStyle="cond_bold" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

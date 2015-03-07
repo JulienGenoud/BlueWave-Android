@@ -9,19 +9,6 @@
     android:fillViewport="true"
     android:overScrollMode="never">
 
-    <!--<ImageView-->
-    <!--android:layout_width="260dp"-->
-    <!--android:layout_height="260dp"-->
-    <!--android:id="@+id/imageanim"-->
-    <!--android:layout_centerVertical="true"-->
-    <!--android:layout_centerHorizontal="true"-->
-    <!--/>-->
-
-    <!--<TextView-->
-    <!--android:layout_width="fill_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="@string/hello" />-->
-
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">

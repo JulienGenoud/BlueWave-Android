@@ -1,6 +1,8 @@
 package debas.com.beaconnotifier.display.fragment;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,6 +29,7 @@ import java.util.List;
 import debas.com.beaconnotifier.R;
 import debas.com.beaconnotifier.SlidingTabLayout;
 import debas.com.beaconnotifier.SlidingTabStrip;
+import debas.com.beaconnotifier.display.BeaconActivity;
 import debas.com.beaconnotifier.display.DisplayBeaconAdapter;
 import debas.com.beaconnotifier.model.BeaconItemSeen;
 import debas.com.beaconnotifier.utils.SortBeacon;
@@ -57,10 +60,10 @@ public class BeaconViewerFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View rootView, @Nullable Bundle savedInstanceState) {
-        beaconView = (RelativeLayout)rootView.findViewById(R.id.nobeacon);
-        beaconLay = (LinearLayout)rootView.findViewById(R.id.beacons_lay);
+        beaconView = (RelativeLayout) rootView.findViewById(R.id.nobeacon);
+        beaconLay = (LinearLayout) rootView.findViewById(R.id.beacons_lay);
 
-        myAnimation = (ImageView)rootView.findViewById(R.id.myanimation);
+        myAnimation = (ImageView) rootView.findViewById(R.id.myanimation);
         myAnimation.setBackgroundResource(R.drawable.imageanim);
         AnimationDrawable frameAnimation = (AnimationDrawable) myAnimation.getBackground();
         frameAnimation.start();
@@ -70,12 +73,11 @@ public class BeaconViewerFragment extends BaseFragment {
         RelativeLayout view = (RelativeLayout) slidingTabStrip.getChildAt(1);
         mVignetteImageView = (ImageView) view.findViewById(R.id.tab_around_beacon_count);
 
-        mAnimationHashMap.put(AnimationVignette.EXPAND,  R.anim.zoom_in);
-        mAnimationHashMap.put(AnimationVignette.BOUNCE,  R.anim.bounce);
-        mAnimationHashMap.put(AnimationVignette.COLLAPSE,  R.anim.zoom_out);
+        mAnimationHashMap.put(AnimationVignette.EXPAND, R.anim.zoom_in);
+        mAnimationHashMap.put(AnimationVignette.BOUNCE, R.anim.bounce);
+        mAnimationHashMap.put(AnimationVignette.COLLAPSE, R.anim.zoom_out);
 
-        mListView = (ListView) rootView.findViewById(R.id.listView);
-
+//        mListView = (ListView) rootView.findViewById(R.id.listView);
 //        mDisplayBeaconAdapter = new DisplayBeaconAdapter(getActivity().getApplicationContext());
 //        mListView.setAdapter(mDisplayBeaconAdapter);
     }
@@ -137,8 +139,7 @@ public class BeaconViewerFragment extends BaseFragment {
                     List<BeaconItemSeen> oldList = mBeaconTempArray;//mDisplayBeaconAdapter.getBeaconList();
                     if (mBeaconArray.size() == 0 && oldList.size() != 0) {
                         startAnimationVignette(AnimationVignette.COLLAPSE, "" + beacons.size());
-                    }
-                    else {
+                    } else {
                         beaconView.setVisibility(View.GONE);
                         beaconLay.setVisibility(View.VISIBLE);
 
@@ -167,36 +168,59 @@ public class BeaconViewerFragment extends BaseFragment {
                         }
 
 
+                        LinearLayout ll = (LinearLayout) activity.findViewById(R.id.linearlayout);
+                        ll.removeAllViews();
+
+
                         for (int i = 0; i < mBeaconArray.size(); i++) {
 
-
-                            int id1 = getResources().getIdentifier("view" + String.valueOf(i + 1) +  "_1", "id", activity.getPackageName());
-                            int id2 = getResources().getIdentifier("view" + String.valueOf(i + 1) +  "_2", "id", activity.getPackageName());
-                            int id3 = getResources().getIdentifier("image" + String.valueOf(i + 1), "id", activity.getPackageName());
-
-                            int id4 = getResources().getIdentifier("beacon" + String.valueOf(i + 1), "id", activity.getPackageName());
-
-                            (activity.findViewById(id4)).setVisibility(View.VISIBLE);
-                            TextView beacon_Title = (TextView) activity.findViewById(id1);
-                            TextView beacon_Distance = (TextView) activity.findViewById(id2);
-
-                            Animation animFadein = AnimationUtils.loadAnimation(activity.getApplicationContext(),
-                                    R.anim.bounce2);
-
-
-                            activity.findViewById(id3).startAnimation(animFadein);
-
                             BeaconItemSeen beacon = mBeaconArray.get(i);
+                            if (i < 3) {
+                                int id1 = getResources().getIdentifier("view" + String.valueOf(i + 1) + "_1", "id", activity.getPackageName());
+                                int id2 = getResources().getIdentifier("view" + String.valueOf(i + 1) + "_2", "id", activity.getPackageName());
+                                int id3 = getResources().getIdentifier("image" + String.valueOf(i + 1), "id", activity.getPackageName());
+                                int id4 = getResources().getIdentifier("beacon" + String.valueOf(i + 1), "id", activity.getPackageName());
+                                View beaconview = activity.findViewById(id4);
 
-                            beacon_Title.setText(beacon.mMajor + " - " + beacon.mMinor);
-                            beacon_Distance.setText(String.format("%.2f meters away", beacon.mDistance));
+                                beaconview.setVisibility(View.VISIBLE);
+                                TextView beacon_Title = (TextView) activity.findViewById(id1);
+                                TextView beacon_Distance = (TextView) activity.findViewById(id2);
+
+                                Animation animFadein = AnimationUtils.loadAnimation(activity.getApplicationContext(),
+                                        R.anim.bounce2);
+                                activity.findViewById(id3).startAnimation(animFadein);
+                                beacon_Title.setText(beacon.mMajor + " - " + beacon.mMinor);
+                                beacon_Distance.setText(String.format("%.2f meters away", beacon.mDistance));
+                                beaconview.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(getActivity(), BeaconActivity.class);
+                                        intent.putExtra("POS", 0);
+                                        startActivity(intent);
+                                    }
+                                });
+                            } else {
+                                LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.beacon_item_view2, ll, false);
+                                ((TextView) layout.findViewById(R.id.name)).setText(beacon.mMajor + " - " + beacon.mMinor);
+                                ((TextView) layout.findViewById(R.id.distance)).setText(String.format("%.2f meters away", beacon.mDistance));
+                                ll.addView(layout);
+                                layout.findViewById(R.id.selectable).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(getActivity(), BeaconActivity.class);
+                                        intent.putExtra("POS", 0);
+                                        startActivity(intent);
+                                    }
+                                });
+                            }
                         }
-                   //    mDisplayBeaconAdapter.setBeaconList(mBeaconArray);
-   //                     mDisplayBeaconAdapter.notifyDataSetChanged();
                     }
+
+
                 }
-          });
-         }
+            });
+        }
     }
 
     @Override

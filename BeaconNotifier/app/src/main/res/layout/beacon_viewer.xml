@@ -130,12 +130,16 @@
                     customAttribute:fontStyle="cond_light" />
 
 
-                <ListView
-                    android:id="@+id/listView"
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:id="@+id/linearlayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/detected"
-                    android:layout_gravity="center_horizontal" />
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="20dp">
+
+                </LinearLayout>
 
 
 
@@ -143,6 +147,7 @@
                     android:layout_width="220dp"
                     android:layout_height="125dp"
                     android:id="@+id/beacon1"
+                    android:background="?android:selectableItemBackground"
                     android:clickable="true"
                     android:layout_alignTop="@+id/imgbeacon"
                     android:layout_centerHorizontal="true"
@@ -194,6 +199,7 @@
                     android:layout_width="220dp"
                     android:layout_height="125dp"
                     android:id="@+id/beacon2"
+                    android:background="?android:selectableItemBackground"
                     android:clickable="true"
                     android:layout_below="@+id/beacon1"
                     android:layout_alignParentLeft="true"
@@ -244,6 +250,7 @@
                     android:layout_width="220dp"
                     android:layout_height="125dp"
                     android:id="@+id/beacon3"
+                    android:background="?android:selectableItemBackground"
                     android:clickable="true"
                     android:layout_below="@+id/beacon1"
                     android:layout_alignParentRight="true"

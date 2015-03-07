@@ -55,13 +55,10 @@ Quam libero nulla netus eu porta curae, ut nulla bibendum facilisis et urna sed,
     <string name="share">Partager</string>
     <string name="delete">Supprimer</string>
     <string name="remove_like">Retirer de mes favoris</string>
-<<<<<<< HEAD
 
     <string name="action_favorites">favoris</string>
     <string name="loading_video">Loading video ...</string>
-=======
     <string name="activate_bluetooth">merci d\'activer le bluetooth !</string>
     <string name="type_beacon">type beacon</string>
     <string name="distance">distance</string>
->>>>>>> 280e400466e82ed73bf04a59e56d60359f2b5158
 </resources>

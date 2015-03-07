@@ -16,7 +16,8 @@
         tools:replace="android:icon"
         android:icon="@drawable/icon_bluewave"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:hardwareAccelerated="true" >
 
         <meta-data android:name="DATABASE" android:value="beacons.db" />
         <meta-data android:name="VERSION" android:value="3" />
@@ -53,6 +54,7 @@
             android:parentActivityName="debas.com.beaconnotifier.display.MainActivity"
             android:launchMode="singleTop"
             android:taskAffinity=""
+            android:screenOrientation="portrait"
             android:excludeFromRecents="true">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data

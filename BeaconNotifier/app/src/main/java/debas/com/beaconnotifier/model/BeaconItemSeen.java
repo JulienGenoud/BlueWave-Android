@@ -30,7 +30,6 @@ public class BeaconItemSeen extends BeaconItemDB {
     public static BeaconItemSeen generateRandom() {
         BeaconItemSeen beaconItemSeen = new BeaconItemSeen();
 
-        beaconItemSeen.mBeaconId = "" + random.nextInt();
         beaconItemSeen.mUuid = "" + random.nextInt();
         beaconItemSeen.mMajor = random.nextInt();
         beaconItemSeen.mMinor = random.nextInt();
@@ -47,7 +46,6 @@ public class BeaconItemSeen extends BeaconItemDB {
         }
         BeaconItemSeen b = (BeaconItemSeen) o;
         if (this.mUuid.equalsIgnoreCase(b.mUuid)
-                && this.mBeaconId.equalsIgnoreCase(b.mBeaconId)
                 && this.mMinor == b.mMinor
                 && this.mMajor == b.mMajor)
             return true;
@@ -57,9 +55,10 @@ public class BeaconItemSeen extends BeaconItemDB {
     public static BeaconItemSeen fromCursor(Cursor cursor) {
         BeaconItemSeen beaconItemSeen = new BeaconItemSeen();
 
+        beaconItemSeen.mSerial = cursor.getString(cursor.getColumnIndex("M_SERIAL"));
+        beaconItemSeen.mTitle = cursor.getString(cursor.getColumnIndex("M_TITLE"));
         beaconItemSeen.mSeen = cursor.getLong(cursor.getColumnIndex("M_SEEN"));
         beaconItemSeen.mFavorites = (cursor.getInt(cursor.getColumnIndex("M_FAVORITES")) == 1);
-        beaconItemSeen.mBeaconId = cursor.getString(cursor.getColumnIndex("M_BEACON_ID"));
         beaconItemSeen.mUuid = cursor.getString(cursor.getColumnIndex("M_UUID"));
         beaconItemSeen.mNotification = cursor.getString(cursor.getColumnIndex("M_NOTIFICATION"));
         beaconItemSeen.mMajor = cursor.getInt(cursor.getColumnIndex("M_MAJOR"));
@@ -71,7 +70,8 @@ public class BeaconItemSeen extends BeaconItemDB {
     }
 
     public void updateField(BeaconItemDB beaconItemDB) {
-        mBeaconId = beaconItemDB.mBeaconId;
+        mTitle = beaconItemDB.mTitle;
+        mSerial = beaconItemDB.mSerial;
         mUuid = beaconItemDB.mUuid;
         mMajor = beaconItemDB.mMajor;
         mMinor = beaconItemDB.mMinor;

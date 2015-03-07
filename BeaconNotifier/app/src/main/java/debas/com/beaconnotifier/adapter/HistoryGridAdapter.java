@@ -14,6 +14,7 @@ import com.github.curioustechizen.ago.RelativeTimeTextView;
 
 import debas.com.beaconnotifier.R;
 import debas.com.beaconnotifier.model.BeaconItemSeen;
+import debas.com.beaconnotifier.utils.Utils;
 
 /**
  * Created by debas on 28/02/15.
@@ -40,7 +41,9 @@ public class HistoryGridAdapter extends CursorAdapter {
 
         TextView textView = (TextView) view.findViewById(R.id.name_beacon);
         RelativeTimeTextView lastTimeSeen = (RelativeTimeTextView) view.findViewById(R.id.last_time_seen);
+        ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
 
+        imageView.setImageResource(Utils.getAssociatedImage(beaconItemSeen.mMajor, beaconItemSeen.mMinor));
         textView.setText(beaconItemSeen.mNotification);
         lastTimeSeen.setReferenceTime(beaconItemSeen.mSeen);
         textView.setPaintFlags(Paint.FAKE_BOLD_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);

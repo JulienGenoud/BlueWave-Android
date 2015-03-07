@@ -55,4 +55,7 @@ Quam libero nulla netus eu porta curae, ut nulla bibendum facilisis et urna sed,
     <string name="share">Partager</string>
     <string name="delete">Supprimer</string>
     <string name="remove_like">Retirer de mes favoris</string>
+
+    <string name="action_favorites">favoris</string>
+    <string name="loading_video">Loading video ...</string>
 </resources>

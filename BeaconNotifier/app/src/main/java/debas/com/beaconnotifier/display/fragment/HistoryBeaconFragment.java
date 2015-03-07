@@ -14,16 +14,16 @@ import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -50,15 +50,23 @@ public class HistoryBeaconFragment extends BaseFragment implements AdapterView.O
     private int mCurrentSection = R.id.floating_history_all;
     private String mCurrentWhereFilter = "", mCurrentWhereSearch = "";
 
+    static final int BEACON_ACTIVTY = 1;
+
     private AdapterView.OnItemClickListener onHistoryItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//            Toast.makeText(getActivity(), "Should open !", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(getActivity(), BeaconActivity.class);
-            intent.putExtra("POS", position);
-            startActivity(intent);
+            BeaconItemSeen beaconItemSeen = (BeaconItemSeen) view.getTag();
+            startBeaconActivity(beaconItemSeen);
         }
     };
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("HistoryBeacon", "Activity result " + requestCode);
+        if (requestCode == BEACON_ACTIVTY) {
+            updateHistory();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,13 +78,8 @@ public class HistoryBeaconFragment extends BaseFragment implements AdapterView.O
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mSearchViewAdapter = new SearchViewAdapter(((ActionBarActivity) getActivity()).getSupportActionBar().getThemedContext());
         setRetainInstance(true);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     }
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
@@ -84,7 +87,7 @@ public class HistoryBeaconFragment extends BaseFragment implements AdapterView.O
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.favorites_heart:
-                    ImageView imageView = (ImageView) v;
+                    final ImageView imageView = (ImageView) v;
                     BeaconItemSeen beaconItemSeen = (BeaconItemSeen) v.getTag();
                     Class beaconClass = BeaconItemSeen.class;
                     Select select = Select.from(beaconClass)
@@ -93,12 +96,14 @@ public class HistoryBeaconFragment extends BaseFragment implements AdapterView.O
                                     Condition.prop("m_minor").eq(beaconItemSeen.mMinor));
                     if (select.count() > 0) {
                         BeaconItemSeen beaconItemSeenSugar = (BeaconItemSeen) select.first();
-
+                        Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.bounce_heart);
                         if (beaconItemSeenSugar.mFavorites) {
                             imageView.setImageResource(R.drawable.favorites_empty);
                         } else {
                             imageView.setImageResource(R.drawable.favorites_full);
                         }
+                        imageView.startAnimation(animation);
+
                         beaconItemSeenSugar.mFavorites = !beaconItemSeenSugar.mFavorites;
                         beaconItemSeenSugar.save();
                         updateHistory();
@@ -329,15 +334,18 @@ public class HistoryBeaconFragment extends BaseFragment implements AdapterView.O
             Cursor historyClickCursor = mSearchViewAdapter.getCursor();
 
             historyClickCursor.moveToPosition(i);
-
             BeaconItemSeen beaconItemSeen = BeaconItemSeen.fromCursor(historyClickCursor);
-
-            Log.d("suggestion click : ", i + "" + " | " + historyClickCursor.getColumnName(2));
-            Toast.makeText(getActivity(), "on click " + i + " | " + beaconItemSeen.mNotification, Toast.LENGTH_SHORT).show();
+            startBeaconActivity(beaconItemSeen);
 
             return true;
         }
     };
+
+    public void startBeaconActivity(BeaconItemSeen beaconItemSeen) {
+        Intent intent = new Intent(getActivity(), BeaconActivity.class);
+        intent.putExtra(BeaconActivity.BEACON_EXTRA, beaconItemSeen);
+        startActivityForResult(intent, BEACON_ACTIVTY);
+    }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {

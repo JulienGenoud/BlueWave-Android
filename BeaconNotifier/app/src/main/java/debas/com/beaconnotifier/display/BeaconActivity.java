@@ -1,5 +1,6 @@
 package debas.com.beaconnotifier.display;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -24,6 +25,9 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.orm.query.Condition;
 import com.orm.query.Select;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import debas.com.beaconnotifier.R;
 import debas.com.beaconnotifier.VideoEnabledWebChromeClient;
@@ -85,7 +89,7 @@ public class BeaconActivity extends BaseActivity implements ObservableScrollView
                             @Override
                             public void onCompleted(Exception e, JsonArray result) {
                                 if (e == null) {
-                                    Toast.makeText(BeaconActivity.this, result.toString(), Toast.LENGTH_LONG).show();
+                                   // Toast.makeText(BeaconActivity.this, result.toString(), Toast.LENGTH_LONG).show();
                                     mImageView.setImageResource(Utils.getAssociatedImage(mBeaconItemSeen.mMajor, mBeaconItemSeen.mMinor));
                                     fillLinearLayout(result, (LinearLayout) findViewById(R.id.body));
                                 } else {
@@ -100,23 +104,23 @@ public class BeaconActivity extends BaseActivity implements ObservableScrollView
     }
 
     private void fillLinearLayout(JsonArray result, LinearLayout layoutBody) {
-        {
-            JsonObject jsonObject;
-
-            jsonObject = new JsonObject();
-            jsonObject.addProperty("type", "text");
-            jsonObject.addProperty("content", "« À l’issue du cursus en cinq ans, l’étudiant d’Epitech est un expert en informatique, autonome, responsable et parfaitement adaptable au monde de l’entreprise. Ultracompétent techniquement, il sait bien évidemment créer et combiner idées et technologies, mais également s’entourer des meilleurs partenaires pour diriger ses projets. Dans un monde en évolution permanente où l’innovation dicte les règles, il dispose ainsi des armes indispensables à sa réussite.»\n" +
-                    "\n" +
-                    "Emmanuel Carli, Directeur Général");
-
-            result.add(jsonObject);
-
-            jsonObject = new JsonObject();
-            jsonObject.addProperty("type", "image");
-            jsonObject.addProperty("content", "http://i.imgur.com/PUDpdel.png");
-
-            result.add(jsonObject);
-        }
+//        {
+//            JsonObject jsonObject;
+//
+//            jsonObject = new JsonObject();
+//            jsonObject.addProperty("type", "text");
+//            jsonObject.addProperty("content", "« À l’issue du cursus en cinq ans, l’étudiant d’Epitech est un expert en informatique, autonome, responsable et parfaitement adaptable au monde de l’entreprise. Ultracompétent techniquement, il sait bien évidemment créer et combiner idées et technologies, mais également s’entourer des meilleurs partenaires pour diriger ses projets. Dans un monde en évolution permanente où l’innovation dicte les règles, il dispose ainsi des armes indispensables à sa réussite.»\n" +
+//                    "\n" +
+//                    "Emmanuel Carli, Directeur Général");
+//
+//            result.add(jsonObject);
+//
+//            jsonObject = new JsonObject();
+//            jsonObject.addProperty("type", "image");
+//            jsonObject.addProperty("content", "http://i.imgur.com/PUDpdel.png");
+//
+//            result.add(jsonObject);
+//        }
         for (int i = 0; i < result.size(); i++) {
             JsonObject jsonObject = result.get(i).getAsJsonObject();
             String type = jsonObject.get("type").getAsString();
@@ -129,15 +133,15 @@ public class BeaconActivity extends BaseActivity implements ObservableScrollView
                     TextView textView = new TextView(this);
                     textView.setTextAppearance(this, R.style.Base_TextAppearance_AppCompat_Medium);
                     textView.setText(content);
-                    layoutBody.addView(textView, i, layoutParams);
+                    layoutBody.addView(textView, layoutParams);
                     break;
                 case "image":
                     ImageView imageView = new ImageView(this);
                     Ion.with(imageView)
-                            .error(R.drawable.example)
+                            .error(R.drawable.def)
                             .load(content);
                     imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    layoutBody.addView(imageView, i, layoutParams);
+                    layoutBody.addView(imageView, layoutParams);
                     break;
                 case "video":
                     View nonVideoLayout = findViewById(R.id.nonvideo_layout); // Your own view, read class comments
@@ -195,11 +199,31 @@ public class BeaconActivity extends BaseActivity implements ObservableScrollView
                     webView.loadData(stringBuilder.toString(), "text/html", "UTF-8");
                     layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, getResources().getDimensionPixelSize(R.dimen.webview_height));
                     layoutParams.setMargins(0, 20, 0, 20);
-                    layoutBody.addView(webView, i, layoutParams);
+                    layoutBody.addView(webView, layoutParams);
+                    break;
+                case "background":
+                    findViewById(R.id.nonvideo_layout).setBackgroundColor(parse(content.toString()));
+                   // Toast.makeText(this.getApplicationContext(), parse(content.toString()), Toast.LENGTH_LONG).show();
                     break;
             }
         }
         layoutBody.requestLayout();
+    }
+
+    public static int parse(String input)
+    {
+        Pattern c = Pattern.compile("rgb *\\( *([0-9]+), *([0-9]+), *([0-9]+) *\\)");
+        Matcher m = c.matcher(input);
+
+
+        if (m.matches())
+        {
+            int color = Color.argb(255, Integer.valueOf(m.group(1)),
+                    Integer.valueOf(m.group(2)),
+                    Integer.valueOf(m.group(3)));
+            return color;
+        }
+        return 0;
     }
 
     @Override

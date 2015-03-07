@@ -53,6 +53,6 @@ public class Utils {
             return R.drawable.eglise;
         else if (major == 65 && minor == 12)
             return R.drawable.tableau;
-        return R.drawable.example;
+        return R.drawable.def;
     };
 }

@@ -174,7 +174,7 @@ public class BeaconViewerFragment extends BaseFragment {
 
                         for (int i = 0; i < mBeaconArray.size(); i++) {
 
-                            BeaconItemSeen beacon = mBeaconArray.get(i);
+                            final BeaconItemSeen beacon = mBeaconArray.get(i);
                             if (i < 3) {
                                 int id1 = getResources().getIdentifier("view" + String.valueOf(i + 1) + "_1", "id", activity.getPackageName());
                                 int id2 = getResources().getIdentifier("view" + String.valueOf(i + 1) + "_2", "id", activity.getPackageName());
@@ -189,27 +189,27 @@ public class BeaconViewerFragment extends BaseFragment {
                                 Animation animFadein = AnimationUtils.loadAnimation(activity.getApplicationContext(),
                                         R.anim.bounce2);
                                 activity.findViewById(id3).startAnimation(animFadein);
-                                beacon_Title.setText(beacon.mMajor + " - " + beacon.mMinor);
-                                beacon_Distance.setText(String.format("%.2f meters away", beacon.mDistance));
+                                beacon_Title.setText(beacon.mTitle);
+                                beacon_Distance.setText(String.format("%.2f mètres", beacon.mDistance));
                                 beaconview.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         Intent intent = new Intent(getActivity(), BeaconActivity.class);
-                                        intent.putExtra("POS", 0);
+                                        intent.putExtra(BeaconActivity.BEACON_EXTRA, beacon);
                                         startActivity(intent);
                                     }
                                 });
                             } else {
                                 LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                                 RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.beacon_item_view2, ll, false);
-                                ((TextView) layout.findViewById(R.id.name)).setText(beacon.mMajor + " - " + beacon.mMinor);
-                                ((TextView) layout.findViewById(R.id.distance)).setText(String.format("%.2f meters away", beacon.mDistance));
+                                ((TextView) layout.findViewById(R.id.name)).setText(beacon.mTitle);
+                                ((TextView) layout.findViewById(R.id.distance)).setText(String.format("%.2f mètres", beacon.mDistance));
                                 ll.addView(layout);
                                 layout.findViewById(R.id.selectable).setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         Intent intent = new Intent(getActivity(), BeaconActivity.class);
-                                        intent.putExtra("POS", 0);
+                                        intent.putExtra(BeaconActivity.BEACON_EXTRA, beacon);
                                         startActivity(intent);
                                     }
                                 });

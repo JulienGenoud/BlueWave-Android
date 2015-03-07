@@ -6,9 +6,12 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import debas.com.beaconnotifier.R;
+import debas.com.beaconnotifier.model.BeaconItemSeen;
+import debas.com.beaconnotifier.utils.Utils;
 
 /**
  * Created by debas on 23/02/15.
@@ -22,21 +25,18 @@ public class SearchViewAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.item_history_search, parent, false);
-
-        return view;
+        return LayoutInflater.from(context).inflate(R.layout.item_history_search, parent, false);
     }
 
     @Override
     public void bindView(View view, final Context context, final Cursor cursor) {
         if (cursor != null && !cursor.isClosed()) {
-            String[] strings = cursor.getColumnNames();
-            for (int i = 0; i < strings.length; i++) {
-                System.out.println("column " + i + " : " + strings[i]);
-            }
+            BeaconItemSeen beaconItemSeen = BeaconItemSeen.fromCursor(cursor);
+
+            ImageView imageView = (ImageView) view.findViewById(R.id.imageview_search);
+            imageView.setImageResource(Utils.getAssociatedImage(beaconItemSeen.mMajor, beaconItemSeen.mMinor));
             TextView textView = (TextView) view.findViewById(R.id.item);
-            textView.setText(cursor.getString(cursor.getColumnIndex("M_NOTIFICATION")));
+            textView.setText(beaconItemSeen.mNotification);
         }
     }
 

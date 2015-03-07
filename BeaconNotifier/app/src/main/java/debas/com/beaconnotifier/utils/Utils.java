@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import debas.com.beaconnotifier.BroadCastBluetoothReceiver;
+import debas.com.beaconnotifier.R;
 
 /**
  * Created by debas on 21/10/14.
@@ -46,4 +47,12 @@ public class Utils {
     public static BroadCastBluetoothReceiver getBroadCastBluetoothReceiver() {
         return mBroadCastBluetoothReceiver;
     }
+
+    public static int getAssociatedImage(int major, int minor) {
+        if (major == 36 && minor == 55)
+            return R.drawable.eglise;
+        else if (major == 65 && minor == 12)
+            return R.drawable.tableau;
+        return R.drawable.example;
+    };
 }

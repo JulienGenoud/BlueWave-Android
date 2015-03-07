@@ -25,13 +25,12 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:adjustViewBounds="true"
-                    android:src="@drawable/tableau"
                     android:id="@+id/imageView"/>
 
                 <ImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:padding="5dp"
+                    android:padding="8dp"
                     android:src="@drawable/favorites_empty"
                     android:layout_gravity="end|top"
                     android:id="@+id/favorites_heart"/>

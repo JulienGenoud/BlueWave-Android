@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RelativeTimeTextView"><attr format="string" name="relative_time_prefix"/><attr format="string" name="relative_time_suffix"/><attr format="string" name="reference_time"/></declare-styleable>
-    <!-- From: file:/Users/julien/Workspace/BlueWave-Android/BeaconNotifier/app/libs/android-ago/build/intermediates/bundles/debug/res/values/values.xml -->
+    <!-- From: file:/home/debas/Project/tek3/PFA/BlueWave-Android/BeaconNotifier/app/libs/android-ago/build/intermediates/bundles/debug/res/values/values.xml -->
     <eat-comment/>
     <string name="just_now">Just Now</string>
 </resources>

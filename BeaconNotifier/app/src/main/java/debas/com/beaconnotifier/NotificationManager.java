@@ -31,9 +31,9 @@ public class NotificationManager
         {
             //Action sur le clique de la notification
             Intent i = new Intent(context, BeaconActivity.class);
-            i.putExtra(BeaconActivity.BEACON_UUID, beaconItemSeen.mUuid);
-            i.putExtra(BeaconActivity.BEACON_MAJOR, beaconItemSeen.mMajor);
-            i.putExtra(BeaconActivity.BEACON_MINOR, beaconItemSeen.mMinor);
+            i.putExtra(BeaconActivity.EXTRA_BEACON_UUID, beaconItemSeen.mUuid);
+            i.putExtra(BeaconActivity.EXTRA_BEACON_MAJOR, beaconItemSeen.mMajor);
+            i.putExtra(BeaconActivity.EXTRA_BEACON_MINOR, beaconItemSeen.mMinor);
             i.putExtra("POS", 0);
             i.putExtra("FROM_NOTIFICATION", true);
 

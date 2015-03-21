@@ -1,4 +1,4 @@
 BlueWave-Android
 ================
 
-YT("https://www.youtube.com/watch?v=Bt5OSYRqDeQ&feature=youtu.be", print = TRUE)
+[![Vidéo de présentation](blue_wave.png)](http://www.youtube.com/watch?v=Bt5OSYRqDeQ)

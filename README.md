@@ -1,14 +1,15 @@
 BlueWave-Android
 ================
 
+[![](blue_wave.png)](http://www.youtube.com/watch?v=Bt5OSYRqDeQ)
+
 Cette application a pour but de promouvoir et/ou présenter un produit à courte proximité.
 Un BackEnd web a été développé en parallèle permettant aux professionnels de configurer leurs balises.
 Application principalement dédiée aux commerçants, aux musées mais aussi
 au service public.
 
-[![](blue_wave.png)](http://www.youtube.com/watch?v=Bt5OSYRqDeQ)
-
 Page de présentation : http://notiwave.com
+
 Vidéo de présentation : http://www.youtube.com/watch?v=Bt5OSYRqDeQ
 
 Screenshots :

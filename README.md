@@ -17,3 +17,9 @@ Screenshots :
 ![Home](screenshot/home.png)
 
 ![Historique](screenshot/history.png)
+
+![Vue](screenshot/la_cene.png)
+
+![Preférences](screenshot/properties_1.png)
+
+![Preférences](screenshot/properties_2.png)

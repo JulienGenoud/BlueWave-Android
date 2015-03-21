@@ -18,6 +18,8 @@ Screenshots :
 
 ![Historique](screenshot/history.png)
 
+![Historique recherche](screenshot/history_search.png)
+
 ![Vue](screenshot/la_cene.png)
 
 ![Preférences](screenshot/properties_1.png)

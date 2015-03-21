@@ -14,4 +14,6 @@ http://www.youtube.com/watch?v=Bt5OSYRqDeQ
 
 Screenshots :
 
-![Historique](screenshots/history.png)
+![Home](screenshot/home.png)
+
+![Historique](screenshot/history.png)

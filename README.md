@@ -3,7 +3,8 @@ BlueWave-Android
 
 [![](blue_wave.png)](http://www.youtube.com/watch?v=Bt5OSYRqDeQ)
 
-Cette application a pour but de promouvoir et/ou présenter un produit à courte proximité à l'aide de la nouvelle technologie Bluetooth Low Energy, des balises bluetooth et de la librairie Altbeacon (https://github.com/AltBeacon/android-beacon-library).
+Cette application a pour but de promouvoir et/ou présenter un produit à courte proximité à l'aide de la nouvelle technologie Bluetooth Low Energy, des balises bluetooth (http://store.gimbal.com/collections/beacons/products/s10) et de la librairie Altbeacon (https://github.com/AltBeacon/android-beacon-library).
+
 Un BackEnd web a été développé en parallèle permettant aux professionnels de configurer leurs balises.
 Application principalement dédiée aux commerçants, aux musées mais aussi
 au service public.

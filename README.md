@@ -6,11 +6,10 @@ Un BackEnd web a été développé en parallèle permettant aux professionnels d
 Application principalement dédiée aux commerçants, aux musées mais aussi
 au service public.
 
-Page de présentation http://notiwave.com
-
-Vidéo de présentation :
 [![](blue_wave.png)](http://www.youtube.com/watch?v=Bt5OSYRqDeQ)
-http://www.youtube.com/watch?v=Bt5OSYRqDeQ
+
+Page de présentation : http://notiwave.com
+Vidéo de présentation : http://www.youtube.com/watch?v=Bt5OSYRqDeQ
 
 Screenshots :
 
